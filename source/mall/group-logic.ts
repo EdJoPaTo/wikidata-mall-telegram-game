@@ -1,5 +1,7 @@
 import {Composer, Extra, Markup, ContextMessageUpdate} from 'telegraf'
 
+import {Mall} from '../lib/types/mall'
+
 import * as userMalls from '../lib/data/malls'
 
 const bot = new Composer()
@@ -15,6 +17,21 @@ async function replyJoinMessage(ctx: ContextMessageUpdate): Promise<void> {
 	text += (ctx as any).wd.r('menu.mall').label()
 
 	await ctx.reply(text, Extra.markdown().inReplyTo(ctx.message!.message_id).markup(keyboard))
+}
+
+async function checkEveryMemberAndRemoveIfNeeded(ctx: ContextMessageUpdate, mallData: Mall): Promise<void> {
+	const removeIds: number[] = []
+	for (const memberId of mallData.member) {
+		try {
+			await ctx.getChatMember(memberId)
+		} catch (error) {
+			console.log('error while testing members', memberId, error.message)
+			removeIds.push(memberId)
+		}
+	}
+
+	mallData.member = mallData.member
+		.filter(o => !removeIds.includes(o))
 }
 
 if (process.env.NODE_ENV !== 'production') {
@@ -70,6 +87,7 @@ bot.on('left_chat_member', async ctx => {
 		const mallData = await userMalls.get(mallId)
 		if (mallData) {
 			mallData.member = mallData.member.filter(o => o !== left.id)
+			await checkEveryMemberAndRemoveIfNeeded(ctx, mallData)
 			if (mallData.member.length === 0) {
 				await userMalls.remove(mallId)
 				await ctx.leaveChat()
@@ -130,6 +148,21 @@ bot.action('join', async ctx => {
 	mallData.member.push(ctx.from!.id)
 	await userMalls.set(mallId, mallData)
 	return ctx.answerCbQuery('👍')
+})
+
+bot.command('fix', async ctx => {
+	const mallId = ctx.chat!.id
+	const mallData = await userMalls.get(mallId)
+	if (!mallData) {
+		return ctx.leaveChat()
+	}
+
+	console.log('fix..', mallId, mallData)
+	await checkEveryMemberAndRemoveIfNeeded(ctx, mallData)
+	console.log('fixed', mallId, mallData)
+
+	await userMalls.set(mallId, mallData)
+	return ctx.reply('everything should be in sync now.')
 })
 
 export default bot
