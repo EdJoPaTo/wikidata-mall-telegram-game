@@ -9,6 +9,19 @@ menu:
 
     When you improve items on Wikidata you can improve this game and other projects. 😎
   back: back
+mall:
+  alreadyInDifferentMall: You are already in a different mall.
+  groupPrivate: Group should be private.
+  supergroupMigration: >
+    Please force migration to supergroup.
+    Make the group public (random name), then private again.
+
+
+    Ask Chat / @EdJoPaTo for help.
+
+
+    I'll wait in here until you did that.
+    Then we can continue :)
 help:
   improveHelp: >
     You can improve this help text!

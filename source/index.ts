@@ -22,6 +22,7 @@ import {notificationText} from './lib/interface/notification'
 import {ErrorMiddleware} from './lib/error-middleware'
 import {NotificationManager} from './lib/notification/manager'
 
+import mall from './mall'
 import menu from './menu'
 
 const tokenFilePath = existsSync('/run/secrets') ? '/run/secrets/bot-token.txt' : 'bot-token.txt'
@@ -89,10 +90,12 @@ bot.use(new TelegrafWikibase(wdEntityStore, {
 	contextKey: 'wd'
 }).middleware())
 
-bot.use(menu.init({
+bot.use((Telegraf as any).privateChat(menu.init({
 	backButtonText: (ctx: any) => `🔙 ${ctx.i18n.t('menu.back')}`,
 	mainMenuButtonText: (ctx: any) => `🔝 ${ctx.wd.r('menu.menu').label()}`
-}))
+})))
+
+bot.use((Telegraf as any).groupChat((mall as any).middleware()))
 
 bot.catch((error: any) => {
 	console.error('telegraf error occured', error)

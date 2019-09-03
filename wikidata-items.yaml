@@ -49,6 +49,8 @@ product:
   product: Q2424752
   storage: Q9158768
   storageCapacity: Q21551014
+mall:
+  participation: Q1773152
 achievement:
   gameStarted: Q529711
 skill:
