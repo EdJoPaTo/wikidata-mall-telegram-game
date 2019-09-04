@@ -50,6 +50,7 @@ product:
   storage: Q9158768
   storageCapacity: Q21551014
 mall:
+  donation: Q1124860
   participation: Q1773152
   production: Q739302
 achievement:

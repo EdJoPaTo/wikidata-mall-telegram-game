@@ -12,9 +12,12 @@ import {parseTitle} from '../lib/game-logic/mall'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
+import {formatFloat} from '../lib/interface/format-number'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
 import productionMenu from './mall-production'
+
+const DONATION_AMOUNT = 10
 
 async function menuText(ctx: any): Promise<string> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
@@ -80,6 +83,40 @@ const menu = new TelegrafInlineMenu(menuText, {
 })
 
 menu.submenu(buttonText(emojis.production, 'mall.production'), 'production', productionMenu)
+
+menu.button(buttonText(emojis.currency, 'mall.donation'), 'donate', {
+	hide: async (ctx: any) => {
+		const session = ctx.session as Session
+		if (session.money < DONATION_AMOUNT * 2) {
+			return true
+		}
+
+		const {mall} = ctx.persist as Persist
+		return Boolean(mall && mall.money >= DONATION_AMOUNT * 10)
+	},
+	doFunc: async (ctx: any) => {
+		const session = ctx.session as Session
+		if (session.money < DONATION_AMOUNT * 2) {
+			return
+		}
+
+		const {mall} = ctx.persist as Persist
+		if (!mall) {
+			throw new Error('user not part of a mall')
+		}
+
+		mall.money += DONATION_AMOUNT
+		session.money -= DONATION_AMOUNT
+
+		let text = ''
+		text += emojis.person
+		text += ' → '
+		text += formatFloat(DONATION_AMOUNT) + emojis.currency
+		text += ' → '
+		text += emojis.mall
+		return ctx.answerCbQuery(text)
+	}
+})
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
