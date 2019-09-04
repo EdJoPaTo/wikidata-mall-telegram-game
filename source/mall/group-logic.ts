@@ -4,6 +4,8 @@ import {Mall} from '../lib/types/mall'
 
 import * as userMalls from '../lib/data/malls'
 
+import {parseTitle} from '../lib/game-logic/mall'
+
 const bot = new Composer()
 
 async function replyJoinMessage(ctx: ContextMessageUpdate): Promise<void> {
@@ -48,8 +50,9 @@ bot.use(async (ctx, next) => {
 	const mallId = ctx.chat!.id
 	const mall = await userMalls.get(mallId)
 	if (mall && ctx.chat) {
-		if (mall.title !== ctx.chat.title) {
-			mall.title = ctx.chat.title
+		const nextTitle = parseTitle(ctx.chat.title)
+		if (mall.title !== nextTitle) {
+			mall.title = nextTitle
 			await userMalls.set(mallId, mall)
 		}
 	}
@@ -143,7 +146,7 @@ bot.action('join', async ctx => {
 		mallData = {
 			member: [],
 			money: 0,
-			title: ctx.chat!.title
+			title: parseTitle(ctx.chat!.title)
 		}
 	}
 

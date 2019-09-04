@@ -19,7 +19,7 @@ async function menuText(ctx: any): Promise<string> {
 		throw new Error('You are not part of a mall')
 	}
 
-	const mallTitle = format.escape(mall.title || '??')
+	const mallTitle = format.escape(mall.title)
 	const memberInfos = (await Promise.all(
 		mall.member.map(async o => userInfo.get(o))
 	))

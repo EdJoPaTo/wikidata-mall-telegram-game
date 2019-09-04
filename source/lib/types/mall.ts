@@ -3,5 +3,5 @@ export interface Mall {
 	// attraction?: string;
 	member: number[];
 	money: number;
-	title?: string;
+	title: string;
 }
