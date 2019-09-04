@@ -20,18 +20,20 @@ async function replyJoinMessage(ctx: ContextMessageUpdate): Promise<void> {
 }
 
 async function checkEveryMemberAndRemoveIfNeeded(ctx: ContextMessageUpdate, mallData: Mall): Promise<void> {
-	const removeIds: number[] = []
-	for (const memberId of mallData.member) {
-		try {
-			await ctx.getChatMember(memberId)
-		} catch (error) {
-			console.log('error while testing members', memberId, error.message)
-			removeIds.push(memberId)
-		}
-	}
-
-	mallData.member = mallData.member
-		.filter(o => !removeIds.includes(o))
+	const remaining = await Promise.all(
+		mallData.member.map(async memberId => {
+			try {
+				const entry = await ctx.getChatMember(memberId)
+				return entry.user.id
+			} catch (error) {
+				console.log('error while testing members', memberId, error.message)
+				return false
+			}
+		})
+	)
+	const remainingIds = remaining
+		.filter(o => Boolean(o)) as number[]
+	mallData.member = remainingIds
 }
 
 if (process.env.NODE_ENV !== 'production') {
