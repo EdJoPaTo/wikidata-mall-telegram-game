@@ -8,6 +8,8 @@ import * as userMalls from '../lib/data/malls'
 
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../lib/game-math/constants'
 
+import {parseTitle} from '../lib/game-logic/mall'
+
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
@@ -19,7 +21,7 @@ async function menuText(ctx: any): Promise<string> {
 		throw new Error('You are not part of a mall')
 	}
 
-	const mallTitle = format.escape(mall.title)
+	const mallTitle = format.escape(parseTitle(mall.chat.title))
 	const memberInfos = (await Promise.all(
 		mall.member.map(async o => userInfo.get(o))
 	))

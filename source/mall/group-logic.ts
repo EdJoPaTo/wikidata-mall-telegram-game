@@ -1,10 +1,9 @@
 import {Composer, Extra, Markup, ContextMessageUpdate} from 'telegraf'
+import stringify from 'json-stable-stringify'
 
 import {Mall} from '../lib/types/mall'
 
 import * as userMalls from '../lib/data/malls'
-
-import {parseTitle} from '../lib/game-logic/mall'
 
 const bot = new Composer()
 
@@ -50,9 +49,10 @@ bot.use(async (ctx, next) => {
 	const mallId = ctx.chat!.id
 	const mall = await userMalls.get(mallId)
 	if (mall && ctx.chat) {
-		const nextTitle = parseTitle(ctx.chat.title)
-		if (mall.title !== nextTitle) {
-			mall.title = nextTitle
+		const stored = stringify(mall.chat)
+		const current = stringify(ctx.chat)
+		if (stored !== current) {
+			mall.chat = ctx.chat
 			await userMalls.set(mallId, mall)
 		}
 	}
@@ -146,7 +146,7 @@ bot.action('join', async ctx => {
 		mallData = {
 			member: [],
 			money: 0,
-			title: parseTitle(ctx.chat!.title)
+			chat: ctx.chat!
 		}
 	}
 
