@@ -63,7 +63,19 @@ menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 		const mallId = await userMalls.getMallIdOfUser(ctx.from!.id)
 		return Boolean(mallId)
 	},
-	doFunc: async ctx => ctx.answerCbQuery('🤖 -> 👥')
+	doFunc: async ctx => {
+		const {username} = (ctx as any).botInfo
+		let text = ''
+		text += '🤖 → 👥'
+		text += '\n'
+		text += '@'
+		text += username
+		text += ' → '
+		text += '👥'
+		text += (ctx as any).wd.r('menu.chat').label()
+
+		await ctx.answerCbQuery(text, true)
+	}
 })
 
 menu.submenu(buttonText(emojis.mall, 'menu.mall'), 'mall', mall, {
