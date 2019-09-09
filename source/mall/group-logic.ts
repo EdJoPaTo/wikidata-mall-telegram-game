@@ -60,26 +60,6 @@ bot.use(async (ctx, next) => {
 	return next && next()
 })
 
-bot.use(async (ctx, next) => {
-	try {
-		const members = await ctx.getChatMembersCount()
-		if (members > 9) {
-			try {
-				await ctx.reply('You should start a new group for the mall.')
-			} catch (error) {
-				console.error('error while messaging big group', error)
-			}
-
-			await ctx.leaveChat()
-			return
-		}
-	} catch (error) {
-		console.error('error while detecting big group', error)
-	}
-
-	return next && next()
-})
-
 bot.on('left_chat_member', async ctx => {
 	const mallId = ctx.chat!.id
 	const left = ctx.message!.left_chat_member!
@@ -101,6 +81,26 @@ bot.on('left_chat_member', async ctx => {
 			}
 		}
 	}
+})
+
+bot.use(async (ctx, next) => {
+	try {
+		const members = await ctx.getChatMembersCount()
+		if (members > 9) {
+			try {
+				await ctx.reply('You should start a new group for the mall.')
+			} catch (error) {
+				console.error('error while messaging big group', error)
+			}
+
+			await ctx.leaveChat()
+			return
+		}
+	} catch (error) {
+		console.error('error while detecting big group', error)
+	}
+
+	return next && next()
 })
 
 bot.on('migrate_to_chat_id', async ctx => {
