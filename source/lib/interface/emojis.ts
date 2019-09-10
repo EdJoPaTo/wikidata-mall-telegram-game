@@ -31,6 +31,7 @@ const basic: Dictionary<string> = {
 	personStudent: '👩‍🎓👨‍🎓',
 	personTemporary: '🤠',
 	personToddler: '👶',
+	production: '🛠',
 	purchasing: '🛒',
 	recruitment: '👏',
 	requireAttention: '🥺',

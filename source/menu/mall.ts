@@ -3,6 +3,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session} from '../lib/types'
 
+import * as mallProduction from '../lib/data/mall-production'
 import * as userInfo from '../lib/data/user-info'
 import * as userMalls from '../lib/data/malls'
 
@@ -13,6 +14,8 @@ import {parseTitle} from '../lib/game-logic/mall'
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
+
+import productionMenu from './mall-production'
 
 async function menuText(ctx: any): Promise<string> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
@@ -34,6 +37,12 @@ async function menuText(ctx: any): Promise<string> {
 	text += '\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currency)
+	text += '\n\n'
+
+	text += emojis.production
+	text += ctx.wd.r('mall.production').label()
+	text += ': '
+	text += ctx.wd.r((await mallProduction.get()).itemToProduce).label()
 	text += '\n\n'
 
 	text += format.bold(
@@ -70,6 +79,8 @@ async function menuText(ctx: any): Promise<string> {
 const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('menu.mall')
 })
+
+menu.submenu(buttonText(emojis.production, 'mall.production'), 'production', productionMenu)
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
