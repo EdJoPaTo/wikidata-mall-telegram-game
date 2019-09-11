@@ -16,8 +16,9 @@ const startTimestamp = Math.floor(Date.now() / 1000)
 
 function generatePersistMiddlewareManually<Key extends keyof Persist>(
 	key: Key,
-	get: (playerId: number) => Promise<Persist[Key] | undefined>,
-	save: (playerId: number, value: Persist[Key]) => Promise<void>
+	getIdFromCtx: (ctx: Context) => string | Promise<string>,
+	get: (ctx: string) => Promise<Persist[Key] | undefined>,
+	save: (ctx: string, value: Persist[Key]) => Promise<void>
 ): (ctx: any, next: any) => Promise<void> {
 	return async (ctx: Context, next) => {
 		if (!ctx.persist) {
@@ -33,7 +34,8 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 			ctx.persist = persist
 		}
 
-		const content = await get(ctx.from.id)
+		const entryId = await getIdFromCtx(ctx)
+		const content = await get(entryId)
 		if (content) {
 			ctx.persist[key] = content
 		}
@@ -43,17 +45,18 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 		const after = stringify(ctx.persist[key])
 
 		if (before !== after) {
-			await save(ctx.from.id, ctx.persist[key])
+			await save(entryId, ctx.persist[key])
 		}
 	}
 }
 
 export function generatePersistMiddleware<Key extends keyof Persist>(
-	key: Key, datastore: Datastore<Persist[Key]>
+	key: Key, datastore: Datastore<Persist[Key]>, getIdFunc: (ctx: Context) => string | Promise<string>
 ): (ctx: any, next: any) => Promise<void> {
 	return generatePersistMiddlewareManually(
 		key,
-		async playerId => datastore.get(String(playerId)),
-		async (playerId, value) => datastore.set(String(playerId), value)
+		getIdFunc,
+		async id => datastore.get(id),
+		async (id, value) => datastore.set(id, value)
 	)
 }

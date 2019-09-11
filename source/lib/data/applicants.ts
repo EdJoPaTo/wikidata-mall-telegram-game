@@ -18,5 +18,5 @@ export async function remove(userId: number): Promise<void> {
 }
 
 export function middleware(): (ctx: any, next: any) => Promise<void> {
-	return generatePersistMiddleware('applicants', data)
+	return generatePersistMiddleware('applicants', data, ctx => String(ctx.from.id))
 }
