@@ -85,6 +85,10 @@ bot.on('left_chat_member', async ctx => {
 
 bot.use(async (ctx, next) => {
 	try {
+		if ((ctx as any).updateSubTypes.includes('migrate_to_chat_id')) {
+			return next && next()
+		}
+
 		const members = await ctx.getChatMembersCount()
 		if (members > 9) {
 			try {
@@ -97,7 +101,7 @@ bot.use(async (ctx, next) => {
 			return
 		}
 	} catch (error) {
-		console.error('error while detecting big group', error)
+		console.error('error while detecting big group', ctx.updateType, (ctx as any).updateSubTypes, error)
 	}
 
 	return next && next()
