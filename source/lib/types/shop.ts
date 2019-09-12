@@ -1,9 +1,11 @@
 import {Person} from './people'
 
+type UnixTimestamp = number
+
 export interface Product {
 	id: string;
 	itemsInStore: number;
-	itemTimestamp: number;
+	itemTimestamp: UnixTimestamp;
 }
 
 export interface Personal {
@@ -14,7 +16,7 @@ export interface Personal {
 
 export interface Shop {
 	id: string;
-	opening: number;
+	opening: UnixTimestamp;
 	personal: Personal;
 	products: Product[];
 }
