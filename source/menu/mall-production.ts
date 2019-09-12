@@ -15,6 +15,7 @@ import {getParts} from '../lib/wikidata/production'
 import {preloadWithParts} from '../lib/game-logic/mall-production'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
+import {countdownMinuteSecond} from '../lib/interface/formatted-time'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
@@ -26,6 +27,7 @@ async function getProduction(ctx: any): Promise<MallProduction> {
 }
 
 async function menuText(ctx: any): Promise<string> {
+	const now = Date.now() / 1000
 	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
@@ -48,8 +50,11 @@ async function menuText(ctx: any): Promise<string> {
 	text += '\n\n'
 
 	if (mall.productionFinishes) {
-		text += 'TODO: in production until… '
-		text += mall.productionFinishes
+		text += emojis.countdown
+		console.log(new Date(mall.productionFinishes * 1000))
+		text += countdownMinuteSecond(mall.productionFinishes - now)
+		text += ' '
+		text += ctx.wd.r('unit.minute').label()
 		text += '\n\n'
 	}
 
