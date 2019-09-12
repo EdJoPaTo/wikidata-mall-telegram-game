@@ -7,9 +7,10 @@ import {Dictionary, sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} f
 
 import {costForAdditionalShop} from '../lib/game-math/shop-cost'
 
-import {getCurrentConstructions} from '../lib/game-logic/shop-construction'
+import {getCurrentConstructions, nextConstructionChange} from '../lib/game-logic/shop-construction'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
+import {countdownHourMinute} from '../lib/interface/formatted-time'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
@@ -18,6 +19,7 @@ import {createHelpMenu, helpButtonText} from './help'
 async function menuText(ctx: any): Promise<string> {
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
+	const now = Date.now() / 1000
 	const cost = costForAdditionalShop(persist.shops.length)
 
 	let text = ''
@@ -34,6 +36,12 @@ async function menuText(ctx: any): Promise<string> {
 	text += Object.keys(await constructionOptions(ctx))
 		.map(o => infoHeader(ctx.wd.r(o), {titlePrefix: emojis.shop}))
 		.join('\n\n')
+	text += '\n\n'
+
+	text += emojis.countdown
+	text += countdownHourMinute(nextConstructionChange(now) - now)
+	text += ' '
+	text += ctx.wd.r('unit.hour').label()
 	text += '\n\n'
 
 	return text
