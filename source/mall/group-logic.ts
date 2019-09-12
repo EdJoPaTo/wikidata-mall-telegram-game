@@ -2,6 +2,7 @@ import {Composer, Extra, Markup, ContextMessageUpdate} from 'telegraf'
 import stringify from 'json-stable-stringify'
 
 import {Mall} from '../lib/types/mall'
+import {Persist} from '../lib/types'
 
 import * as userMalls from '../lib/data/malls'
 
@@ -134,6 +135,7 @@ bot.on(['group_chat_created', 'new_chat_members'], async ctx => {
 bot.start(async ctx => replyJoinMessage(ctx))
 
 bot.action('join', async ctx => {
+	const persist = (ctx as any).persist as Persist
 	const mallId = ctx.chat!.id
 
 	let mallData = await userMalls.get(mallId)
@@ -141,8 +143,7 @@ bot.action('join', async ctx => {
 		return ctx.answerCbQuery('🥰')
 	}
 
-	const existingUserMallId = await userMalls.getMallIdOfUser(ctx.from!.id)
-	if (existingUserMallId) {
+	if (persist.mall) {
 		return ctx.answerCbQuery((ctx as any).i18n.t('mall.alreadyInDifferentMall'))
 	}
 

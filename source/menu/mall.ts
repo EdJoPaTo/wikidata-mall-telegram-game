@@ -1,11 +1,10 @@
 import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session} from '../lib/types'
+import {Session, Persist} from '../lib/types'
 
 import * as mallProduction from '../lib/data/mall-production'
 import * as userInfo from '../lib/data/user-info'
-import * as userMalls from '../lib/data/malls'
 
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../lib/game-math/constants'
 
@@ -19,7 +18,7 @@ import productionMenu from './mall-production'
 
 async function menuText(ctx: any): Promise<string> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
-	const mall = await userMalls.getMallOfUser(ctx.from.id)
+	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}

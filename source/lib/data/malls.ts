@@ -1,5 +1,6 @@
 import {Mall} from '../types/mall'
 
+import {generatePersistMiddleware} from './persist-middleware'
 import {InMemoryFiles} from './datastore'
 
 type Dictionary<T> = {[key: string]: T}
@@ -12,22 +13,12 @@ export async function getAllMalls(): Promise<Dictionary<Mall>> {
 	return data.entries()
 }
 
-export async function getMallIdOfUser(userId: number): Promise<number | undefined> {
+async function getMallIdOfUser(userId: number): Promise<number | undefined> {
 	const dict = await data.entries()
 	for (const key of Object.keys(dict)) {
 		const mall = dict[key]
 		if (mall.member.includes(userId)) {
 			return Number(key)
-		}
-	}
-
-	return undefined
-}
-
-export async function getMallOfUser(userId: number): Promise<Mall | undefined> {
-	for (const mall of Object.values(await data.entries())) {
-		if (mall.member.includes(userId)) {
-			return mall
 		}
 	}
 
@@ -44,4 +35,8 @@ export async function set(mallId: number, mall: Mall): Promise<void> {
 
 export async function remove(mallId: number): Promise<void> {
 	return data.delete(String(mallId))
+}
+
+export function middleware(): (ctx: any, next: any) => Promise<void> {
+	return generatePersistMiddleware('mall', data, async ctx => String(await getMallIdOfUser(ctx.from.id)))
 }

@@ -1,4 +1,5 @@
 import {Applicants} from './people'
+import {Mall} from './mall'
 import {Shop} from './shop'
 import {Skills, SkillInTraining} from './skills'
 import {Stats} from './stats'
@@ -29,4 +30,5 @@ export interface Persist {
 	applicants: Applicants;
 	shops: Shop[];
 	skills: Skills;
+	mall?: Mall;
 }

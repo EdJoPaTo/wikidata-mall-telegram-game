@@ -2,9 +2,10 @@ import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityStore from 'wikidata-entity-store'
 
+import {Persist} from '../lib/types'
+
 import * as mallProduction from '../lib/data/mall-production'
 import * as userInfo from '../lib/data/user-info'
-import * as userMalls from '../lib/data/malls'
 
 import {getParts} from '../lib/wikidata/production'
 
@@ -15,7 +16,7 @@ import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
 async function menuText(ctx: any): Promise<string> {
-	const mall = await userMalls.getMallOfUser(ctx.from.id)
+	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
@@ -69,7 +70,7 @@ const menu = new TelegrafInlineMenu(menuText, {
 })
 
 async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
-	const mall = await userMalls.getMallOfUser(ctx.from.id)
+	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
@@ -93,7 +94,7 @@ menu.select('take', currentlyNotTakenParts, {
 	columns: 2,
 	textFunc: (ctx: any, key) => ctx.wd.r(key).label(),
 	setFunc: async (ctx: any, key) => {
-		const mall = await userMalls.getMallOfUser(ctx.from.id)
+		const {mall} = ctx.persist as Persist
 		if (!mall) {
 			throw new Error('You are not part of a mall')
 		}

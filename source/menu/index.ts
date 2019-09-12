@@ -5,9 +5,6 @@ import {Session, Persist} from '../lib/types'
 import {canAddToSkillQueue} from '../lib/game-math/skill'
 import {getRefinedState} from '../lib/game-math/applicant'
 
-import * as userMalls from '../lib/data/malls'
-
-
 import {buttonText} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
@@ -59,9 +56,9 @@ function shopsButtonText(ctx: any): string {
 menu.submenu(shopsButtonText, 'shops', shops)
 
 menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
-	hide: async ctx => {
-		const mallId = await userMalls.getMallIdOfUser(ctx.from!.id)
-		return Boolean(mallId)
+	hide: async (ctx: any) => {
+		const persist = ctx.persist as Persist
+		return Boolean(persist.mall)
 	},
 	doFunc: async ctx => {
 		const {username} = (ctx as any).botInfo
@@ -79,9 +76,9 @@ menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 })
 
 menu.submenu(buttonText(emojis.mall, 'menu.mall'), 'mall', mall, {
-	hide: async ctx => {
-		const mallId = await userMalls.getMallIdOfUser(ctx.from!.id)
-		return !mallId
+	hide: async (ctx: any) => {
+		const persist = ctx.persist as Persist
+		return !persist.mall
 	}
 })
 
