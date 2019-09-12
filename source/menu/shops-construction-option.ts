@@ -13,6 +13,7 @@ import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from './help'
+import {replyMenu} from './shops'
 
 function fromCtx(ctx: any): {construction: string} {
 	const construction = ctx.match[1]
@@ -96,7 +97,7 @@ menu.simpleButton(buttonText(emojis.construction, 'action.construction'), 'const
 		session.money -= cost
 		persist.shops.push(newShop)
 		await ctx.answerCbQuery(emojis.yes)
-		// TODO: go to shops menu
+		await replyMenu.middleware()(ctx, undefined)
 	}
 })
 
