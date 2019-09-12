@@ -1,6 +1,6 @@
 import {Achievements, Stats} from './achievements'
 import {Person} from './people'
-import {Shop, Construction} from './shop'
+import {Shop} from './shop'
 import {Skills, SkillInTraining} from './skills'
 
 /* eslint @typescript-eslint/camelcase: warn */
@@ -14,7 +14,6 @@ export interface Session {
 	achievements: Achievements;
 	applicants: Person[];
 	applicantTimestamp: number;
-	construction?: Construction;
 	hideExplanationMath: boolean;
 	leaderboardView?: LeaderboardView;
 	money: number;

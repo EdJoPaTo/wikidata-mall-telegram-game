@@ -16,6 +16,11 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		init(session)
 		ensureStats(session)
 
+		// TODO: remove migration
+		if ((session as any).construction) {
+			delete (session as any).construction
+		}
+
 		applicants(session, persist, now)
 		personal(session, persist, now)
 

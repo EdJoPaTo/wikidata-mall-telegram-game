@@ -83,14 +83,7 @@ menu.selectSubmenu('s', userShops, shopMenu, {
 	textFunc: (ctx: any, key) => ctx.wd.r(key).label()
 })
 
-menu.submenu(buttonText(emojis.construction, 'action.construction'), 'build', constructionMenu, {
-	hide: (ctx: any) => {
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
-		const cost = costForAdditionalShop(persist.shops.length)
-		return cost > session.money
-	}
-})
+menu.submenu(buttonText(emojis.construction, 'action.construction'), 'build', constructionMenu)
 
 menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', ctx => `(${buyAllAdditionalCostString(ctx)})`), 'buy-all', {
 	hide: (ctx: any) => {

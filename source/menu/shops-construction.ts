@@ -1,14 +1,13 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../lib/types'
-import {Shop, Construction} from '../lib/types/shop'
+import {Shop} from '../lib/types/shop'
 
-import {randomUnusedEntry} from '../lib/js-helper/array'
 import {Dictionary, sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../lib/js-helper/dictionary'
 
-import * as wdShops from '../lib/wikidata/shops'
-
 import {costForAdditionalShop} from '../lib/game-math/shop-cost'
+
+import {getCurrentConstructions} from '../lib/game-logic/shop-construction'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
@@ -16,31 +15,7 @@ import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from './help'
 
-function getConstruction(ctx: any): Construction {
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
-
-	const construction: Construction = session.construction || {
-		possibleShops: []
-	}
-
-	const allShops = wdShops.allShops()
-	const userShops = persist.shops.map(o => o.id)
-
-	construction.possibleShops = construction.possibleShops
-		.filter(o => allShops.includes(o))
-
-	while (construction.possibleShops.length < 3) {
-		construction.possibleShops.push(
-			randomUnusedEntry(allShops, [...userShops, ...construction.possibleShops])
-		)
-	}
-
-	session.construction = construction
-	return construction
-}
-
-function menuText(ctx: any): string {
+async function menuText(ctx: any): Promise<string> {
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
 	const cost = costForAdditionalShop(persist.shops.length)
@@ -56,11 +31,10 @@ function menuText(ctx: any): string {
 	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
 	text += '\n\n'
 
-	if (cost < session.money) {
-		text += Object.keys(constructionOptions(ctx))
-			.map(o => infoHeader(ctx.wd.r(o), {titlePrefix: emojis.shop}))
-			.join('\n\n')
-	}
+	text += Object.keys(await constructionOptions(ctx))
+		.map(o => infoHeader(ctx.wd.r(o), {titlePrefix: emojis.shop}))
+		.join('\n\n')
+	text += '\n\n'
 
 	return text
 }
@@ -69,9 +43,10 @@ const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('action.construction')
 })
 
-function constructionOptions(ctx: any): Dictionary<string> {
+async function constructionOptions(ctx: any): Promise<Dictionary<string>> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
-	const construction = getConstruction(ctx)
+	const now = Date.now() / 1000
+	const construction = await getCurrentConstructions(now)
 
 	const labels: Dictionary<string> = {}
 	for (const shopId of construction.possibleShops) {
@@ -91,6 +66,10 @@ menu.select('s', constructionOptions, {
 		const persist = ctx.persist as Persist
 		const now = Math.floor(Date.now() / 1000)
 
+		if (persist.shops.some(o => o.id === key)) {
+			throw new Error('you already have that shop')
+		}
+
 		const cost = costForAdditionalShop(persist.shops.length)
 		if (session.money < cost) {
 			// Fishy
@@ -105,7 +84,6 @@ menu.select('s', constructionOptions, {
 		}
 
 		session.money -= cost
-		delete session.construction
 		persist.shops.push(newShop)
 	}
 })

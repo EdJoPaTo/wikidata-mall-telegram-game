@@ -23,4 +23,5 @@ export interface Shop {
 
 export interface Construction {
 	possibleShops: string[];
+	timestamp: UnixTimestamp;
 }
