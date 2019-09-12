@@ -1,7 +1,6 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../lib/types'
-import {Shop} from '../lib/types/shop'
 
 import {Dictionary, sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../lib/js-helper/dictionary'
 
@@ -15,6 +14,7 @@ import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from './help'
+import constructionOptionMenu from './shops-construction-option'
 
 async function menuText(ctx: any): Promise<string> {
 	const session = ctx.session as Session
@@ -70,35 +70,8 @@ async function constructionOptions(ctx: any): Promise<Dictionary<string>> {
 	return recreateDictWithGivenKeyOrder(labels, orderedKeys)
 }
 
-menu.select('s', constructionOptions, {
-	columns: 1,
-	setParentMenuAfter: true,
-	prefixFunc: () => emojis.construction + emojis.shop,
-	setFunc: (ctx: any, key) => {
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
-		const now = Math.floor(Date.now() / 1000)
-
-		if (persist.shops.some(o => o.id === key)) {
-			throw new Error('you already have that shop')
-		}
-
-		const cost = costForAdditionalShop(persist.shops.length)
-		if (session.money < cost) {
-			// Fishy
-			throw new Error('not enough money for construction')
-		}
-
-		const newShop: Shop = {
-			id: key,
-			opening: now,
-			personal: {},
-			products: []
-		}
-
-		session.money -= cost
-		persist.shops.push(newShop)
-	}
+menu.selectSubmenu('s', constructionOptions, constructionOptionMenu, {
+	columns: 1
 })
 
 menu.urlButton(
