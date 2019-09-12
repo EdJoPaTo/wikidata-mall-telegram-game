@@ -53,9 +53,7 @@ async function menuText(ctx: any): Promise<string> {
 		text += ' '
 		text += ctx.wd.r('unit.minute').label()
 		text += '\n\n'
-	}
-
-	if (mall.partsProducedBy) {
+	} else {
 		const parts = getParts(ctx.wd.r(itemToProduce))
 
 		const lines = await Promise.all(parts
@@ -63,8 +61,8 @@ async function menuText(ctx: any): Promise<string> {
 				let line = ''
 				line += format.bold(ctx.wd.r(o).label())
 				line += ':\n  '
-				if (mall.partsProducedBy![o]) {
-					const userId = mall.partsProducedBy![o]
+				if (mall.partsProducedBy && mall.partsProducedBy[o]) {
+					const userId = mall.partsProducedBy[o]
 					const user = await userInfo.get(userId)
 					line += format.escape(user ? user.first_name : '??')
 				} else {
