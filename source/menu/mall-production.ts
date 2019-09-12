@@ -135,8 +135,13 @@ menu.select('take', currentlyNotTakenParts, {
 })
 
 menu.urlButton(
-	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
+	buttonText(emojis.wikidataItem, 'mall.production'),
 	(ctx: any) => ctx.wd.r('mall.production').url()
+)
+
+menu.urlButton(
+	buttonText(emojis.wikidataItem, async ctx => (await getProduction(ctx)).itemToProduce),
+	async (ctx: any) => ctx.wd.r((await getProduction(ctx)).itemToProduce).url()
 )
 
 export default menu
