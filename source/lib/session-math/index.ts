@@ -2,6 +2,7 @@ import {Session, Persist} from '../types'
 
 import applicants from './applicants'
 import income from './income'
+import mall from './mall'
 import notification from './notification'
 import personal from './personal'
 import skills from './skills'
@@ -26,6 +27,7 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		}
 
 		applicants(session, persist, now)
+		await mall(persist, now)
 		personal(persist, now)
 
 		income(session, persist, now)

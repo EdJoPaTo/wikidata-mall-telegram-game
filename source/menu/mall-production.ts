@@ -5,6 +5,8 @@ import WikidataEntityStore from 'wikidata-entity-store'
 import {MallProduction} from '../lib/types/mall'
 import {Persist} from '../lib/types'
 
+import {MALL_MIN_PEOPLE, MALL_PRODUCTION_TIME_IN_SECONDS} from '../lib/game-math/constants'
+
 import * as mallProduction from '../lib/data/mall-production'
 import * as userInfo from '../lib/data/user-info'
 
@@ -107,6 +109,7 @@ menu.select('take', currentlyNotTakenParts, {
 	columns: 2,
 	textFunc: (ctx: any, key) => ctx.wd.r(key).label(),
 	setFunc: async (ctx: any, key) => {
+		const now = Date.now() / 1000
 		const {mall} = ctx.persist as Persist
 		if (!mall) {
 			throw new Error('You are not part of a mall')
@@ -131,6 +134,11 @@ menu.select('take', currentlyNotTakenParts, {
 		}
 
 		mall.partsProducedBy[key] = ctx.from.id
+
+		if (mall.member.length >= MALL_MIN_PEOPLE && mall.member.length <= Object.keys(mall.partsProducedBy).length) {
+			mall.productionFinishes = Math.ceil(now + MALL_PRODUCTION_TIME_IN_SECONDS)
+			delete mall.partsProducedBy
+		}
 	}
 })
 
