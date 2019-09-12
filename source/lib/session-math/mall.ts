@@ -26,6 +26,7 @@ async function updateMallProduction(mall: Mall, now: number): Promise<void> {
 
 				content.itemsProducedPerMall[mallId]++
 				await mallProduction.set(content)
+				mall.money += Math.PI
 			}
 
 			delete mall.productionFinishes
