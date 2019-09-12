@@ -1,5 +1,4 @@
 import {markdown as format} from 'telegram-format'
-import {User} from 'telegram-typings'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityStore from 'wikidata-entity-store'
 
@@ -21,10 +20,6 @@ async function menuText(ctx: any): Promise<string> {
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
-
-	const memberInfos = (await Promise.all(
-		mall.member.map(async o => userInfo.get(o))
-	)).filter(o => o) as User[]
 
 	const {itemToProduce, competitionUntil} = await mallProduction.get()
 	console.log('competition until', competitionUntil, new Date(competitionUntil * 1000))
@@ -54,14 +49,14 @@ async function menuText(ctx: any): Promise<string> {
 	if (mall.partsProducedBy) {
 		const parts = getParts(ctx.wd.r(itemToProduce))
 
-		const lines = parts
-			.map(o => {
+		const lines = await Promise.all(parts
+			.map(async o => {
 				let line = ''
 				line += format.bold(ctx.wd.r(o).label())
 				line += ':\n  '
 				if (mall.partsProducedBy![o]) {
 					const userId = mall.partsProducedBy![o]
-					const user = memberInfos.filter(o => o.id === userId)[0]
+					const user = await userInfo.get(userId)
 					line += format.escape(user ? user.first_name : '??')
 				} else {
 					line += emojis.noPerson
@@ -69,6 +64,7 @@ async function menuText(ctx: any): Promise<string> {
 
 				return line
 			})
+		)
 
 		text += lines.join('\n')
 		text += '\n\n'
