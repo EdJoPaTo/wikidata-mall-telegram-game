@@ -129,6 +129,12 @@ menu.select('take', currentlyNotTakenParts, {
 			return
 		}
 
+		const keysTakenByUser = Object.keys(mall.partsProducedBy)
+			.filter(o => mall.partsProducedBy![o] === ctx.from.id)
+		for (const k of keysTakenByUser) {
+			delete mall.partsProducedBy[k]
+		}
+
 		mall.partsProducedBy[key] = ctx.from.id
 	}
 })
