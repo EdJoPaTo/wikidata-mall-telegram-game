@@ -16,6 +16,7 @@ export interface Mall {
 }
 
 export interface MallProduction {
+	competitionSince: UnixTimestamp;
 	competitionUntil: UnixTimestamp;
 	itemsProducedPerMall: Dictionary<number>;
 	itemToProduce: string;

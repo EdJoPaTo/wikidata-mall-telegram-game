@@ -7,8 +7,9 @@ const data = new InMemoryFile<MallProduction>('persist/mall-production.json')
 export async function get(): Promise<MallProduction> {
 	const current = await data.get()
 	return current || {
-		itemToProduce: 'Q20873979',
+		competitionSince: -Infinity,
 		competitionUntil: Infinity,
+		itemToProduce: 'Q20873979',
 		itemsProducedPerMall: {}
 	}
 }
