@@ -77,7 +77,7 @@ menu.submenu(buttonText(emojis.person, 'menu.employee'), 'employees', employees,
 
 function skillEmoji(ctx: any): string {
 	const {skillQueue} = ctx.session as Session
-	return (skillQueue && skillQueue.length > 0 ? '' : emojis.shopProductsEmpty) + emojis.skill
+	return (skillQueue && skillQueue.length > 0 ? '' : emojis.requireAttention) + emojis.skill
 }
 
 menu.submenu(buttonText(skillEmoji, 'menu.skill'), 'skill', skills, {

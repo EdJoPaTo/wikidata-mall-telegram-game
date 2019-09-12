@@ -15,7 +15,7 @@ export function notificationText(notification: Notification, fireDate: Date): st
 			text += emojis.skill
 			break
 		case 'storeProductsEmpty':
-			text += emojis.shopProductsEmpty
+			text += emojis.requireAttention
 			text += emojis.storage
 			break
 		case 'employeeRetired':
