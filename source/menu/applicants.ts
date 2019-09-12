@@ -66,6 +66,9 @@ function menuText(ctx: any): string {
 		text += '\n\n'
 	}
 
+	text += emojis.warning
+	text += '*BETA*\nApplicants are subject to change. Soon…'
+
 	return text
 }
 
