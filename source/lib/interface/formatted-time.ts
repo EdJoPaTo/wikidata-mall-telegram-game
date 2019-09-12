@@ -1,12 +1,19 @@
 export function countdownHourMinute(secondsLeft: number): string {
 	const totalMinutes = secondsLeft / 60
-	const minutes = totalMinutes % 60
-	const totalHours = totalMinutes / 60
+	return formatClock(totalMinutes)
+}
 
-	const hourString = Math.floor(totalHours).toString()
-	const minuteString = `${minutes < 10 ? '0' : ''}${Math.floor(minutes)}`
+export function countdownMinuteSecond(secondsLeft: number): string {
+	return formatClock(secondsLeft)
+}
 
-	return `${hourString}:${minuteString}`
+function formatClock(total: number): string {
+	const first = Math.floor(total / 60)
+	const second = Math.floor(total % 60)
+
+	const firstString = first.toString()
+	const secondString = `${second < 10 ? '0' : ''}${second}`
+	return `${firstString}:${secondString}`
 }
 
 export function humanReadableTimestamp(unixTimestamp: number, locale: string | undefined, timeZone: string | undefined): string {
