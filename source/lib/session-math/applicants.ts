@@ -10,6 +10,11 @@ export default function calcApplicants(session: Session, persist: Persist, now: 
 		session.applicantTimestamp = now
 	}
 
+	// TODO: remove migration
+	if ((session as any).applicantWaiting) {
+		delete (session as any).applicantWaiting
+	}
+
 	retireWaitingApplicants(session, now)
 	addWaitingApplicants(session, persist, now)
 }
