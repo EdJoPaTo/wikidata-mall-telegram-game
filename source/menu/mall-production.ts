@@ -2,6 +2,7 @@ import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityStore from 'wikidata-entity-store'
 
+import {MallProduction} from '../lib/types/mall'
 import {Persist} from '../lib/types'
 
 import * as mallProduction from '../lib/data/mall-production'
@@ -15,17 +16,21 @@ import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
+async function getProduction(ctx: any): Promise<MallProduction> {
+	const store = ctx.wd.store as WikidataEntityStore
+	const production = await mallProduction.get()
+	await preloadWithParts(store, production.itemToProduce)
+	return production
+}
+
 async function menuText(ctx: any): Promise<string> {
 	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
 
-	const {itemToProduce, competitionUntil} = await mallProduction.get()
+	const {itemToProduce, competitionUntil} = await getProduction(ctx)
 	console.log('competition until', competitionUntil, new Date(competitionUntil * 1000))
-	const store = ctx.wd.store as WikidataEntityStore
-	console.log('preloadWithParts', 'menuText')
-	await preloadWithParts(store, itemToProduce)
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.production'), {titlePrefix: emojis.production})
@@ -75,10 +80,7 @@ async function menuText(ctx: any): Promise<string> {
 
 const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto(async (ctx: any) => {
-		const {itemToProduce} = await mallProduction.get()
-		const store = ctx.wd.store as WikidataEntityStore
-		console.log('preloadWithParts', 'menuPhoto')
-		await preloadWithParts(store, itemToProduce)
+		const {itemToProduce} = await getProduction(ctx)
 		return itemToProduce
 	})
 })
@@ -93,10 +95,7 @@ async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
 		return []
 	}
 
-	const {itemToProduce} = await mallProduction.get()
-	const store = ctx.wd.store as WikidataEntityStore
-	console.log('preloadWithParts', 'currentlyNotProducedParts')
-	await preloadWithParts(store, itemToProduce)
+	const {itemToProduce} = await getProduction(ctx)
 	const parts = getParts(ctx.wd.r(itemToProduce))
 	const takenParts = Object.keys(mall.partsProducedBy || {})
 	const notTakenParts = parts
