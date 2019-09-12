@@ -43,10 +43,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currency)
 	text += '\n\n'
 
-	text += emojis.production
-	text += format.bold(
-		ctx.wd.r((await mallProduction.get()).itemToProduce).label()
-	)
+	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
 	text += '\n\n'
 
 	if (mall.productionFinishes) {
