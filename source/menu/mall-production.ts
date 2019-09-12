@@ -78,7 +78,13 @@ async function menuText(ctx: any): Promise<string> {
 }
 
 const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('mall.production')
+	photo: menuPhoto(async (ctx: any) => {
+		const {itemToProduce} = await mallProduction.get()
+		const store = ctx.wd.store as WikidataEntityStore
+		console.log('preloadWithParts', 'menuPhoto')
+		await preloadWithParts(store, itemToProduce)
+		return itemToProduce
+	})
 })
 
 async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
