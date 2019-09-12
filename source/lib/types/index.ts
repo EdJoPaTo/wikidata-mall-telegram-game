@@ -14,7 +14,6 @@ export interface Session {
 	achievements: Achievements;
 	applicants: Person[];
 	applicantTimestamp: number;
-	applicantWaiting?: Person;
 	construction?: Construction;
 	hideExplanationMath: boolean;
 	leaderboardView?: LeaderboardView;

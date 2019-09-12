@@ -34,9 +34,9 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 		text += '\n'
 	}
 
-	text += emojis.applicantNew
-	text += ctx.wd.r('applicant.application').label()
-	text += ': '
+	text += '+1'
+	text += emojis.person
+	text += ' / '
 	text += formatInt(interval)
 	text += ' '
 	text += ctx.wd.r('unit.second').label()

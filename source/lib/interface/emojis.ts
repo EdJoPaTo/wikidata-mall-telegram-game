@@ -2,7 +2,6 @@ type Dictionary<T> = {[key: string]: T}
 
 const basic: Dictionary<string> = {
 	add: '➕',
-	applicantNew: '🆕',
 	applicantsAvailable: '📬',
 	applicantsEmpty: '📭',
 	chat: '💭',
