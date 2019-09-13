@@ -21,8 +21,6 @@ export interface Session {
 	money: number;
 	page?: number;
 	showAllLanguages?: true;
-	// TODO: remove (migration in progress)
-	skillInTraining?: SkillInTraining;
 	skillQueue?: SkillInTraining[];
 	stats: Stats;
 }

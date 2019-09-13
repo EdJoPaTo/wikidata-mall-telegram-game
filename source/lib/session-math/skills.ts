@@ -5,11 +5,12 @@ import {isSimpleSkill} from '../game-math/skill'
 import {increaseLevelByOne} from '../game-logic/skills'
 
 export default function applySkills(session: Session, persist: Persist, now: number): void {
-	if (session.skillInTraining) {
+	// TODO: remove migration
+	if ((session as any).skillInTraining) {
 		session.skillQueue = [
-			session.skillInTraining
+			(session as any).skillInTraining
 		]
-		delete session.skillInTraining
+		delete (session as any).skillInTraining
 	}
 
 	if (session.skillQueue) {
