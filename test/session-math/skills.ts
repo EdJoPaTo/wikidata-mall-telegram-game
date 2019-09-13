@@ -5,6 +5,16 @@ import {SkillInTraining} from '../../source/lib/types/skills'
 
 import handler from '../../source/lib/session-math/skills'
 
+test('does not crash when there is no queue', t => {
+	const persist: Persist = {
+		shops: [],
+		skills: {}
+	}
+
+	const session: any = {}
+	t.notThrows(() => handler(session, persist, 0))
+})
+
 test('removes skills and all behind from queue when shop doesnt exist anymore', t => {
 	const persist: Persist = {
 		shops: [
