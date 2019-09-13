@@ -1,7 +1,7 @@
-import {Achievements, Stats} from './achievements'
 import {Person} from './people'
 import {Shop} from './shop'
 import {Skills, SkillInTraining} from './skills'
+import {Stats} from './stats'
 
 type UnixTimestamp = number
 
@@ -13,9 +13,9 @@ export const LEADERBOARD_VIEWS: LeaderboardView[] = ['returnOnInvestment', 'coll
 // Contains smaller things only relevant to a specific player
 export interface Session {
 	__wikibase_language_code: string;
-	achievements: Achievements;
 	applicants: Person[];
 	applicantTimestamp: UnixTimestamp;
+	gameStarted: UnixTimestamp;
 	hideExplanationMath?: true;
 	leaderboardView?: LeaderboardView;
 	money: number;

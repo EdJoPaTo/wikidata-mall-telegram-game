@@ -1,6 +1,5 @@
 import {Session, Persist} from '../types'
 
-import achievements from './achievements'
 import applicants from './applicants'
 import income from './income'
 import notification from './notification'
@@ -13,7 +12,12 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		const persist = ctx.persist as Persist
 		const now = Math.floor(Date.now() / 1000)
 
-		init(session)
+		// TODO: remove migration
+		if ((session as any).achievements) {
+			session.gameStarted = (session as any).achievements.gameStarted
+		}
+
+		init(session, now)
 		ensureStats(session)
 
 		// TODO: remove migration
@@ -30,14 +34,16 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 
 		await next()
 
-		achievements(session, persist, now)
 		notification(ctx.from.id, session, persist)
 	}
 }
 
-function init(session: Session): void {
-	const {money} = session
+function init(session: Session, now: number): void {
+	if (!session.gameStarted) {
+		session.gameStarted = now
+	}
 
+	const {money} = session
 	if (!isFinite(money)) {
 		session.money = 300
 	}
