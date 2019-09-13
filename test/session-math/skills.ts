@@ -100,3 +100,62 @@ test('removes nothing when all shops still exist', t => {
 		endTimestamp: 20
 	}])
 })
+
+test('skills simple skill when time is up', t => {
+	const persist: Persist = {
+		shops: [
+			{
+				id: 'Q5',
+				opening: 0,
+				personal: {},
+				products: []
+			}
+		],
+		skills: {}
+	}
+	const skillQueue: SkillInTraining[] = [
+		{
+			skill: 'applicantSeats',
+			endTimestamp: 10
+		}
+	]
+
+	const session: any = {skillQueue}
+
+	handler(session, persist, 20)
+
+	t.deepEqual(persist.skills, {
+		applicantSeats: 1
+	})
+})
+
+test('skills category skill when time is up', t => {
+	const persist: Persist = {
+		shops: [
+			{
+				id: 'Q5',
+				opening: 0,
+				personal: {},
+				products: []
+			}
+		],
+		skills: {}
+	}
+	const skillQueue: SkillInTraining[] = [
+		{
+			skill: 'collector',
+			category: 'Q5',
+			endTimestamp: 10
+		}
+	]
+
+	const session: any = {skillQueue}
+
+	handler(session, persist, 20)
+
+	t.deepEqual(persist.skills, {
+		collector: {
+			Q5: 1
+		}
+	})
+})
