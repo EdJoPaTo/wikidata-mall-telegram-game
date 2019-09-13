@@ -1,6 +1,6 @@
 import {Skills} from '../types/skills'
 
-import {applicantSeats, secondsBetweenApplicants, maxDaysUntilRetirement} from '../game-math/applicant'
+import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement} from '../game-math/applicant'
 import {currentLevel} from '../game-math/skill'
 
 import {emojis} from './emojis'
@@ -14,7 +14,7 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 	const interval = secondsBetweenApplicants(skills)
 
 	const healthCareLevel = currentLevel(skills, 'healthCare')
-	const retirementDays = maxDaysUntilRetirement(skills)
+	const retirementDays = daysUntilRetirement(skills).max
 
 	let text = ''
 	text += emojis.seat

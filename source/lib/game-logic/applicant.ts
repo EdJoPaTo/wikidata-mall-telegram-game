@@ -8,17 +8,21 @@ import * as wdName from '../wikidata/name'
 import * as wdShops from '../wikidata/shops'
 
 import {DAY_IN_SECONDS} from '../math/timestamp-constants'
+import {randomBetween} from '../math/probability'
 
-import {maxDaysUntilRetirement} from '../game-math/applicant'
+import {daysUntilRetirement} from '../game-math/applicant'
 
 export function createApplicant(skills: Skills, now: number): Person {
 	const name = wdName.randomName()
-	const retirementTimespan = DAY_IN_SECONDS * maxDaysUntilRetirement(skills)
+
+	const retirement = daysUntilRetirement(skills)
+	const retirementDays = randomBetween(retirement.min, retirement.max)
+	const retirementTimestamp = now + (DAY_IN_SECONDS * retirementDays)
 
 	return {
 		name,
 		hobby: randomItem(wdShops.allShops()),
-		retirementTimestamp: Math.ceil(now + (Math.random() * retirementTimespan)),
+		retirementTimestamp,
 		talents: randomTalents()
 	}
 }

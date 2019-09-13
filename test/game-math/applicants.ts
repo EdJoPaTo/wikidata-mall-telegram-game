@@ -2,7 +2,7 @@ import test, {ExecutionContext} from 'ava'
 
 import {Skills} from '../../source/lib/types/skills'
 
-import {applicantSeats, secondsBetweenApplicants, maxDaysUntilRetirement} from '../../source/lib/game-math/applicant'
+import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement} from '../../source/lib/game-math/applicant'
 
 function applicantSeatsMacro(t: ExecutionContext, applicantSeatsLevel: number, expected: number): void {
 	const skills: Skills = {applicantSeats: applicantSeatsLevel}
@@ -26,13 +26,16 @@ test('secondsBetweenApplicants level 9', secondsBetweenApplicantsMacro, 9, 30)
 test('secondsBetweenApplicants level 14', secondsBetweenApplicantsMacro, 14, 20)
 test('secondsBetweenApplicants level 24', secondsBetweenApplicantsMacro, 24, 12)
 
-function maxDaysUntilRetirementMacro(t: ExecutionContext, healthCareLevel: number, expected: number): void {
+function daysUntilRetirementMacro(t: ExecutionContext, healthCareLevel: number, expectedMin: number, expectedMax: number): void {
 	const skills: Skills = {healthCare: healthCareLevel}
-	t.is(maxDaysUntilRetirement(skills), expected)
+	t.deepEqual(daysUntilRetirement(skills), {
+		min: expectedMin,
+		max: expectedMax
+	})
 }
 
-test('maxDaysUntilRetirement level 0', maxDaysUntilRetirementMacro, 0, 6)
-test('maxDaysUntilRetirement level 5', maxDaysUntilRetirementMacro, 5, 16)
-test('maxDaysUntilRetirement level 10', maxDaysUntilRetirementMacro, 10, 26)
-test('maxDaysUntilRetirement level 15', maxDaysUntilRetirementMacro, 15, 36)
-test('maxDaysUntilRetirement level 25', maxDaysUntilRetirementMacro, 25, 56)
+test('daysUntilRetirement level 0', daysUntilRetirementMacro, 0, 1, 6)
+test('daysUntilRetirement level 5', daysUntilRetirementMacro, 5, 1, 16)
+test('daysUntilRetirement level 10', daysUntilRetirementMacro, 10, 1, 26)
+test('daysUntilRetirement level 15', daysUntilRetirementMacro, 15, 1, 36)
+test('daysUntilRetirement level 25', daysUntilRetirementMacro, 25, 1, 56)
