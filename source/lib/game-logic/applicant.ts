@@ -39,6 +39,7 @@ console.log('talentDistribution probability', '>1.5:', 1 - talentDistribution.cd
 console.log('talentDistribution probability', '>1.8:', 1 - talentDistribution.cdf(1.8))
 console.log('talentDistribution probability', '>2  :', 1 - talentDistribution.cdf(2))
 console.log('talentDistribution probability', '>2.5:', 1 - talentDistribution.cdf(2.5))
+console.log('talentDistribution all negative', talentDistribution.cdf(1) ** TALENTS.length)
 /**/
 
 function randomTalents(): Talents {
