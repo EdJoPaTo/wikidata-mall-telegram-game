@@ -26,7 +26,7 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		}
 
 		applicants(session, persist, now)
-		personal(session, persist, now)
+		personal(persist, now)
 
 		income(session, persist, now)
 
@@ -43,8 +43,7 @@ function init(session: Session, now: number): void {
 		session.gameStarted = now
 	}
 
-	const {money} = session
-	if (!isFinite(money)) {
+	if (!isFinite(session.money)) {
 		session.money = 300
 	}
 }

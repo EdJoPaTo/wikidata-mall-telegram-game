@@ -1,8 +1,8 @@
-import {Session, Persist} from '../types'
+import {Persist} from '../types'
 import {Shop} from '../types/shop'
 import {TalentName} from '../types/people'
 
-export default function calcPersonal(_session: Session, persist: Persist, now: number): void {
+export default function calcPersonal(persist: Persist, now: number): void {
 	retirePersonal(persist, now)
 }
 
