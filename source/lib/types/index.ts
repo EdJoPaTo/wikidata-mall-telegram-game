@@ -3,6 +3,8 @@ import {Person} from './people'
 import {Shop} from './shop'
 import {Skills, SkillInTraining} from './skills'
 
+type UnixTimestamp = number
+
 /* eslint @typescript-eslint/camelcase: warn */
 
 export type LeaderboardView = 'returnOnInvestment' | 'collector'
@@ -13,7 +15,7 @@ export interface Session {
 	__wikibase_language_code: string;
 	achievements: Achievements;
 	applicants: Person[];
-	applicantTimestamp: number;
+	applicantTimestamp: UnixTimestamp;
 	hideExplanationMath?: true;
 	leaderboardView?: LeaderboardView;
 	money: number;
