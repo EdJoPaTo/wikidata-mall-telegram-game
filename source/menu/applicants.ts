@@ -45,7 +45,7 @@ function menuText(ctx: any): string {
 	text += infoHeader(ctx.wd.r('menu.applicant'))
 	text += '\n\n'
 
-	text += applicantInfluencesPart(ctx, persist.skills, session.applicants.length, session.hideExplanationMath)
+	text += applicantInfluencesPart(ctx, persist.skills, session.applicants.length, !session.hideExplanationMath)
 
 	text += '\n'
 	if (session.applicants.length > 0) {

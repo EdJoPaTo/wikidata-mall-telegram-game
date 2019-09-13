@@ -29,7 +29,11 @@ menu.toggle((ctx: any) => ctx.wd.r('other.math').label(), 'explanationMath', {
 	},
 	setFunc: (ctx: any, newState) => {
 		const session = ctx.session as Session
-		session.hideExplanationMath = !newState
+		if (newState) {
+			delete session.hideExplanationMath
+		} else {
+			session.hideExplanationMath = true
+		}
 	}
 })
 

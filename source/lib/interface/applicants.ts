@@ -6,7 +6,7 @@ import {currentLevel} from '../game-math/skill'
 import {emojis} from './emojis'
 import {formatInt} from './format-number'
 
-export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: number, hideExplanationMath: boolean): string {
+export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: number, showExplanation: boolean): string {
 	const applicantSeatsLevel = currentLevel(skills, 'applicantSeats')
 	const maxSeats = applicantSeats(skills)
 
@@ -25,7 +25,7 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 	text += maxSeats
 	text += emojis.seat
 	text += '\n'
-	if (!hideExplanationMath && applicantSeatsLevel > 0) {
+	if (showExplanation && applicantSeatsLevel > 0) {
 		text += '  '
 		text += emojis.skill
 		text += ctx.wd.r('skill.applicantSeats').label()
@@ -41,7 +41,7 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 	text += ' '
 	text += ctx.wd.r('unit.second').label()
 	text += '\n'
-	if (!hideExplanationMath && applicantSpeedLevel > 0) {
+	if (showExplanation && applicantSpeedLevel > 0) {
 		text += '  '
 		text += emojis.skill
 		text += ctx.wd.r('skill.applicantSpeed').label()
@@ -58,7 +58,7 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 	text += ' '
 	text += ctx.wd.r('unit.day').label()
 	text += '\n'
-	if (!hideExplanationMath && healthCareLevel > 0) {
+	if (showExplanation && healthCareLevel > 0) {
 		text += '  '
 		text += emojis.skill
 		text += ctx.wd.r('skill.healthCare').label()

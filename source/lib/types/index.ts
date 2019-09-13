@@ -14,7 +14,7 @@ export interface Session {
 	achievements: Achievements;
 	applicants: Person[];
 	applicantTimestamp: number;
-	hideExplanationMath: boolean;
+	hideExplanationMath?: true;
 	leaderboardView?: LeaderboardView;
 	money: number;
 	page?: number;
