@@ -12,6 +12,21 @@ const localeEmoji = require('locale-emoji')
 const menu = new TelegrafInlineMenu(ctx => languageMenuText(ctx))
 menu.setCommand('language')
 
+menu.toggle((ctx: any) => ctx.wd.r('menu.allLanguages').label(), 'all', {
+	isSetFunc: (ctx: any) => {
+		const session = ctx.session as Session
+		return Boolean(session.showAllLanguages)
+	},
+	setFunc: (ctx: any, newState) => {
+		const session = ctx.session as Session
+		if (newState) {
+			session.showAllLanguages = newState
+		} else {
+			delete session.showAllLanguages
+		}
+	}
+})
+
 menu.button(`${emojis.language} Wikidatanish`, 'wikidata', {
 	doFunc: (ctx: any) => {
 		// Keep last set i18n locale
@@ -35,7 +50,13 @@ function languageMenuText(ctx: any): string {
 	return text
 }
 
-menu.select('lang', (ctx: any) => ctx.wd.availableLocales(0.05), {
+function languageOptions(ctx: any): string[] {
+	const session = ctx.session as Session
+	const minPercentage = session.showAllLanguages ? 0 : 0.1
+	return ctx.wd.availableLocales(minPercentage)
+}
+
+menu.select('lang', languageOptions, {
 	columns: 3,
 	textFunc: (_ctx, key) => {
 		const flag = flagString(key)
