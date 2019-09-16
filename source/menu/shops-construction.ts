@@ -71,7 +71,8 @@ async function constructionOptions(ctx: any): Promise<Dictionary<string>> {
 }
 
 menu.selectSubmenu('s', constructionOptions, constructionOptionMenu, {
-	columns: 1
+	columns: 1,
+	prefixFunc: () => emojis.construction
 })
 
 menu.urlButton(
