@@ -12,7 +12,7 @@ export const LEADERBOARD_VIEWS: LeaderboardView[] = ['returnOnInvestment', 'coll
 
 // Contains smaller things only relevant to a specific player
 export interface Session {
-	__wikibase_language_code: string;
+	__wikibase_language_code?: string;
 	applicants: Person[];
 	applicantTimestamp: UnixTimestamp;
 	gameStarted: UnixTimestamp;

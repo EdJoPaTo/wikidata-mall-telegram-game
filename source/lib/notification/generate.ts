@@ -21,11 +21,11 @@ export function generateNotifications(session: Session, persist: Persist, entity
 	]
 }
 
-function generateProductsEmpty(shops: readonly Shop[], entityStore: WikidataEntityStore, locale: string): readonly Notification[] {
+function generateProductsEmpty(shops: readonly Shop[], entityStore: WikidataEntityStore, locale: string | undefined): readonly Notification[] {
 	return shops.flatMap(s => generateProductsEmptyShop(s, entityStore, locale))
 }
 
-function generateProductsEmptyShop(shop: Shop, entityStore: WikidataEntityStore, locale: string): readonly Notification[] {
+function generateProductsEmptyShop(shop: Shop, entityStore: WikidataEntityStore, locale: string | undefined): readonly Notification[] {
 	const emptyTimestamps = shopProductsEmptyTimestamps(shop)
 	const max = Math.max(...emptyTimestamps)
 	if (max < 1) {

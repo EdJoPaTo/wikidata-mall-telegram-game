@@ -49,7 +49,7 @@ function skillQueueEntryString(ctx: any, skillInTraining: SkillInTraining, now: 
 	return text
 }
 
-export function skillFinishedNotificationString(skillInTraining: SkillInTraining, entityStore: WikidataEntityStore, locale: string): string {
+export function skillFinishedNotificationString(skillInTraining: SkillInTraining, entityStore: WikidataEntityStore, locale: string | undefined): string {
 	const {skill, category} = skillInTraining
 
 	let text = ''
