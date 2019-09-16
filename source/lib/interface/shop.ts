@@ -14,7 +14,7 @@ export function incomePart(ctx: any, shops: readonly Shop[], skills: Skills, sho
 	const income = returnOnInvestment(shops, skills)
 	const magnetIncome = returnOnInvestment(shops, skills, factor)
 	const sell = shops
-		.map(o => sellPerMinute(o, skills))
+		.map(o => sellPerMinute(o, skills, o => o.itemsInStore > 0))
 		.reduce((a, b) => a + b, 0)
 
 	if (!isFinite(income)) {
