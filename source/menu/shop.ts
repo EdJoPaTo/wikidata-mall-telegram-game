@@ -129,7 +129,7 @@ function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boo
 	return text
 }
 
-function addProductPart(ctx: any, shop: Shop): string {
+function addProductPart(ctx: any, shop: Shop, money: number): string {
 	const persist = ctx.persist as Persist
 
 	if (!canAddProductTechnically(shop, persist.skills)) {
@@ -145,6 +145,12 @@ function addProductPart(ctx: any, shop: Shop): string {
 	text += ctx.wd.r('other.assortment').label()
 	text += '*'
 	text += '\n'
+	text += labeledFloat(ctx.wd.r('other.money'), money, emojis.currency)
+	text += '\n'
+	if (money < cost) {
+		text += emojis.requireAttention
+	}
+
 	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
 	text += '\n\n'
 	return text
@@ -182,14 +188,11 @@ function menuText(ctx: any): string {
 	text += infoHeader(reader, {titlePrefix: emojis.shop})
 	text += '\n\n'
 
-	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
-	text += '\n\n'
-
 	text += customerIntervalPart(ctx, shop)
 	text += incomePart(ctx, [shop], persist.skills, !session.hideExplanationMath)
 	text += storageCapacityPart(ctx, shop, persist.skills, !session.hideExplanationMath)
 	text += productsPart(ctx, shop, persist.skills, !session.hideExplanationMath)
-	text += addProductPart(ctx, shop)
+	text += addProductPart(ctx, shop, session.money)
 
 	return text
 }
