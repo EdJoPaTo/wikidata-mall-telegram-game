@@ -15,9 +15,10 @@ import * as userSkills from '../lib/data/skills'
 
 import {currentLevel} from '../lib/game-math/skill'
 import {lastTimeActive} from '../lib/game-math/shop-time'
-import {returnOnInvestment} from '../lib/game-math/shop-cost'
+import {returnOnInvestment, sellPerMinute} from '../lib/game-math/shop-cost'
 
 import {emojis} from '../lib/interface/emojis'
+import {formatFloat} from '../lib/interface/format-number'
 import {infoHeader} from '../lib/interface/formatted-strings'
 import {menuPhoto, buttonText} from '../lib/interface/menu'
 import {percentBonusString} from '../lib/interface/format-percent'
@@ -47,6 +48,32 @@ async function getROITable(now: number): Promise<LeaderboardEntries> {
 		}
 
 		values[playerId] = roi
+	}
+
+	return {
+		values,
+		order: sortDictKeysByNumericValues(values, true)
+	}
+}
+
+async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries> {
+	const allUserShops = await userShops.getAllShops()
+	const allUserSkills = await userSkills.getAllSkills()
+	const playerIds = Object.keys(allUserShops)
+		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
+
+	const values: Dictionary<number> = {}
+	for (const playerId of playerIds) {
+		const shops = allUserShops[playerId]
+		const skills: Skills = allUserSkills[playerId] || {}
+		const income = shops
+			.map(o => sellPerMinute(o, skills, () => true))
+			.reduce((a, b) => a + b, 0)
+		if (!isFinite(income) || income < 0.01) {
+			continue
+		}
+
+		values[playerId] = income
 	}
 
 	return {
@@ -117,6 +144,10 @@ async function menuText(ctx: any): Promise<string> {
 			text += await generateTable(await getROITable(now), ctx.from.id, percentBonusString)
 			break
 
+		case 'sellPerMinute':
+			text += await generateTable(await getSellPerMinuteTable(now), ctx.from.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.r('unit.minute').label()}`)
+			break
+
 		case 'collector':
 			text += await generateTable(await getCollectorTable(), ctx.from.id, o => String(o))
 			break
@@ -136,6 +167,8 @@ function viewResourceKey(view: LeaderboardView): string {
 	switch (view) {
 		case 'returnOnInvestment':
 			return 'other.returnOnInvestment'
+		case 'sellPerMinute':
+			return 'other.income'
 		case 'collector':
 			return 'skill.collector'
 		default:

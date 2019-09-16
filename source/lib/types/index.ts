@@ -7,8 +7,8 @@ type UnixTimestamp = number
 
 /* eslint @typescript-eslint/camelcase: warn */
 
-export type LeaderboardView = 'returnOnInvestment' | 'collector'
-export const LEADERBOARD_VIEWS: LeaderboardView[] = ['returnOnInvestment', 'collector']
+export type LeaderboardView = 'returnOnInvestment' | 'sellPerMinute' | 'collector'
+export const LEADERBOARD_VIEWS: LeaderboardView[] = ['returnOnInvestment', 'sellPerMinute', 'collector']
 
 // Contains smaller things only relevant to a specific player
 export interface Session {
