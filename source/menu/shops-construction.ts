@@ -44,6 +44,8 @@ async function menuText(ctx: any): Promise<string> {
 	text += '\n\n'
 
 	text += emojis.countdown
+	text += ctx.wd.r('action.change').label()
+	text += ': '
 	text += countdownHourMinute(nextConstructionChange(now) - now)
 	text += ' '
 	text += ctx.wd.r('unit.hour').label()
