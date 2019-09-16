@@ -4,7 +4,7 @@ import {Session, Persist} from '../lib/types'
 import {Shop} from '../lib/types/shop'
 import {Skills} from '../lib/types/skills'
 
-import {costForAdditionalShop, buyAllCost, buyAllCostFactor, magnetEnabled} from '../lib/game-math/shop-cost'
+import {buyAllCost, buyAllCostFactor, magnetEnabled} from '../lib/game-math/shop-cost'
 import {storageCapacity, storageFilledPercentage} from '../lib/game-math/shop-capacity'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
@@ -51,14 +51,6 @@ function menuText(ctx: any): string {
 			.join('\n')
 		text += '\n\n'
 	}
-
-	const cost = costForAdditionalShop(persist.shops.length)
-	text += emojis.construction
-	text += '*'
-	text += ctx.wd.r('action.construction').label()
-	text += '*'
-	text += '\n'
-	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
 
 	return text
 }
