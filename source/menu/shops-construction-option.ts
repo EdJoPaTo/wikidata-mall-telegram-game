@@ -5,10 +5,7 @@ import {Shop} from '../lib/types/shop'
 
 import {costForAdditionalShop} from '../lib/game-math/shop-cost'
 
-import {nextConstructionChange} from '../lib/game-logic/shop-construction'
-
 import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {countdownHourMinute} from '../lib/interface/formatted-time'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
@@ -23,7 +20,6 @@ function fromCtx(ctx: any): {construction: string} {
 async function menuText(ctx: any): Promise<string> {
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
-	const now = Date.now() / 1000
 	const cost = costForAdditionalShop(persist.shops.length)
 	const {construction} = fromCtx(ctx)
 
@@ -40,12 +36,6 @@ async function menuText(ctx: any): Promise<string> {
 	}
 
 	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
-	text += '\n\n'
-
-	text += emojis.countdown
-	text += countdownHourMinute(nextConstructionChange(now) - now)
-	text += ' '
-	text += ctx.wd.r('unit.hour').label()
 	text += '\n\n'
 
 	return text
