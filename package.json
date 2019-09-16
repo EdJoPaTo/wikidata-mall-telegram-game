@@ -1,7 +1,7 @@
 {
 	"name": "wikidata-mall-telegram-game",
 	"private": true,
-	"version": "0.7.0",
+	"version": "0.8.0",
 	"description": "A Telegram Game where you can build your own mall based on Wikidata entities",
 	"license": "MIT",
 	"repository": "EdJoPaTo/wikidata-mall-telegram-game",
