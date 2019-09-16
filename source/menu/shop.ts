@@ -17,7 +17,6 @@ import * as wdShop from '../lib/wikidata/shops'
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {formatInt} from '../lib/interface/format-number'
-import {humanReadableTimestamp} from '../lib/interface/formatted-time'
 import {incomePart} from '../lib/interface/shop'
 import {infoHeader, labeledFloat, labeledInt} from '../lib/interface/formatted-strings'
 import {percentBonusString} from '../lib/interface/format-percent'
@@ -57,19 +56,6 @@ function canAddProductTechnically(shop: Shop, skills: Skills): boolean {
 function productLine(ctx: any, product: Product): string {
 	let text = ''
 	text += labeledInt(ctx.wd.r(product.id), product.itemsInStore, emojis.storage)
-
-	return text
-}
-
-function openingPart(ctx: any, shop: Shop): string {
-	const {__wikibase_language_code: locale} = ctx.session as Session
-
-	let text = ''
-	text += emojis.opening
-	text += ctx.wd.r('shop.opening').label()
-	text += ':\n  '
-	text += humanReadableTimestamp(shop.opening, locale)
-	text += '\n\n'
 
 	return text
 }
@@ -199,7 +185,6 @@ function menuText(ctx: any): string {
 	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
 	text += '\n\n'
 
-	text += openingPart(ctx, shop)
 	text += customerIntervalPart(ctx, shop)
 	text += incomePart(ctx, [shop], persist.skills, !session.hideExplanationMath)
 	text += storageCapacityPart(ctx, shop, persist.skills, !session.hideExplanationMath)

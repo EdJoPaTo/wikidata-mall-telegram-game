@@ -23,7 +23,6 @@ const basic: Dictionary<string> = {
 	magnetism: '🧲',
 	mall: '🏬',
 	noPerson: '🕳',
-	opening: '🎈',
 	person: '👤',
 	purchasing: '🛒',
 	recruitment: '👏',
