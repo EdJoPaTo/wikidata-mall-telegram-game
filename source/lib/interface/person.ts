@@ -49,13 +49,19 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += ctx.wd.r(hobby).label()
 	text += '\n'
 
-	if (person.type === 'refined' && person.graduation && person.graduation < now) {
+	if (person.type === 'refined' && person.graduation) {
 		text += emojis.graduation
 		text += '*'
 		text += ctx.wd.r('person.graduation').label()
 		text += '*'
-		text += ':\n  '
-		text += humanReadableTimestamp(person.graduation, locale)
+		if (person.graduation < now) {
+			text += ':\n  '
+			text += humanReadableTimestamp(person.graduation, locale)
+		} else {
+			text += ': '
+			text += '??'
+		}
+
 		text += '\n'
 	}
 
