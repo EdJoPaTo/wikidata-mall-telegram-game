@@ -2,7 +2,7 @@ import test, {ExecutionContext} from 'ava'
 
 import {Skills} from '../../source/lib/types/skills'
 
-import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement} from '../../source/lib/game-math/applicant'
+import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement, minutesUntilGraduation} from '../../source/lib/game-math/applicant'
 
 function applicantSeatsMacro(t: ExecutionContext, applicantSeatsLevel: number, expected: number): void {
 	const skills: Skills = {applicantSeats: applicantSeatsLevel}
@@ -39,3 +39,7 @@ test('daysUntilRetirement level 5', daysUntilRetirementMacro, 5, 1, 16)
 test('daysUntilRetirement level 10', daysUntilRetirementMacro, 10, 1, 26)
 test('daysUntilRetirement level 15', daysUntilRetirementMacro, 15, 1, 36)
 test('daysUntilRetirement level 25', daysUntilRetirementMacro, 25, 1, 56)
+
+test('minutesUntilGraduation', t => {
+	t.deepEqual(minutesUntilGraduation(), {min: 2, max: 20})
+})
