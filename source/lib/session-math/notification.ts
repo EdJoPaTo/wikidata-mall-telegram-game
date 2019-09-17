@@ -22,9 +22,12 @@ export async function initialize(notififyManager: NotificationManager, entitySto
 	const allSkills = await userSkills.getAllSkills()
 
 	for (const {user, data} of userSessions.getRaw()) {
-		const applicants = allApplicants[user]
+		const applicants = allApplicants[user] || {
+			list: [],
+			timestamp: 0
+		}
 		const shops = allShops[user] || []
-		const skills = allSkills[user]
+		const skills = allSkills[user] || {}
 		const persist: Persist = {applicants, shops, skills}
 		updateNotification(user, data, persist)
 	}
