@@ -6,6 +6,7 @@ import {Persist} from '../lib/types'
 import {Shop} from '../lib/types/shop'
 import {TalentName, Person} from '../lib/types/people'
 
+import {canBeEmployed} from '../lib/game-math/applicant'
 import {personalBonusWhenEmployed} from '../lib/game-math/personal'
 
 import {buttonText} from '../lib/interface/menu'
@@ -73,6 +74,7 @@ menu.button(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
 })
 
 function availableApplicants(ctx: any): string[] {
+	const now = Date.now() / 1000
 	const {applicants} = ctx.persist as Persist
 	const {employee, shop, talent} = fromCtx(ctx)
 	const currentBonus = personalBonusWhenEmployed(shop, talent, employee)
@@ -85,6 +87,7 @@ function availableApplicants(ctx: any): string[] {
 
 	const indiciesOfInterest = applicants.list
 		.map((_, i) => i)
+		.filter(i => canBeEmployed(applicants.list[i], now))
 		.filter(i => applicantBoni[i] > currentBonus)
 		.sort((a, b) => applicantBoni[b] - applicantBoni[a])
 

@@ -3,7 +3,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../lib/types'
 import {Person} from '../lib/types/people'
 
-import {secondsBetweenApplicants, applicantSeats} from '../lib/game-math/applicant'
+import {secondsBetweenApplicants, applicantSeats, canBeEmployed} from '../lib/game-math/applicant'
 
 import {applicantInfluencesPart} from '../lib/interface/applicants'
 import {emojis} from '../lib/interface/emojis'
@@ -29,8 +29,10 @@ function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): s
 	text += '\n  '
 	text += emojis.retirement
 	text += humanReadableTimestamp(applicant.retirementTimestamp, locale)
-	text += '\n  '
-	text += personAllTalentsLine(applicant.talents)
+	if (canBeEmployed(applicant, now)) {
+		text += '\n  '
+		text += personAllTalentsLine(applicant.talents)
+	}
 
 	return text
 }

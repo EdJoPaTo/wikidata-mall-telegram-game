@@ -1,5 +1,5 @@
 import {Skills} from '../types/skills'
-import {RefinedWorker, RefinedState} from '../types/people'
+import {RefinedWorker, RefinedState, Person} from '../types/people'
 
 import {currentLevel} from './skill'
 
@@ -26,4 +26,8 @@ export function getRefinedState(person: RefinedWorker, now: number): RefinedStat
 	}
 
 	return person.graduation > now ? 'student' : 'finished'
+}
+
+export function canBeEmployed(person: Person, now: number): boolean {
+	return person.type === 'temporary' || getRefinedState(person, now) === 'finished'
 }

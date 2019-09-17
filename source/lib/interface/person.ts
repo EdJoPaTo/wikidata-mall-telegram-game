@@ -5,7 +5,7 @@ import {Session} from '../types'
 import {Shop} from '../types/shop'
 
 import {personalBonus} from '../game-math/personal'
-import {getRefinedState} from '../game-math/applicant'
+import {getRefinedState, canBeEmployed} from '../game-math/applicant'
 
 import {emojis} from './emojis'
 import {humanReadableTimestamp} from './formatted-time'
@@ -65,17 +65,18 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += '*'
 	text += ':\n  '
 	text += humanReadableTimestamp(retirementTimestamp, locale)
-	text += '\n'
 
-	text += '\n'
-	text += '*'
-	text += ctx.wd.r('person.talent').label()
-	text += '*'
-	text += '\n'
+	if (canBeEmployed(person, now)) {
+		text += '\n\n'
+		text += '*'
+		text += ctx.wd.r('person.talent').label()
+		text += '*'
+		text += '\n'
 
-	text += (Object.keys(talents) as TalentName[])
-		.map(t => talentLine(ctx, t, talents[t]))
-		.join('\n')
+		text += (Object.keys(talents) as TalentName[])
+			.map(t => talentLine(ctx, t, talents[t]))
+			.join('\n')
+	}
 
 	return text
 }
