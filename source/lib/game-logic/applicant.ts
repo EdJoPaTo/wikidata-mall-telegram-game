@@ -17,7 +17,7 @@ export function createApplicant(skills: Skills, now: number): Person {
 
 	const retirement = daysUntilRetirement(skills)
 	const retirementDays = randomBetween(retirement.min, retirement.max)
-	const retirementTimestamp = now + (DAY_IN_SECONDS * retirementDays)
+	const retirementTimestamp = Math.floor(now + (DAY_IN_SECONDS * retirementDays))
 
 	return {
 		name,
