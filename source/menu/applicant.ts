@@ -1,7 +1,7 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Person} from '../lib/types/people'
-import {Session, Persist} from '../lib/types'
+import {Persist} from '../lib/types'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
@@ -11,9 +11,8 @@ import {createHelpMenu, helpButtonText} from './help'
 
 function fromCtx(ctx: any): {applicantId: number; applicant: Person; hobbyIsFitting: boolean} {
 	const applicantId = Number(ctx.match[1])
-	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
-	const applicant: Person = session.applicants[applicantId]
+	const applicant: Person = persist.applicants.list[applicantId]
 	if (!applicant) {
 		throw new Error('The applicant you are looking for is not there.')
 	}
@@ -36,8 +35,8 @@ menu.button(buttonText(emojis.door, 'other.door'), 'remove', {
 	setParentMenuAfter: true,
 	doFunc: (ctx: any) => {
 		const {applicantId} = fromCtx(ctx)
-		const session = ctx.session as Session
-		session.applicants.splice(applicantId, 1)
+		const {applicants} = ctx.persist as Persist
+		applicants.list.splice(applicantId, 1)
 	}
 })
 

@@ -1,6 +1,6 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
+import {Persist} from '../lib/types'
 import {Shop} from '../lib/types/shop'
 import {TalentName, Person} from '../lib/types/people'
 
@@ -17,11 +17,10 @@ function fromCtx(ctx: any): {shop: Shop; talent: TalentName; employee?: Person; 
 	const talent = ctx.match[2] as TalentName
 	const applicantId = Number(ctx.match[3])
 
-	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
 	const shop = persist.shops.filter(o => o.id === shopType)[0]
 	const employee = shop.personal[talent]
-	const applicant = session.applicants[applicantId]
+	const applicant = persist.applicants.list[applicantId]
 
 	if (!applicant) {
 		throw new Error('These aren\'t the applicants you are looking for')
@@ -61,16 +60,16 @@ menu.button(buttonText(emojis.yes + emojis.recruitment, 'action.recruitment'), '
 	},
 	doFunc: (ctx: any) => {
 		const now = Date.now() / 1000
+		const {applicants} = ctx.persist as Persist
 		const {shop, talent, employee, applicantId, applicant} = fromCtx(ctx)
-		const session = ctx.session as Session
 
 		if (employee) {
-			session.applicants.push(employee)
+			applicants.list.push(employee)
 		}
 
 		shop.personal[talent] = applicant
-		session.applicants.splice(applicantId, 1)
-		session.applicantTimestamp = now
+		applicants.list.splice(applicantId, 1)
+		applicants.timestamp = now
 	}
 })
 

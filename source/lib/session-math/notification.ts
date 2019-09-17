@@ -2,6 +2,7 @@ import WikidataEntityStore from 'wikidata-entity-store'
 
 import {Session, Persist} from '../types'
 
+import * as userApplicants from '../data/applicants'
 import * as userSessions from '../data/user-sessions'
 import * as userShops from '../data/shops'
 import * as userSkills from '../data/skills'
@@ -16,13 +17,15 @@ export async function initialize(notififyManager: NotificationManager, entitySto
 	notificationManager = notififyManager
 	wdEntityStore = entityStore
 
+	const allApplicants = await userApplicants.getAll()
 	const allShops = await userShops.getAllShops()
 	const allSkills = await userSkills.getAllSkills()
 
 	for (const {user, data} of userSessions.getRaw()) {
+		const applicants = allApplicants[user]
 		const shops = allShops[user] || []
 		const skills = allSkills[user]
-		const persist: Persist = {shops, skills}
+		const persist: Persist = {applicants, shops, skills}
 		updateNotification(user, data, persist)
 	}
 }

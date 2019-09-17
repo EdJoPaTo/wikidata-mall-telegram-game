@@ -2,7 +2,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Dictionary} from '../lib/js-helper/dictionary'
 
-import {Session, Persist} from '../lib/types'
+import {Persist} from '../lib/types'
 import {Shop} from '../lib/types/shop'
 import {TalentName, Person} from '../lib/types/people'
 
@@ -57,7 +57,7 @@ menu.button(buttonText(emojis.employmentTermination, 'action.employmentTerminati
 menu.button(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
 	hide: ctx => !fromCtx(ctx).employee,
 	doFunc: (ctx: any) => {
-		const session = ctx.session as Session
+		const {applicants} = ctx.persist as Persist
 		const {shop, talent} = fromCtx(ctx)
 
 		const person = shop.personal[talent]
@@ -66,23 +66,23 @@ menu.button(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
 			return
 		}
 
-		session.applicants.push(person)
+		applicants.list.push(person)
 		delete shop.personal[talent]
 	}
 })
 
 function availableApplicants(ctx: any): string[] {
-	const session = ctx.session as Session
+	const {applicants} = ctx.persist as Persist
 	const {employee, shop, talent} = fromCtx(ctx)
 	const currentBonus = personalBonusWhenEmployed(shop, talent, employee)
 
 	const applicantBoni: Dictionary<number> = {}
-	for (let i = 0; i < session.applicants.length; i++) {
-		const applicant = session.applicants[i]
+	for (let i = 0; i < applicants.list.length; i++) {
+		const applicant = applicants.list[i]
 		applicantBoni[i] = personalBonusWhenEmployed(shop, talent, applicant)
 	}
 
-	const indiciesOfInterest = session.applicants
+	const indiciesOfInterest = applicants.list
 		.map((_, i) => i)
 		.filter(i => applicantBoni[i] > currentBonus)
 		.sort((a, b) => applicantBoni[b] - applicantBoni[a])
@@ -93,9 +93,9 @@ function availableApplicants(ctx: any): string[] {
 menu.selectSubmenu('a', availableApplicants, confirmEmployee, {
 	columns: 1,
 	textFunc: (ctx: any, key) => {
+		const {applicants} = ctx.persist as Persist
 		const {shop, talent} = fromCtx(ctx)
-		const session = ctx.session as Session
-		const applicant = session.applicants[Number(key)]
+		const applicant = applicants.list[Number(key)]
 
 		const {name} = applicant
 

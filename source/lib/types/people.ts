@@ -21,3 +21,8 @@ export interface Talents {
 
 export type TalentName = keyof Talents
 export const TALENTS: TalentName[] = ['purchasing', 'selling', 'storage']
+
+export interface Applicants {
+	list: Person[];
+	timestamp: UnixTimestamp;
+}

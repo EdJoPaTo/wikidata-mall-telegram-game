@@ -12,6 +12,8 @@ interface Context {
 	session: Session;
 }
 
+const startTimestamp = Math.floor(Date.now() / 1000)
+
 function generatePersistMiddlewareManually<Key extends keyof Persist>(
 	key: Key,
 	get: (playerId: number) => Promise<Persist[Key] | undefined>,
@@ -20,6 +22,10 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 	return async (ctx: Context, next) => {
 		if (!ctx.persist) {
 			const persist: Persist = {
+				applicants: {
+					list: [],
+					timestamp: startTimestamp
+				},
 				shops: [],
 				skills: {}
 			}

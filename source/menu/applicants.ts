@@ -45,19 +45,19 @@ function menuText(ctx: any): string {
 	text += infoHeader(ctx.wd.r('menu.applicant'))
 	text += '\n\n'
 
-	text += applicantInfluencesPart(ctx, persist.skills, session.applicants.length, !session.hideExplanationMath)
+	text += applicantInfluencesPart(ctx, persist.skills, persist.applicants.list.length, !session.hideExplanationMath)
 
 	text += '\n'
-	if (session.applicants.length > 0) {
+	if (persist.applicants.list.length > 0) {
 		const shopIds = persist.shops.map(o => o.id)
-		text += session.applicants
+		text += persist.applicants.list
 			.map(o => applicantEntry(ctx, o, shopIds.includes(o.hobby)))
 			.join('\n')
 		text += '\n\n'
 	}
 
-	if (session.applicants.length < maxSeats) {
-		const secondsUntilNext = (session.applicantTimestamp + interval) - now
+	if (persist.applicants.list.length < maxSeats) {
+		const secondsUntilNext = (persist.applicants.timestamp + interval) - now
 		text += ctx.wd.r('other.countdown').label()
 		text += ': '
 		text += formatFloat(secondsUntilNext)
@@ -77,16 +77,15 @@ const menu = new TelegrafInlineMenu(menuText, {
 })
 
 function availableApplicants(ctx: any): string[] {
-	const session = ctx.session as Session
-	return Object.keys(session.applicants)
+	const {applicants} = ctx.persist as Persist
+	return Object.keys(applicants.list)
 }
 
 menu.selectSubmenu('a', availableApplicants, applicantMenu, {
 	columns: 2,
 	textFunc: (ctx: any, key) => {
-		const session = ctx.session as Session
 		const persist = ctx.persist as Persist
-		const {name, hobby} = session.applicants[Number(key)]
+		const {name, hobby} = persist.applicants.list[Number(key)]
 		const hasShopOfHobby = persist.shops.some(o => o.id === hobby)
 		const hasShopOfHobbyString = hasShopOfHobby ? emojis.hobbyMatch : ''
 		return `${hasShopOfHobbyString}${name.given} ${name.family}`

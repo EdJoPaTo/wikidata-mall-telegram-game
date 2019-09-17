@@ -7,6 +7,10 @@ import handler from '../../source/lib/session-math/skills'
 
 test('does not crash when there is no queue', t => {
 	const persist: Persist = {
+		applicants: {
+			list: [],
+			timestamp: 0
+		},
 		shops: [],
 		skills: {}
 	}
@@ -17,6 +21,10 @@ test('does not crash when there is no queue', t => {
 
 test('removes skills and all behind from queue when shop doesnt exist anymore', t => {
 	const persist: Persist = {
+		applicants: {
+			list: [],
+			timestamp: 0
+		},
 		shops: [
 			{
 				id: 'Q5',
@@ -65,6 +73,10 @@ test('removes skills and all behind from queue when shop doesnt exist anymore', 
 
 test('removes nothing when all shops still exist', t => {
 	const persist: Persist = {
+		applicants: {
+			list: [],
+			timestamp: 0
+		},
 		shops: [
 			{
 				id: 'Q5',
@@ -103,6 +115,10 @@ test('removes nothing when all shops still exist', t => {
 
 test('skills simple skill when time is up', t => {
 	const persist: Persist = {
+		applicants: {
+			list: [],
+			timestamp: 0
+		},
 		shops: [
 			{
 				id: 'Q5',
@@ -131,6 +147,10 @@ test('skills simple skill when time is up', t => {
 
 test('skills category skill when time is up', t => {
 	const persist: Persist = {
+		applicants: {
+			list: [],
+			timestamp: 0
+		},
 		shops: [
 			{
 				id: 'Q5',

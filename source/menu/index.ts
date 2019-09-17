@@ -58,8 +58,8 @@ menu.simpleButton(buttonText(emojis.mall + emojis.underConstruction, 'menu.mall'
 })
 
 function applicantEmoji(ctx: any): string {
-	const session = ctx.session as Session
-	return session.applicants.length > 0 ? emojis.applicantsAvailable : emojis.applicantsEmpty
+	const {applicants} = ctx.persist as Persist
+	return applicants.list.length > 0 ? emojis.applicantsAvailable : emojis.applicantsEmpty
 }
 
 menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicants, {
