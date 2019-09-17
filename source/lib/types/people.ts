@@ -1,7 +1,10 @@
+type QNumber = string
+type UnixTimestamp = number
+
 export interface Person {
 	name: Name;
-	hobby: string;
-	retirementTimestamp: number;
+	hobby: QNumber;
+	retirementTimestamp: UnixTimestamp;
 	talents: Talents;
 }
 
