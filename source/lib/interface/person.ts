@@ -12,7 +12,7 @@ import {humanReadableTimestamp} from './formatted-time'
 import {percentBonusString} from './format-percent'
 
 export function personStateEmoji(person: Person, now: number): string {
-	if (person.type === 'temporary') {
+	if (person.type !== 'refined') {
 		return emojis.personTemporary
 	}
 
@@ -37,7 +37,7 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += nameMarkdown(name)
 	text += '\n'
 	text += personStateEmoji(person, now)
-	const typeResourceKey = person.type === 'temporary' ? person.type : getRefinedState(person, now)
+	const typeResourceKey = person.type === 'refined' ? getRefinedState(person, now) : 'temporary'
 	text += ctx.wd.r(`person.type.${typeResourceKey}`).label()
 	text += '\n\n'
 

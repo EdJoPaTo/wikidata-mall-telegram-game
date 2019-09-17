@@ -78,6 +78,10 @@ const temporaryWorker: TemporaryWorker = {
 	type: 'temporary'
 }
 
+const oldPerson: any = {
+	basePerson
+}
+
 function getRefinedStateMacro(t: ExecutionContext, person: RefinedWorker, expected: RefinedState): void {
 	t.is(getRefinedState(person, 15), expected)
 }
@@ -94,3 +98,4 @@ test('canBeEmployed toddler', canBeEmployedMacro, toddler, false)
 test('canBeEmployed student', canBeEmployedMacro, student, false)
 test('canBeEmployed refinedFinished', canBeEmployedMacro, refinedFinished, true)
 test('canBeEmployed temporaryWorker', canBeEmployedMacro, temporaryWorker, true)
+test('canBeEmployed oldPerson', canBeEmployedMacro, oldPerson, true)

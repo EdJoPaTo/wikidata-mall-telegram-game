@@ -29,7 +29,7 @@ export function getRefinedState(person: RefinedWorker, now: number): RefinedStat
 }
 
 export function canBeEmployed(person: Person, now: number): boolean {
-	return person.type === 'temporary' || getRefinedState(person, now) === 'finished'
+	return person.type !== 'refined' || getRefinedState(person, now) === 'finished'
 }
 
 export function minutesUntilGraduation(): {min: number; max: number} {
