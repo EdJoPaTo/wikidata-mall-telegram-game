@@ -11,15 +11,17 @@ import {formatFloat} from '../lib/interface/format-number'
 import {humanReadableTimestamp} from '../lib/interface/formatted-time'
 import {infoHeader} from '../lib/interface/formatted-strings'
 import {menuPhoto, buttonText} from '../lib/interface/menu'
-import {personAllTalentsLine, nameMarkdown} from '../lib/interface/person'
+import {personAllTalentsLine, nameMarkdown, personStateEmoji} from '../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from './help'
 import applicantMenu from './applicant'
 
 function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): string {
 	const {__wikibase_language_code: locale} = ctx.session as Session
+	const now = Date.now() / 1000
 
 	let text = ''
+	text += personStateEmoji(applicant, now)
 	text += nameMarkdown(applicant.name)
 	text += '\n  '
 	text += isHobbyFitting ? emojis.hobbyMatch : emojis.hobbyDifferent

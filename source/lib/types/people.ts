@@ -26,6 +26,7 @@ export interface Name {
 }
 
 export type PersonType = 'refined' | 'temporary'
+export type RefinedState = 'toddler' | 'student' | 'finished'
 
 export interface Talents {
 	purchasing: number;

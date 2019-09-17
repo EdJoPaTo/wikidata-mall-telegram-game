@@ -1,4 +1,5 @@
 import {Skills} from '../types/skills'
+import {RefinedWorker, RefinedState} from '../types/people'
 
 import {currentLevel} from './skill'
 
@@ -17,4 +18,12 @@ export function daysUntilRetirement(skills: Skills): {min: number; max: number} 
 	const min = 1
 	const max = 6 + (healthCareLevel * 2)
 	return {min, max}
+}
+
+export function getRefinedState(person: RefinedWorker, now: number): RefinedState {
+	if (!person.graduation) {
+		return 'toddler'
+	}
+
+	return person.graduation > now ? 'student' : 'finished'
 }

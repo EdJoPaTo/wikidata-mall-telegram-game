@@ -5,10 +5,29 @@ import {Session} from '../types'
 import {Shop} from '../types/shop'
 
 import {personalBonus} from '../game-math/personal'
+import {getRefinedState} from '../game-math/applicant'
 
 import {emojis} from './emojis'
 import {humanReadableTimestamp} from './formatted-time'
 import {percentBonusString} from './format-percent'
+
+export function personStateEmoji(person: Person, now: number): string {
+	if (person.type === 'temporary') {
+		return emojis.personTemporary
+	}
+
+	const state = getRefinedState(person, now)
+	switch (state) {
+		case 'toddler':
+			return emojis.personToddler
+		case 'student':
+			return emojis.personStudent
+		case 'finished':
+			return emojis.personRefined
+		default:
+			throw new Error('unknown person state')
+	}
+}
 
 export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now: number): string {
 	const {__wikibase_language_code: locale} = ctx.session as Session
@@ -16,6 +35,10 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 
 	let text = ''
 	text += nameMarkdown(name)
+	text += '\n'
+	text += personStateEmoji(person, now)
+	const typeResourceKey = person.type === 'temporary' ? person.type : getRefinedState(person, now)
+	text += ctx.wd.r(`person.type.${typeResourceKey}`).label()
 	text += '\n\n'
 
 	text += isFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
