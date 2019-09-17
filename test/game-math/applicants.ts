@@ -1,8 +1,9 @@
 import test, {ExecutionContext} from 'ava'
 
+import {RefinedWorker, RefinedState, TemporaryWorker, Person} from '../../source/lib/types/people'
 import {Skills} from '../../source/lib/types/skills'
 
-import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement, minutesUntilGraduation} from '../../source/lib/game-math/applicant'
+import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement, minutesUntilGraduation, getRefinedState, canBeEmployed} from '../../source/lib/game-math/applicant'
 
 function applicantSeatsMacro(t: ExecutionContext, applicantSeatsLevel: number, expected: number): void {
 	const skills: Skills = {applicantSeats: applicantSeatsLevel}
@@ -43,3 +44,53 @@ test('daysUntilRetirement level 25', daysUntilRetirementMacro, 25, 1, 56)
 test('minutesUntilGraduation', t => {
 	t.deepEqual(minutesUntilGraduation(), {min: 2, max: 20})
 })
+
+const basePerson = {
+	name: {given: 'A', family: 'B'},
+	hobby: 'Q5',
+	retirementTimestamp: 0,
+	talents: {
+		purchasing: 0,
+		selling: 0,
+		storage: 0
+	}
+}
+
+const toddler: RefinedWorker = {
+	...basePerson,
+	type: 'refined'
+}
+
+const student: RefinedWorker = {
+	...basePerson,
+	type: 'refined',
+	graduation: 20
+}
+
+const refinedFinished: RefinedWorker = {
+	...basePerson,
+	type: 'refined',
+	graduation: 10
+}
+
+const temporaryWorker: TemporaryWorker = {
+	...basePerson,
+	type: 'temporary'
+}
+
+function getRefinedStateMacro(t: ExecutionContext, person: RefinedWorker, expected: RefinedState): void {
+	t.is(getRefinedState(person, 15), expected)
+}
+
+test('getRefinedState toddler', getRefinedStateMacro, toddler, 'toddler')
+test('getRefinedState student', getRefinedStateMacro, student, 'student')
+test('getRefinedState refinedFinished', getRefinedStateMacro, refinedFinished, 'finished')
+
+function canBeEmployedMacro(t: ExecutionContext, person: Person, expected: boolean): void {
+	t.is(canBeEmployed(person, 15), expected)
+}
+
+test('canBeEmployed toddler', canBeEmployedMacro, toddler, false)
+test('canBeEmployed student', canBeEmployedMacro, student, false)
+test('canBeEmployed refinedFinished', canBeEmployedMacro, refinedFinished, true)
+test('canBeEmployed temporaryWorker', canBeEmployedMacro, temporaryWorker, true)
