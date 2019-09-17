@@ -9,10 +9,7 @@ import * as wikidata from './lib/wikidata'
 
 import {HOUR_IN_SECONDS} from './lib/math/timestamp-constants'
 
-import * as dataShops from './lib/data/shops'
-import * as dataSkills from './lib/data/skills'
-import * as userInfo from './lib/data/user-info'
-import * as userSessions from './lib/data/user-sessions'
+import data from './lib/data'
 
 import {removeOld} from './lib/game-logic/remove-old'
 
@@ -56,10 +53,7 @@ bot.use(new ErrorMiddleware({
 
 removeOld()
 
-bot.use(userInfo.middleware())
-bot.use(userSessions.middleware())
-bot.use(dataShops.middleware())
-bot.use(dataSkills.middleware())
+bot.use((data as any).middleware())
 bot.use(sessionMathMiddleware())
 
 const i18n = new TelegrafI18n({
