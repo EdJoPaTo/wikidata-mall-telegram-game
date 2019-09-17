@@ -31,13 +31,14 @@ function fromCtx(ctx: any): {shop: Shop; talent: TalentName; employee?: Person; 
 
 function menuText(ctx: any): string {
 	const {shop, talent, applicant} = fromCtx(ctx)
+	const now = Date.now() / 1000
 	const bonusWhenEmployed = personalBonusWhenEmployed(shop, talent, applicant)
 
 	let text = ''
 	text += infoHeader(ctx.wd.r(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
 	text += '\n\n'
 
-	text += personMarkdown(ctx, applicant, shop.id === applicant.hobby)
+	text += personMarkdown(ctx, applicant, shop.id === applicant.hobby, now)
 	text += '\n\n'
 
 	if (bonusWhenEmployed < 1) {

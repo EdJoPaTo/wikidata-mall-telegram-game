@@ -24,7 +24,8 @@ function fromCtx(ctx: any): {applicantId: number; applicant: Person; hobbyIsFitt
 
 function menuText(ctx: any): string {
 	const {applicant, hobbyIsFitting} = fromCtx(ctx)
-	return personMarkdown(ctx, applicant, hobbyIsFitting)
+	const now = Date.now() / 1000
+	return personMarkdown(ctx, applicant, hobbyIsFitting, now)
 }
 
 const menu = new TelegrafInlineMenu(menuText, {

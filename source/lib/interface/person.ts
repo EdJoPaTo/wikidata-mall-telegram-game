@@ -10,7 +10,7 @@ import {emojis} from './emojis'
 import {humanReadableTimestamp} from './formatted-time'
 import {percentBonusString} from './format-percent'
 
-export function personMarkdown(ctx: any, person: Person, isFitting: boolean): string {
+export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now: number): string {
 	const {__wikibase_language_code: locale} = ctx.session as Session
 	const {name, hobby, retirementTimestamp, talents} = person
 
@@ -25,6 +25,16 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean): st
 	text += ': '
 	text += ctx.wd.r(hobby).label()
 	text += '\n'
+
+	if (person.type === 'refined' && person.graduation && person.graduation < now) {
+		text += emojis.graduation
+		text += '*'
+		text += ctx.wd.r('person.graduation').label()
+		text += '*'
+		text += ':\n  '
+		text += humanReadableTimestamp(person.graduation, locale)
+		text += '\n'
+	}
 
 	text += emojis.retirement
 	text += '*'

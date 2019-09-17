@@ -30,13 +30,14 @@ function fromCtx(ctx: any): {shop: Shop; talent: TalentName; employee?: Person} 
 
 function menuText(ctx: any): string {
 	const {shop, talent, employee} = fromCtx(ctx)
+	const now = Date.now() / 1000
 
 	let text = ''
 	text += infoHeader(ctx.wd.r(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
 	text += '\n\n'
 
 	if (employee) {
-		text += personMarkdown(ctx, employee, shop.id === employee.hobby)
+		text += personMarkdown(ctx, employee, shop.id === employee.hobby, now)
 	} else {
 		text += emojis.noPerson
 	}
