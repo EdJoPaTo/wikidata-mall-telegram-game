@@ -87,6 +87,12 @@ function availableApplicants(ctx: any): string[] {
 
 menu.selectSubmenu('a', availableApplicants, applicantMenu, {
 	columns: 2,
+	prefixFunc: (ctx: any, key) => {
+		const now = Date.now() / 1000
+		const {applicants} = ctx.persist as Persist
+		const applicant = applicants.list[Number(key)]
+		return personStateEmoji(applicant, now)
+	},
 	textFunc: (ctx: any, key) => {
 		const persist = ctx.persist as Persist
 		const {name, hobby} = persist.applicants.list[Number(key)]

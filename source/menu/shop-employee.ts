@@ -13,7 +13,7 @@ import {buttonText} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader} from '../lib/interface/formatted-strings'
 import {percentBonusString} from '../lib/interface/format-percent'
-import {personMarkdown} from '../lib/interface/person'
+import {personMarkdown, personStateEmoji} from '../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from './help'
 import confirmEmployee from './shop-employee-confirm-applicant'
@@ -96,6 +96,12 @@ function availableApplicants(ctx: any): string[] {
 
 menu.selectSubmenu('a', availableApplicants, confirmEmployee, {
 	columns: 1,
+	prefixFunc: (ctx: any, key) => {
+		const now = Date.now() / 1000
+		const {applicants} = ctx.persist as Persist
+		const applicant = applicants.list[Number(key)]
+		return personStateEmoji(applicant, now)
+	},
 	textFunc: (ctx: any, key) => {
 		const {applicants} = ctx.persist as Persist
 		const {shop, talent} = fromCtx(ctx)
