@@ -26,10 +26,10 @@ function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): s
 	text += '\n  '
 	text += isHobbyFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
 	text += ctx.wd.r(applicant.hobby).label()
-	text += '\n  '
-	text += emojis.retirement
-	text += humanReadableTimestamp(applicant.retirementTimestamp, locale)
 	if (canBeEmployed(applicant, now)) {
+		text += '\n  '
+		text += emojis.retirement
+		text += humanReadableTimestamp(applicant.retirementTimestamp, locale)
 		text += '\n  '
 		text += personAllTalentsLine(applicant.talents)
 	}
