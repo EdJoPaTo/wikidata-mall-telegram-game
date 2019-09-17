@@ -1,7 +1,12 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
+import {MINUTE_IN_SECONDS} from '../lib/math/timestamp-constants'
+import {randomBetween} from '../lib/math/probability'
+
 import {Person} from '../lib/types/people'
 import {Persist} from '../lib/types'
+
+import {minutesUntilGraduation} from '../lib/game-math/applicant'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
@@ -32,7 +37,27 @@ const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto(ctx => fromCtx(ctx).applicant.hobby)
 })
 
+menu.button(buttonText(emojis.personStudent, 'action.education'), 'educate', {
+	hide: (ctx: any) => {
+		const {applicant} = fromCtx(ctx)
+		return applicant.type !== 'refined' || Boolean(applicant.graduation)
+	},
+	doFunc: (ctx: any) => {
+		const now = Date.now() / 1000
+		const {applicant} = fromCtx(ctx)
+		if (applicant.type !== 'refined' || applicant.graduation) {
+			return
+		}
+
+		const grad = minutesUntilGraduation()
+		const minutesUntil = randomBetween(grad.min, grad.max)
+		const timestamp = Math.floor(now + (minutesUntil * MINUTE_IN_SECONDS))
+		applicant.graduation = timestamp
+	}
+})
+
 menu.button(buttonText(emojis.door, 'other.door'), 'remove', {
+	joinLastRow: true,
 	setParentMenuAfter: true,
 	doFunc: (ctx: any) => {
 		const {applicantId} = fromCtx(ctx)
