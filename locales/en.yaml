@@ -45,7 +45,7 @@ help:
     At least soon. 😏
 
 
-    You can view all the players based on their return on interest or their total collector skill level.
+    You can view top players and direct competitors of yours based on multiple statistics.
   product: >
     This is a product you can sell.
 
@@ -82,11 +82,19 @@ help:
     Closing a shop is also possible.
     You will get some money for closing it.
   shops-construction: >
-    You can select one of these randomly selected shops as your next shop.
+    Here you can get an additional shop.
+    You can select one of these currently available shops.
     With it you can do all the things you like.
-    Choose wisely and get rich 🙃
+    Choose wisely what you like to sell and then get rich 🙃
+
+    Shops change every few hours.
+    If you dont like one of the currently available shops you can just wait.
+    There will be another offer that suits you later.
   shops: >
     Here are all your shiny shops. ✨
+
+    You can have multiple shops selling all kinds of stuff.
+    Also its possible to construct an additional shop.
   skills: >
     All the skills you can learn.
     And you will only need time for that.
