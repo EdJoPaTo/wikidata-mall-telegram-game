@@ -9,7 +9,7 @@ import {
 
 import {generateShop} from './_shop'
 
-function storageFilledPercentageMacro(t: ExecutionContext, amounts: number[], expected: number): void {
+function storageFilledPercentageMacro(t: ExecutionContext, amounts: readonly number[], expected: number): void {
 	const skills: Skills = {}
 	const shop = generateShop(amounts)
 	t.is(storageFilledPercentage(shop, skills), expected)

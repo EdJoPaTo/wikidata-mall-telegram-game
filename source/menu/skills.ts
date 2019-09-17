@@ -83,7 +83,7 @@ menu.button(buttonText(emojis.clearSkillQueue, 'skill.queue'), 'clearQueue', {
 	}
 })
 
-function skillOptions(ctx: any, skills: Skill[]): Dictionary<string> {
+function skillOptions(ctx: any, skills: readonly Skill[]): Dictionary<string> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
 	const labels: Dictionary<string> = {}
 	for (const key of skills) {

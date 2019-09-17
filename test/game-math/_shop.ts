@@ -1,7 +1,7 @@
 import {Product, Shop, Personal} from '../../source/lib/types/shop'
 import {Talents} from '../../source/lib/types/people'
 
-export function generateShop(amounts: number[], talents?: Talents): Shop {
+export function generateShop(amounts: readonly number[], talents?: Talents): Shop {
 	const products: Product[] = amounts.map(o => ({id: 'Q42', itemTimestamp: 0, itemsInStore: o}))
 	const talentsEnsured: Talents = talents || {
 		purchasing: 1,

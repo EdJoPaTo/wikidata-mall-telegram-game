@@ -109,7 +109,7 @@ test('buyAllCostFactor 0 in multiple shops', buyAllCostFactorMacro, 0, 3, 2.5)
 test('buyAllCostFactor 5 in multiple shops', buyAllCostFactorMacro, 5, 3, 2.4)
 test('buyAllCostFactor 10 in multiple shops', buyAllCostFactorMacro, 10, 3, 2.3)
 
-function shopTotalPurchaseCostMacro(t: ExecutionContext, amounts: number[], expectedItemsToPayFor: number): void {
+function shopTotalPurchaseCostMacro(t: ExecutionContext, amounts: readonly number[], expectedItemsToPayFor: number): void {
 	const skills: Skills = {magnetism: 0}
 
 	const basePrice = productBasePrice({id: 'Q42', itemTimestamp: 0, itemsInStore: 0}, skills)
@@ -198,7 +198,7 @@ test('sellPerMinute accept any product', t => {
 	t.is(sellPerMinute(shop, skills, () => true), 8 * 2 * 2)
 })
 
-function sellPerMinuteInStockMacro(t: ExecutionContext, amounts: number[], expected: number): void {
+function sellPerMinuteInStockMacro(t: ExecutionContext, amounts: readonly number[], expected: number): void {
 	const skills: Skills = {}
 	const shop = generateShop(amounts)
 

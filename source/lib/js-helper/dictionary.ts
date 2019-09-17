@@ -1,6 +1,6 @@
 export type Dictionary<T> = {[key: string]: T}
 
-export function recreateDictWithGivenKeyOrder<T>(dict: Dictionary<T>, newOrder: string[]): Dictionary<T> {
+export function recreateDictWithGivenKeyOrder<T>(dict: Dictionary<T>, newOrder: readonly string[]): Dictionary<T> {
 	const result: Dictionary<T> = {}
 	for (const key of newOrder) {
 		if (!isNaN(Number(key))) {
