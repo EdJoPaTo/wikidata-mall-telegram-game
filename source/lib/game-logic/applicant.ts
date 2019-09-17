@@ -1,7 +1,7 @@
 import gaussian from 'gaussian'
 import randomItem from 'random-item'
 
-import {Person, Talents, TALENTS} from '../types/people'
+import {Person, Talents, TALENTS, PersonType} from '../types/people'
 import {Skills} from '../types/skills'
 
 import * as wdName from '../wikidata/name'
@@ -15,12 +15,16 @@ import {daysUntilRetirement} from '../game-math/applicant'
 export function createApplicant(skills: Skills, now: number): Person {
 	const name = wdName.randomName()
 
+	const retirementRandom = Math.random()
+	const type: PersonType = retirementRandom > 0.6 ? 'refined' : 'temporary'
+
 	const retirement = daysUntilRetirement(skills)
-	const retirementDays = randomBetween(retirement.min, retirement.max)
+	const retirementDays = randomBetween(retirement.min, retirement.max, retirementRandom)
 	const retirementTimestamp = Math.floor(now + (DAY_IN_SECONDS * retirementDays))
 
 	return {
 		name,
+		type,
 		hobby: randomItem(wdShops.allShops()),
 		retirementTimestamp,
 		talents: randomTalents()

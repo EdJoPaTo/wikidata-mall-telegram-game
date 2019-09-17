@@ -1,17 +1,31 @@
 type QNumber = string
 type UnixTimestamp = number
 
-export interface Person {
+interface BasicPerson {
 	name: Name;
+	type: PersonType;
 	hobby: QNumber;
 	retirementTimestamp: UnixTimestamp;
 	talents: Talents;
 }
 
+export interface TemporaryWorker extends BasicPerson {
+	type: 'temporary';
+}
+
+export interface RefinedWorker extends BasicPerson {
+	type: 'refined';
+	graduation?: UnixTimestamp;
+}
+
+export type Person = TemporaryWorker | RefinedWorker
+
 export interface Name {
 	given: string;
 	family: string;
 }
+
+export type PersonType = 'refined' | 'temporary'
 
 export interface Talents {
 	purchasing: number;

@@ -12,18 +12,21 @@ export function generateShop(amounts: number[], talents?: Talents): Shop {
 	const personal: Personal = {
 		purchasing: {
 			name: {given: '', family: ''},
+			type: 'temporary',
 			hobby: 'Q666',
 			retirementTimestamp: 0,
 			talents: talentsEnsured
 		},
 		selling: {
 			name: {given: '', family: ''},
+			type: 'temporary',
 			hobby: 'Q666',
 			retirementTimestamp: 0,
 			talents: talentsEnsured
 		},
 		storage: {
 			name: {given: '', family: ''},
+			type: 'temporary',
 			hobby: 'Q666',
 			retirementTimestamp: 0,
 			talents: talentsEnsured

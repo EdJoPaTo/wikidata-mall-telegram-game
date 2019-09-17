@@ -10,6 +10,7 @@ const examplePerson: Person = {
 		given: 'A',
 		family: 'B'
 	},
+	type: 'temporary',
 	hobby: 'Q42',
 	retirementTimestamp: 0,
 	talents: {
