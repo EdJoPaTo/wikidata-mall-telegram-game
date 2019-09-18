@@ -12,20 +12,22 @@ import {humanReadableTimestamp} from './formatted-time'
 import {percentBonusString} from './format-percent'
 
 export function personStateEmoji(person: Person, now: number): string {
-	if (person.type !== 'refined') {
-		return emojis.personTemporary
+	if (person.type === 'refined') {
+		const state = getRefinedState(person, now)
+		switch (state) {
+			case 'toddler':
+				return emojis.personToddler
+			case 'student':
+				return emojis.personStudent
+			case 'finished':
+				return emojis.personRefined
+			default:
+				throw new Error('unknown person state')
+		}
 	}
 
-	const state = getRefinedState(person, now)
-	switch (state) {
-		case 'toddler':
-			return emojis.personToddler
-		case 'student':
-			return emojis.personStudent
-		case 'finished':
-			return emojis.personRefined
-		default:
-			throw new Error('unknown person state')
+	switch (person.type) {
+		default: return emojis.personTemporary
 	}
 }
 

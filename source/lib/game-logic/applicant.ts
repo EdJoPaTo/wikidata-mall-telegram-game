@@ -16,8 +16,7 @@ export function createApplicant(skills: Skills, now: number): Person {
 	const name = wdName.randomName()
 
 	const retirementRandom = Math.random()
-	const type: PersonType = retirementRandom > 0.6 ? 'refined' : 'temporary'
-	const talentDistribution = type === 'refined' ? distributionRefined : distributionTemporary
+	const type = typeFromRandom(retirementRandom)
 
 	const retirement = daysUntilRetirement(skills)
 	const retirementDays = randomBetween(retirement.min, retirement.max, retirementRandom)
@@ -28,7 +27,18 @@ export function createApplicant(skills: Skills, now: number): Person {
 		type,
 		hobby: randomItem(wdShops.allShops()),
 		retirementTimestamp,
-		talents: randomTalents(talentDistribution)
+		talents: randomTalents(talentDistributionForType(type))
+	}
+}
+
+function typeFromRandom(random: number): PersonType {
+	return random > 0.6 ? 'refined' : 'temporary'
+}
+
+function talentDistributionForType(type: PersonType): Gaussian {
+	switch (type) {
+		case 'refined': return distributionRefined
+		default: return distributionTemporary
 	}
 }
 

@@ -9,8 +9,8 @@ interface BasicPerson {
 	talents: Talents;
 }
 
-export interface TemporaryWorker extends BasicPerson {
-	type: 'temporary';
+export interface SimpleWorker extends BasicPerson {
+	type: Exclude<PersonType, 'refined'>;
 }
 
 export interface RefinedWorker extends BasicPerson {
@@ -18,7 +18,7 @@ export interface RefinedWorker extends BasicPerson {
 	graduation?: UnixTimestamp;
 }
 
-export type Person = TemporaryWorker | RefinedWorker
+export type Person = SimpleWorker | RefinedWorker
 
 export interface Name {
 	given: string;

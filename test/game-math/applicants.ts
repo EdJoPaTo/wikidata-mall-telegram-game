@@ -1,6 +1,6 @@
 import test, {ExecutionContext} from 'ava'
 
-import {RefinedWorker, RefinedState, TemporaryWorker, Person} from '../../source/lib/types/people'
+import {RefinedWorker, RefinedState, SimpleWorker, Person} from '../../source/lib/types/people'
 import {Skills} from '../../source/lib/types/skills'
 
 import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement, minutesUntilGraduation, getRefinedState, canBeEmployed} from '../../source/lib/game-math/applicant'
@@ -73,7 +73,7 @@ const refinedFinished: RefinedWorker = {
 	graduation: 10
 }
 
-const temporaryWorker: TemporaryWorker = {
+const temporaryWorker: SimpleWorker = {
 	...basePerson,
 	type: 'temporary'
 }
