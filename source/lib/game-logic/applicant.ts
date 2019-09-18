@@ -43,14 +43,16 @@ function talentDistributionForType(type: PersonType): Gaussian {
 }
 
 const MINIMAL_TALENT = 0.001
-const distributionRefined = gaussian(1.25, 0.04)
-const distributionTemporary = gaussian(1.1, 0.01)
+// Gaussian takes sigma^2, everyone else takes sigma (standardDeviation)
+// -> use sigma and square it on startup
+const distributionRefined = gaussian(1.25, 0.2 ** 2)
+const distributionTemporary = gaussian(1.1, 0.1 ** 2)
 /* DEBUG
 debugDistribution('before', gaussian(1.1, 0.06))
 debugDistribution('refined', distributionRefined)
 debugDistribution('temporary', distributionTemporary)
 function debugDistribution(name: string, distribution: Gaussian): void {
-	console.log('debugDistribution', name, distribution.mean, distribution.variance)
+	console.log('debugDistribution', name, distribution.mean, distribution.standardDeviation)
 	console.log('probability', '<0  :', distribution.cdf(MINIMAL_TALENT))
 	console.log('probability', '<0.2:', distribution.cdf(0.2))
 	console.log('probability', '>1  :', 1 - distribution.cdf(1))
