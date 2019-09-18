@@ -23,14 +23,14 @@ function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): s
 	let text = ''
 	text += personStateEmoji(applicant, now)
 	text += nameMarkdown(applicant.name)
-	text += '\n  '
+	text += '\n    '
 	text += isHobbyFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
 	text += ctx.wd.r(applicant.hobby).label()
 	if (canBeEmployed(applicant, now)) {
-		text += '\n  '
+		text += '\n    '
 		text += emojis.retirement
 		text += humanReadableTimestamp(applicant.retirementTimestamp, locale)
-		text += '\n  '
+		text += '\n    '
 		text += personAllTalentsLine(applicant.talents)
 	}
 
