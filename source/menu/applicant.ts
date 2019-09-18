@@ -10,7 +10,7 @@ import {minutesUntilGraduation} from '../lib/game-math/applicant'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
-import {personMarkdown} from '../lib/interface/person'
+import {personMarkdown, personStateEmoji, wdResourceKeyOfPerson} from '../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from './help'
 
@@ -65,6 +65,22 @@ menu.button(buttonText(emojis.door, 'other.door'), 'remove', {
 		applicants.list.splice(applicantId, 1)
 	}
 })
+
+menu.urlButton(
+	(ctx: any) => {
+		const {applicant} = fromCtx(ctx)
+		const now = Date.now() / 1000
+		const typeEmoji = personStateEmoji(applicant, now)
+		const resourceKey = wdResourceKeyOfPerson(applicant, now)
+		return `${emojis.wikidataItem}${typeEmoji}${ctx.wd.r(resourceKey).label()}`
+	},
+	(ctx: any) => {
+		const {applicant} = fromCtx(ctx)
+		const now = Date.now() / 1000
+		const resourceKey = wdResourceKeyOfPerson(applicant, now)
+		return ctx.wd.r(resourceKey).url()
+	}
+)
 
 menu.urlButton(
 	(ctx: any) => {

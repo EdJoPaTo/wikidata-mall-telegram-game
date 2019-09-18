@@ -31,6 +31,11 @@ export function personStateEmoji(person: Person, now: number): string {
 	}
 }
 
+export function wdResourceKeyOfPerson(person: Person, now: number): string {
+	const typeResourceKey = person.type === 'refined' ? getRefinedState(person, now) : person.type
+	return `person.type.${typeResourceKey}`
+}
+
 export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now: number): string {
 	const {__wikibase_language_code: locale} = ctx.session as Session
 	const {name, hobby, retirementTimestamp, talents} = person
@@ -39,8 +44,7 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += nameMarkdown(name)
 	text += '\n'
 	text += personStateEmoji(person, now)
-	const typeResourceKey = person.type === 'refined' ? getRefinedState(person, now) : 'temporary'
-	text += ctx.wd.r(`person.type.${typeResourceKey}`).label()
+	text += ctx.wd.r(wdResourceKeyOfPerson(person, now)).label()
 	text += '\n\n'
 
 	text += isFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
