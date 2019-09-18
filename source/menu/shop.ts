@@ -290,6 +290,7 @@ menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', ctx => `($
 menu.submenu(buttonText(emojis.person, 'menu.employee'), 'e', employeeMenu)
 
 menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureConfirmMenu, {
+	joinLastRow: true,
 	hide: (ctx: any) => {
 		const persist = ctx.persist as Persist
 		return persist.shops.length <= 1

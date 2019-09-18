@@ -86,9 +86,12 @@ menu.urlButton(
 	(ctx: any) => {
 		const {applicant, hobbyIsFitting} = fromCtx(ctx)
 		const hobby = hobbyIsFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-		return `${emojis.wikidataItem}${hobby} ${ctx.wd.r('person.hobby').label()} ${ctx.wd.r(applicant.hobby).label()}`
+		return `${emojis.wikidataItem}${hobby}${ctx.wd.r(applicant.hobby).label()}`
 	},
-	(ctx: any) => ctx.wd.r(fromCtx(ctx).applicant.hobby).url()
+	(ctx: any) => ctx.wd.r(fromCtx(ctx).applicant.hobby).url(),
+	{
+		joinLastRow: true
+	}
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.applicants'))
