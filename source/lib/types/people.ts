@@ -25,7 +25,7 @@ export interface Name {
 	family: string;
 }
 
-export type PersonType = 'refined' | 'temporary'
+export type PersonType = 'refined' | 'temporary' | 'robot' | 'alien'
 export type RefinedState = 'toddler' | 'student' | 'finished'
 
 export interface Talents {

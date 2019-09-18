@@ -30,13 +30,16 @@ person:
   graduation: Q1054021
   hobby: Q47728
   retirement: Q946865
+  robotHobby: Q411713
   talent: Q1200995
   talents:
     purchasing: Q1369832
     selling: Q194189
     storage: Q9158768
   type:
+    alien: Q181508
     finished: Q1391344
+    robot: Q181787
     student: Q11448873
     temporary: Q2109535
     toddler: Q1340307

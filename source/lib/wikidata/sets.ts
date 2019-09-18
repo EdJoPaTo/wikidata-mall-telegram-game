@@ -5,6 +5,11 @@ import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 type Dictionary<T> = {[key: string]: T}
 
 const queries: Dictionary<string> = {
+	alienHobby: `SELECT DISTINCT ?planet WHERE {
+?planet wdt:P31 ?class.
+?class wdt:P279* wd:Q128207.
+?planet wdt:P18 ?image.
+}`,
 	attractions: `SELECT DISTINCT ?item WHERE {
 ?item wdt:P31*/wdt:P279* wd:Q570116.
 ?item rdfs:label ?label.
