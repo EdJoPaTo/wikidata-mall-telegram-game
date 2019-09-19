@@ -35,6 +35,6 @@ export function canBeEmployed(person: Person, now: number): boolean {
 export function minutesUntilGraduation(): {min: number; max: number} {
 	return {
 		min: 2,
-		max: 20
+		max: 15
 	}
 }
