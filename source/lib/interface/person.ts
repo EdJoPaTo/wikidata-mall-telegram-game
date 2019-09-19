@@ -47,7 +47,7 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += '\n'
 	text += personStateEmoji(person, now)
 	text += ctx.wd.r(wdResourceKeyOfPerson(person, now)).label()
-	text += '\n\n'
+	text += '\n'
 
 	text += isFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
 	text += '*'
@@ -65,7 +65,7 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += humanReadableTimestamp(retirementTimestamp, locale)
 
 	if (canBeEmployed(person, now)) {
-		text += '\n\n'
+		text += '\n'
 		text += '*'
 		text += ctx.wd.r('person.talent').label()
 		text += '*'
