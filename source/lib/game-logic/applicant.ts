@@ -60,7 +60,11 @@ function talentsForType(type: PersonType): Talents {
 	switch (type) {
 		case 'robot': return randomTalents(distributionRobot)
 		case 'refined': return randomTalents(distributionRefined)
-		case 'alien': return randomTalents(distributionAlien)
+		case 'alien': return {
+			purchasing: distributionAlienOther.ppf(Math.random()),
+			selling: distributionAlienSell.ppf(Math.random()),
+			storage: distributionAlienOther.ppf(Math.random())
+		}
 		default: return randomTalents(distributionTemporary)
 	}
 }
@@ -71,13 +75,15 @@ const MINIMAL_TALENT = 0.001
 const distributionRefined = gaussian(1.25, 0.2 ** 2)
 const distributionTemporary = gaussian(1.1, 0.15 ** 2)
 const distributionRobot = gaussian(1.25, 0.005 ** 2)
-const distributionAlien = gaussian(2.5, 0.5 ** 2)
+const distributionAlienSell = gaussian(6, 0.5 ** 2)
+const distributionAlienOther = gaussian(1.4, 0.1 ** 2)
 /* DEBUG
 debugDistribution('before', gaussian(1.1, 0.06))
 debugDistribution('refined', distributionRefined)
 debugDistribution('temporary', distributionTemporary)
 debugDistribution('robot', distributionRobot)
-debugDistribution('alien', distributionAlien)
+debugDistribution('alien sell', distributionAlienSell)
+debugDistribution('alien other', distributionAlienOther)
 function debugDistribution(name: string, distribution: Gaussian): void {
 	console.log('debugDistribution', name, distribution.mean, distribution.standardDeviation)
 	console.log('probability', '<0  :', distribution.cdf(MINIMAL_TALENT))
