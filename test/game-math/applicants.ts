@@ -36,13 +36,13 @@ function daysUntilRetirementMacro(t: ExecutionContext, healthCareLevel: number, 
 }
 
 test('daysUntilRetirement level 0', daysUntilRetirementMacro, 0, 0, 6)
-test('daysUntilRetirement level 5', daysUntilRetirementMacro, 5, 0, 16)
-test('daysUntilRetirement level 10', daysUntilRetirementMacro, 10, 0, 26)
-test('daysUntilRetirement level 15', daysUntilRetirementMacro, 15, 0, 36)
-test('daysUntilRetirement level 25', daysUntilRetirementMacro, 25, 0, 56)
+test('daysUntilRetirement level 5', daysUntilRetirementMacro, 5, 0, 11)
+test('daysUntilRetirement level 10', daysUntilRetirementMacro, 10, 0, 16)
+test('daysUntilRetirement level 15', daysUntilRetirementMacro, 15, 0, 21)
+test('daysUntilRetirement level 25', daysUntilRetirementMacro, 25, 0, 31)
 
 test('minutesUntilGraduation', t => {
-	t.deepEqual(minutesUntilGraduation(), {min: 2, max: 20})
+	t.deepEqual(minutesUntilGraduation(), {min: 2, max: 15})
 })
 
 const basePerson = {
