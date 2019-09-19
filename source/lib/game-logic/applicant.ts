@@ -28,7 +28,7 @@ export function createApplicant(skills: Skills, now: number): Person {
 		type,
 		hobby: hobbyForType(type),
 		retirementTimestamp,
-		talents: randomTalents(talentDistributionForType(type))
+		talents: talentsForType(type)
 	}
 }
 
@@ -56,12 +56,12 @@ function hobbyForType(type: PersonType): string {
 	return randomItem(wdShops.allShops())
 }
 
-function talentDistributionForType(type: PersonType): Gaussian {
+function talentsForType(type: PersonType): Talents {
 	switch (type) {
-		case 'robot': return distributionRobot
-		case 'refined': return distributionRefined
-		case 'alien': return distributionAlien
-		default: return distributionTemporary
+		case 'robot': return randomTalents(distributionRobot)
+		case 'refined': return randomTalents(distributionRefined)
+		case 'alien': return randomTalents(distributionAlien)
+		default: return randomTalents(distributionTemporary)
 	}
 }
 
