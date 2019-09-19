@@ -33,7 +33,7 @@ export function createApplicant(skills: Skills, now: number): Person {
 }
 
 function typeFromRandom(random: number): PersonType {
-	if (random < 0.005) {
+	if (random < 0.01) {
 		return 'alien'
 	}
 
