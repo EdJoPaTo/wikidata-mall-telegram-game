@@ -14,7 +14,6 @@ const basic: Dictionary<string> = {
 	door: '🚪',
 	employmentTermination: '🔫',
 	github: '🦑',
-	graduation: '🎉',
 	help: '🃏',
 	hobbyDifferent: '❤️',
 	hobbyMatch: '💚',
