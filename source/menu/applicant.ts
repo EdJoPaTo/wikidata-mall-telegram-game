@@ -6,7 +6,7 @@ import {randomBetween} from '../lib/math/probability'
 import {Person} from '../lib/types/people'
 import {Persist} from '../lib/types'
 
-import {minutesUntilGraduation, getRefinedState} from '../lib/game-math/applicant'
+import {canBeEmployed, minutesUntilGraduation, getRefinedState} from '../lib/game-math/applicant'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
@@ -67,6 +67,31 @@ menu.button(buttonText(emojis.door, 'other.door'), 'remove', {
 	doFunc: (ctx: any) => {
 		const {applicantId} = fromCtx(ctx)
 		const {applicants} = ctx.persist as Persist
+		applicants.list.splice(applicantId, 1)
+	}
+})
+
+menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
+	joinLastRow: true,
+	setParentMenuAfter: true,
+	hide: (ctx: any) => {
+		const now = Date.now() / 1000
+		const {applicant} = fromCtx(ctx)
+		const {mall} = ctx.persist as Persist
+		return !mall || mall.applicants.length > 0 || !canBeEmployed(applicant, now)
+	},
+	doFunc: (ctx: any) => {
+		const {applicantId, applicant} = fromCtx(ctx)
+		const {applicants, mall} = ctx.persist as Persist
+		if (!mall) {
+			throw new Error('You are not part of a mall')
+		}
+
+		if (mall.applicants.length > 0) {
+			throw new Error('Mall seats are full')
+		}
+
+		mall.applicants.push(applicant)
 		applicants.list.splice(applicantId, 1)
 	}
 })

@@ -10,11 +10,13 @@ import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../lib/game-math/constants'
 
 import {parseTitle} from '../lib/game-logic/mall'
 
+import {applicantButtonEmoji} from '../lib/interface/applicants'
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {formatFloat} from '../lib/interface/format-number'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
+import applicantsMenu from './mall-applicants'
 import productionMenu from './mall-production'
 
 const DONATION_AMOUNT = 10
@@ -81,6 +83,18 @@ async function menuText(ctx: any): Promise<string> {
 const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('menu.mall')
 })
+
+function applicantEmoji(ctx: any): string {
+	const now = Date.now() / 1000
+	const {mall} = ctx.persist as Persist
+	if (!mall) {
+		throw new Error('user not part of a mall')
+	}
+
+	return applicantButtonEmoji(mall.applicants, now)
+}
+
+menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicantsMenu)
 
 menu.submenu(buttonText(emojis.production, 'mall.production'), 'production', productionMenu)
 

@@ -149,6 +149,7 @@ bot.action('join', async ctx => {
 
 	if (!mallData) {
 		mallData = {
+			applicants: [],
 			member: [],
 			money: 0,
 			chat: ctx.chat!
