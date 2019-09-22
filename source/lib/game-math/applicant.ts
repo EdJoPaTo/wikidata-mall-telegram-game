@@ -1,5 +1,5 @@
 import {Skills} from '../types/skills'
-import {RefinedWorker, RefinedState, Person} from '../types/people'
+import {RefinedWorker, RefinedState, Person, TALENTS} from '../types/people'
 
 import {currentLevel} from './skill'
 
@@ -37,4 +37,19 @@ export function minutesUntilGraduation(): {min: number; max: number} {
 		min: 2,
 		max: 15
 	}
+}
+
+export function sortIndexOfPerson(person: Person, now: number): number {
+	if (person.type === 'refined') {
+		const state = getRefinedState(person, now)
+		if (state === 'toddler') {
+			return -2
+		}
+
+		if (state === 'student') {
+			return -1
+		}
+	}
+
+	return Math.max(...TALENTS.map(t => person.talents[t]))
 }

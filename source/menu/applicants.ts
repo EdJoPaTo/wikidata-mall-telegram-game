@@ -3,7 +3,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../lib/types'
 import {Person} from '../lib/types/people'
 
-import {secondsBetweenApplicants, applicantSeats, canBeEmployed} from '../lib/game-math/applicant'
+import {secondsBetweenApplicants, applicantSeats, canBeEmployed, sortIndexOfPerson} from '../lib/game-math/applicant'
 
 import {applicantInfluencesPart} from '../lib/interface/applicants'
 import {emojis} from '../lib/interface/emojis'
@@ -55,6 +55,7 @@ function menuText(ctx: any): string {
 	if (persist.applicants.list.length > 0) {
 		const shopIds = persist.shops.map(o => o.id)
 		text += persist.applicants.list
+			.sort((a, b) => sortIndexOfPerson(a, now) - sortIndexOfPerson(b, now))
 			.map(o => applicantEntry(ctx, o, shopIds.includes(o.hobby)))
 			.join('\n')
 		text += '\n\n'
