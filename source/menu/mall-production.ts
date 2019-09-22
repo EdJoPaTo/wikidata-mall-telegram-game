@@ -3,7 +3,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityStore from 'wikidata-entity-store'
 
 import {MallProduction} from '../lib/types/mall'
-import {Persist} from '../lib/types'
+import {Persist, Session} from '../lib/types'
 
 import {MALL_MIN_PEOPLE, MALL_PRODUCTION_TIME_IN_SECONDS} from '../lib/game-math/constants'
 
@@ -15,7 +15,7 @@ import {getParts} from '../lib/wikidata/production'
 import {preloadWithParts} from '../lib/game-logic/mall-production'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {countdownMinuteSecond} from '../lib/interface/formatted-time'
+import {countdownMinuteSecond, humanReadableTimestamp} from '../lib/interface/formatted-time'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
@@ -28,6 +28,7 @@ async function getProduction(ctx: any): Promise<MallProduction> {
 
 async function menuText(ctx: any): Promise<string> {
 	const now = Date.now() / 1000
+	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
 	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
@@ -44,6 +45,12 @@ async function menuText(ctx: any): Promise<string> {
 	text += '\n\n'
 
 	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
+	text += '\n\n'
+
+	text += emojis.countdown
+	text += format.bold(ctx.wd.r('other.end').label())
+	text += ':\n  '
+	text += humanReadableTimestamp(competitionUntil, locale, timeZone)
 	text += '\n\n'
 
 	if (mall.productionFinishes) {
