@@ -43,6 +43,7 @@ const basic: Dictionary<string> = {
 	skillFinished: '✅',
 	stats: '📊',
 	storage: '📦',
+	timezone: '🕑',
 	underConstruction: '🚧',
 	warning: '⚠️',
 	wikidataItem: 'ℹ️',

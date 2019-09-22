@@ -21,6 +21,7 @@ export interface Session {
 	showAllLanguages?: true;
 	skillQueue?: SkillInTraining[];
 	stats: Stats;
+	timeZone?: string;
 }
 
 // Contains things that are stored outside of the session

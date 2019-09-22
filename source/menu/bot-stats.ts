@@ -57,7 +57,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += entryLine(ctx, 'menu.employee', formatInt(allEmployees.length))
 	text += entryLine(ctx, 'product.product', formatInt(allProducts.length))
 
-	const {gameStarted, stats, __wikibase_language_code: locale} = ctx.session as Session
+	const {gameStarted, stats, timeZone, __wikibase_language_code: locale} = ctx.session as Session
 
 	text += '\n'
 	text += '*'
@@ -65,7 +65,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += '*'
 	text += '\n'
 
-	text += entryLine(ctx, 'achievement.gameStarted', humanReadableTimestamp(gameStarted, locale))
+	text += entryLine(ctx, 'achievement.gameStarted', humanReadableTimestamp(gameStarted, locale, timeZone))
 	text += entryLine(ctx, 'person.talents.purchasing', formatInt(stats.productsBought))
 
 	return text

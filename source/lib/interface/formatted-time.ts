@@ -9,10 +9,10 @@ export function countdownHourMinute(secondsLeft: number): string {
 	return `${hourString}:${minuteString}`
 }
 
-export function humanReadableTimestamp(unixTimestamp: number, locale: string | undefined): string {
+export function humanReadableTimestamp(unixTimestamp: number, locale: string | undefined, timeZone: string | undefined): string {
 	const date = new Date(unixTimestamp * 1000)
 	return date.toLocaleString(locale === 'wikidatanish' ? 'en' : locale, {
-		timeZone: 'UTC',
+		timeZone: timeZone || 'UTC',
 		timeZoneName: 'short',
 		year: 'numeric',
 		month: 'short',

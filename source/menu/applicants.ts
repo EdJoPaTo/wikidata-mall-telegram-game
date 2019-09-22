@@ -17,7 +17,7 @@ import {createHelpMenu, helpButtonText} from './help'
 import applicantMenu from './applicant'
 
 function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): string {
-	const {__wikibase_language_code: locale} = ctx.session as Session
+	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
 	const now = Date.now() / 1000
 
 	let text = ''
@@ -29,7 +29,7 @@ function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): s
 	if (canBeEmployed(applicant, now)) {
 		text += '\n    '
 		text += emojis.retirement
-		text += humanReadableTimestamp(applicant.retirementTimestamp, locale)
+		text += humanReadableTimestamp(applicant.retirementTimestamp, locale, timeZone)
 		text += '\n    '
 		text += personAllTalentsLine(applicant.talents)
 	}

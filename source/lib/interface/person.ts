@@ -39,7 +39,7 @@ export function wdResourceKeyOfPerson(person: Person, now: number): string {
 }
 
 export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now: number): string {
-	const {__wikibase_language_code: locale} = ctx.session as Session
+	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
 	const {name, hobby, retirementTimestamp, talents} = person
 
 	let text = ''
@@ -62,7 +62,7 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += ctx.wd.r('person.retirement').label()
 	text += '*'
 	text += ':\n  '
-	text += humanReadableTimestamp(retirementTimestamp, locale)
+	text += humanReadableTimestamp(retirementTimestamp, locale, timeZone)
 
 	if (canBeEmployed(person, now)) {
 		text += '\n'
@@ -127,7 +127,7 @@ export function shopEmployeeOverview(ctx: any, shop: Shop): string {
 }
 
 function shopEmployeeEntry(ctx: any, shop: Shop, talent: TalentName): string {
-	const {__wikibase_language_code: locale} = ctx.session as Session
+	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
 	const person = shop.personal[talent]
 
 	let text = ''
@@ -151,7 +151,7 @@ function shopEmployeeEntry(ctx: any, shop: Shop, talent: TalentName): string {
 	text += '\n'
 	text += '    '
 	text += emojis.retirement
-	text += humanReadableTimestamp(person.retirementTimestamp, locale)
+	text += humanReadableTimestamp(person.retirementTimestamp, locale, timeZone)
 
 	return text
 }

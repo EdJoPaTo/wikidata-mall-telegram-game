@@ -8,6 +8,7 @@ import {infoHeader} from '../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from './help'
 import languageMenu from './languages'
+import timezoneMenu from './settings-timezone'
 
 function menuText(ctx: any): string {
 	let text = ''
@@ -21,6 +22,8 @@ const menu = new TelegrafInlineMenu(menuText, {
 menu.setCommand('settings')
 
 menu.submenu(buttonText(emojis.language, 'menu.language'), 'lang', languageMenu)
+
+menu.submenu(buttonText(emojis.timezone, 'menu.timezone'), 'tz', timezoneMenu)
 
 menu.toggle((ctx: any) => ctx.wd.r('other.math').label(), 'explanationMath', {
 	isSetFunc: (ctx: any) => {
