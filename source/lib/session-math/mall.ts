@@ -1,18 +1,41 @@
 import {Persist} from '../types'
 import {Mall} from '../types/mall'
 
+import {DAY_IN_SECONDS} from '../math/timestamp-constants'
+
 import * as mallProduction from '../data/mall-production'
+
+const PRODUCTION_TIMESPAN_IN_SECONDS = DAY_IN_SECONDS
 
 export default async function manageMall(persist: Persist, now: number): Promise<void> {
 	if (!persist.mall) {
 		return
 	}
 
-	await updateMallProduction(persist.mall, now)
+	await updateCurrentProduction(now)
+	await updateProductionProcessOfMall(persist.mall, now)
 	removePartsByLeftMembers(persist.mall)
 }
 
-async function updateMallProduction(mall: Mall, now: number): Promise<void> {
+async function updateCurrentProduction(now: number): Promise<void> {
+	const content = await mallProduction.get()
+	const expectedFinish = (Math.ceil(now / PRODUCTION_TIMESPAN_IN_SECONDS) * PRODUCTION_TIMESPAN_IN_SECONDS) - 1
+
+	if (content.competitionUntil !== expectedFinish) {
+		const expectedStart = Math.floor(now / PRODUCTION_TIMESPAN_IN_SECONDS) * PRODUCTION_TIMESPAN_IN_SECONDS
+		content.competitionSince = expectedStart
+		content.competitionUntil = expectedFinish
+
+		// TODO: handle winner in some way
+		content.itemsProducedPerMall = {}
+
+		// TODO: define new item to produce from the vote
+
+		await mallProduction.set(content)
+	}
+}
+
+async function updateProductionProcessOfMall(mall: Mall, now: number): Promise<void> {
 	if (mall.productionFinishes) {
 		if (mall.productionFinishes > now) {
 			delete mall.partsProducedBy
