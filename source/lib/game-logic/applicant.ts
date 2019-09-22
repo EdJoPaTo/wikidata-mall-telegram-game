@@ -74,7 +74,7 @@ const MINIMAL_TALENT = 0.001
 // -> use sigma and square it on startup
 const distributionRefined = gaussian(1.25, 0.2 ** 2)
 const distributionTemporary = gaussian(1.1, 0.15 ** 2)
-const distributionRobot = gaussian(1.25, 0.005 ** 2)
+const distributionRobot = gaussian(1.28, 0.005 ** 2)
 const distributionAlienSell = gaussian(6, 0.5 ** 2)
 const distributionAlienOther = gaussian(1.4, 0.1 ** 2)
 /* DEBUG
