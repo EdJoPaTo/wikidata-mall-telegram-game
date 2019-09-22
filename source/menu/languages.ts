@@ -4,12 +4,21 @@ import {Session} from '../lib/types'
 
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader} from '../lib/interface/formatted-strings'
+import {menuPhoto} from '../lib/interface/menu'
 
 /* eslint @typescript-eslint/no-var-requires: warn */
 /* eslint @typescript-eslint/no-require-imports: warn */
 const localeEmoji = require('locale-emoji')
 
-const menu = new TelegrafInlineMenu(ctx => languageMenuText(ctx))
+function menuText(ctx: any): string {
+	const flag = flagString(ctx.wd.locale(), true)
+	const text = infoHeader(ctx.wd.r('menu.language'), {titlePrefix: flag})
+	return text
+}
+
+const menu = new TelegrafInlineMenu(menuText, {
+	photo: menuPhoto('menu.language')
+})
 menu.setCommand('language')
 
 menu.toggle((ctx: any) => ctx.wd.r('menu.allLanguages').label(), 'all', {
@@ -42,12 +51,6 @@ function flagString(languageCode: string, useFallbackFlag = false): string {
 	}
 
 	return flag
-}
-
-function languageMenuText(ctx: any): string {
-	const flag = flagString(ctx.wd.locale(), true)
-	const text = infoHeader(ctx.wd.r('menu.language'), {titlePrefix: flag})
-	return text
 }
 
 function languageOptions(ctx: any): string[] {
