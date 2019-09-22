@@ -3,8 +3,8 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../lib/types'
 
 import {canAddToSkillQueue} from '../lib/game-math/skill'
-import {getRefinedState} from '../lib/game-math/applicant'
 
+import {applicantButtonEmoji} from '../lib/interface/applicants'
 import {buttonText} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
@@ -85,9 +85,7 @@ menu.submenu(buttonText(emojis.mall, 'menu.mall'), 'mall', mall, {
 function applicantEmoji(ctx: any): string {
 	const now = Date.now() / 1000
 	const {applicants} = ctx.persist as Persist
-	const relevant = applicants.list
-		.filter(o => o.type !== 'refined' || getRefinedState(o, now) !== 'student')
-	return relevant.length > 0 ? emojis.applicantsAvailable : emojis.applicantsEmpty
+	return applicantButtonEmoji(applicants.list, now)
 }
 
 menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicants, {

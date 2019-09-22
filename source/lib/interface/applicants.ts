@@ -1,6 +1,7 @@
+import {Person} from '../types/people'
 import {Skills} from '../types/skills'
 
-import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement} from '../game-math/applicant'
+import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement, getRefinedState} from '../game-math/applicant'
 import {currentLevel} from '../game-math/skill'
 
 import {emojis} from './emojis'
@@ -68,4 +69,10 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 	}
 
 	return text
+}
+
+export function applicantButtonEmoji(applicants: Person[], now: number): string {
+	const relevant = applicants
+		.filter(o => o.type !== 'refined' || getRefinedState(o, now) !== 'student')
+	return relevant.length > 0 ? emojis.applicantsAvailable : emojis.applicantsEmpty
 }
