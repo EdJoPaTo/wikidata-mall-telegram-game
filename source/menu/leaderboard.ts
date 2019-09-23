@@ -4,12 +4,15 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Dictionary, sortDictKeysByNumericValues} from '../lib/js-helper/dictionary'
 
-import {Session, LeaderboardView, LEADERBOARD_VIEWS} from '../lib/types'
+import {Session, Persist, LeaderboardView, LEADERBOARD_VIEWS} from '../lib/types'
 import {Skills} from '../lib/types/skills'
+import {Mall} from '../lib/types/mall'
 
 import {WEEK_IN_SECONDS} from '../lib/math/timestamp-constants'
 
+import * as mallProduction from '../lib/data/mall-production'
 import * as userInfo from '../lib/data/user-info'
+import * as userMalls from '../lib/data/malls'
 import * as userShops from '../lib/data/shops'
 import * as userSkills from '../lib/data/skills'
 
@@ -17,8 +20,10 @@ import {currentLevel} from '../lib/game-math/skill'
 import {lastTimeActive} from '../lib/game-math/shop-time'
 import {returnOnInvestment, sellPerMinute} from '../lib/game-math/shop-cost'
 
+import {parseTitle} from '../lib/game-logic/mall'
+
 import {emojis} from '../lib/interface/emojis'
-import {formatFloat} from '../lib/interface/format-number'
+import {formatFloat, formatInt} from '../lib/interface/format-number'
 import {infoHeader} from '../lib/interface/formatted-strings'
 import {menuPhoto, buttonText} from '../lib/interface/menu'
 import {percentBonusString} from '../lib/interface/format-percent'
@@ -96,8 +101,16 @@ async function getCollectorTable(): Promise<LeaderboardEntries> {
 	}
 }
 
-function entryLine(index: number, info: User | undefined, formattedValue: string, highlighted: boolean): string {
-	const name = info ? info.first_name : '??'
+async function getMallProductionTable(): Promise<LeaderboardEntries> {
+	const production = await mallProduction.get()
+	const values = production.itemsProducedPerMall
+	return {
+		values,
+		order: sortDictKeysByNumericValues(values, true)
+	}
+}
+
+function entryLine(index: number, name: string, formattedValue: string, highlighted: boolean): string {
 	const rank = index + 1
 
 	const parts: string[] = []
@@ -108,14 +121,29 @@ function entryLine(index: number, info: User | undefined, formattedValue: string
 	return parts.join(' ')
 }
 
-async function generateTable(entries: LeaderboardEntries, forPlayerId: number, formatNumberFunc: (num: number) => string): Promise<string> {
+function nameOfId(allPlayerInfos: Dictionary<User>, allMallInfos: Dictionary<Mall>, id: string): string {
+	const playerInfo = allPlayerInfos[id]
+	if (playerInfo) {
+		return playerInfo.first_name
+	}
+
+	const mallInfo = allMallInfos[id]
+	if (mallInfo) {
+		return parseTitle(mallInfo.chat.title)
+	}
+
+	return '??'
+}
+
+async function generateTable(entries: LeaderboardEntries, forPlayerId: number | undefined, formatNumberFunc: (num: number) => string): Promise<string> {
 	const allPlayerInfos = await userInfo.getAll()
+	const allMallInfos = await userMalls.getAll()
 	const indexOfPlayer = entries.order.indexOf(String(forPlayerId))
 
 	const lines = await Promise.all(
 		entries.order.map((playerId, i) => {
 			if (i < 10 || (i > indexOfPlayer - 5 && i < indexOfPlayer + 5)) {
-				return entryLine(i, allPlayerInfos[playerId], formatNumberFunc(entries.values[playerId]), i === indexOfPlayer)
+				return entryLine(i, nameOfId(allPlayerInfos, allMallInfos, playerId), formatNumberFunc(entries.values[playerId]), i === indexOfPlayer)
 			}
 
 			return undefined
@@ -129,6 +157,8 @@ async function generateTable(entries: LeaderboardEntries, forPlayerId: number, f
 
 async function menuText(ctx: any): Promise<string> {
 	const session = ctx.session as Session
+	const {mall} = ctx.persist as Persist
+	const production = await mallProduction.get()
 	const now = Date.now() / 1000
 
 	let text = ''
@@ -152,6 +182,12 @@ async function menuText(ctx: any): Promise<string> {
 			text += await generateTable(await getCollectorTable(), ctx.from.id, o => String(o))
 			break
 
+		case 'mallProduction':
+			text += infoHeader(ctx.wd.r(production.itemToProduce))
+			text += '\n\n'
+			text += await generateTable(await getMallProductionTable(), mall && mall.chat.id, o => formatInt(o))
+			break
+
 		default:
 			throw new Error(`unknown leaderboard view: ${view}`)
 	}
@@ -171,6 +207,8 @@ function viewResourceKey(view: LeaderboardView): string {
 			return 'other.income'
 		case 'collector':
 			return 'skill.collector'
+		case 'mallProduction':
+			return 'mall.production'
 		default:
 			throw new Error(`unknown leaderboard view: ${view}`)
 	}

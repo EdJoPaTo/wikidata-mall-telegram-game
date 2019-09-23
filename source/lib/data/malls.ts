@@ -9,7 +9,7 @@ console.time('load malls')
 const data = new InMemoryFiles<Mall>('persist/malls')
 console.timeEnd('load malls')
 
-export async function getAllMalls(): Promise<Dictionary<Mall>> {
+export async function getAll(): Promise<Dictionary<Mall>> {
 	return data.entries()
 }
 
