@@ -29,7 +29,7 @@ export async function preload(store: WikidataEntityStore): Promise<void> {
 	)
 
 	const qNumbers = Object.values(entities).flat()
-	console.timeLog('wikidata-sets', 'preloadQNumbers', qNumbers.length)
+	console.timeLog('wikidata-sets', 'sum', qNumbers.length)
 	await store.preloadQNumbers(...qNumbers)
 	console.timeEnd('wikidata-sets')
 }
@@ -39,6 +39,7 @@ async function loadQNumbersOfKey(key: string): Promise<void> {
 		const results = await sparqlQuerySimplifiedMinified(queries[key])
 		const qNumbers = results as string[]
 		entities[key] = qNumbers
+		console.timeLog('wikidata-sets', key, qNumbers.length)
 	} catch (error) {
 		console.error('wikidata-set query failed', key, error)
 	}
