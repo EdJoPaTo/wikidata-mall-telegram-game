@@ -1,20 +1,20 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
-import {Session, Persist} from '../lib/types'
-import {Shop} from '../lib/types/shop'
+import {Session, Persist} from '../../../lib/types'
+import {Shop} from '../../../lib/types/shop'
 
-import {moneyForShopClosure} from '../lib/game-math/shop-cost'
+import {moneyForShopClosure} from '../../../lib/game-math/shop-cost'
 
-import * as wdShop from '../lib/wikidata/shops'
+import * as wdShop from '../../../lib/wikidata/shops'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {formatFloat, formatInt} from '../lib/interface/format-number'
-import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
+import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {emojis} from '../../../lib/interface/emojis'
+import {formatFloat, formatInt} from '../../../lib/interface/format-number'
+import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings'
 
-import {createHelpMenu, helpButtonText} from './help'
-import {replyMenu} from './shops'
+import {createHelpMenu, helpButtonText} from '../../help'
+import {replyMenu} from '..'
 
 function fromCtx(ctx: any): {shop: Shop; indexOfShop: number} {
 	const persist = ctx.persist as Persist

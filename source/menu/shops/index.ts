@@ -1,20 +1,21 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
-import {Shop} from '../lib/types/shop'
-import {Skills} from '../lib/types/skills'
+import {Session, Persist} from '../../lib/types'
+import {Shop} from '../../lib/types/shop'
+import {Skills} from '../../lib/types/skills'
 
-import {buyAllCost, buyAllCostFactor, magnetEnabled} from '../lib/game-math/shop-cost'
-import {storageCapacity, storageFilledPercentage} from '../lib/game-math/shop-capacity'
+import {buyAllCost, buyAllCostFactor, magnetEnabled} from '../../lib/game-math/shop-cost'
+import {storageCapacity, storageFilledPercentage} from '../../lib/game-math/shop-capacity'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {incomePart} from '../lib/interface/shop'
-import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
-import {percentBonusString, percentString} from '../lib/interface/format-percent'
+import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {emojis} from '../../lib/interface/emojis'
+import {incomePart} from '../../lib/interface/shop'
+import {infoHeader, labeledFloat} from '../../lib/interface/formatted-strings'
+import {percentBonusString, percentString} from '../../lib/interface/format-percent'
 
-import {createHelpMenu, helpButtonText} from './help'
-import constructionMenu from './shops-construction'
+import {createHelpMenu, helpButtonText} from '../help'
+
+import constructionMenu from './construction'
 import shopMenu from './shop'
 
 function shopLine(ctx: any, shop: Shop, skills: Skills): string {

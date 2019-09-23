@@ -3,12 +3,12 @@ import {markdown as format} from 'telegram-format'
 import arrayFilterUnique from 'array-filter-unique'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session} from '../lib/types'
+import {Session} from '../../lib/types'
 
-import {emojis} from '../lib/interface/emojis'
-import {humanReadableTimestamp} from '../lib/interface/formatted-time'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {menuPhoto} from '../lib/interface/menu'
+import {emojis} from '../../lib/interface/emojis'
+import {humanReadableTimestamp} from '../../lib/interface/formatted-time'
+import {infoHeader} from '../../lib/interface/formatted-strings'
+import {menuPhoto} from '../../lib/interface/menu'
 
 const tzNormal = listTimeZones()
 	.map(o => o.split('/'))

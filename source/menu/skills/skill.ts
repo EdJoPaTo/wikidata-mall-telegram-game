@@ -1,19 +1,19 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
-import {Skill} from '../lib/types/skills'
+import {Session, Persist} from '../../lib/types'
+import {Skill} from '../../lib/types/skills'
 
-import {currentLevel, skillUpgradeEndTimestamp, isSimpleSkill, categorySkillSpecificLevel, canAddToSkillQueue, entriesInSkillQueue, levelAfterSkillQueue} from '../lib/game-math/skill'
+import {currentLevel, skillUpgradeEndTimestamp, isSimpleSkill, categorySkillSpecificLevel, canAddToSkillQueue, entriesInSkillQueue, levelAfterSkillQueue} from '../../lib/game-math/skill'
 
-import {addSkillToQueue} from '../lib/game-logic/skills'
+import {addSkillToQueue} from '../../lib/game-logic/skills'
 
-import {countdownHourMinute} from '../lib/interface/formatted-time'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../lib/interface/menu'
-import {skillQueueString} from '../lib/interface/skill'
+import {countdownHourMinute} from '../../lib/interface/formatted-time'
+import {emojis} from '../../lib/interface/emojis'
+import {infoHeader} from '../../lib/interface/formatted-strings'
+import {menuPhoto, buttonText} from '../../lib/interface/menu'
+import {skillQueueString} from '../../lib/interface/skill'
 
-import {createHelpMenu, helpButtonText} from './help'
+import {createHelpMenu, helpButtonText} from '../help'
 
 function fromCtx(ctx: any): {skill: Skill; category?: string} {
 	const skill = ctx.match[1]

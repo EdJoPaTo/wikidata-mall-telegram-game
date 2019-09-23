@@ -2,24 +2,24 @@ import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityStore from 'wikidata-entity-store'
 
-import {MallProduction} from '../lib/types/mall'
-import {Persist, Session} from '../lib/types'
+import {MallProduction} from '../../lib/types/mall'
+import {Persist, Session} from '../../lib/types'
 
-import {MALL_MIN_PEOPLE, MALL_PRODUCTION_TIME_IN_SECONDS} from '../lib/game-math/constants'
+import {MALL_MIN_PEOPLE, MALL_PRODUCTION_TIME_IN_SECONDS} from '../../lib/game-math/constants'
 
-import * as mallProduction from '../lib/data/mall-production'
-import * as userInfo from '../lib/data/user-info'
+import * as mallProduction from '../../lib/data/mall-production'
+import * as userInfo from '../../lib/data/user-info'
 
-import {getParts} from '../lib/wikidata/production'
+import {getParts} from '../../lib/wikidata/production'
 
-import {preloadWithParts} from '../lib/game-logic/mall-production'
+import {preloadWithParts} from '../../lib/game-logic/mall-production'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {countdownMinuteSecond, humanReadableTimestamp} from '../lib/interface/formatted-time'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
+import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {countdownMinuteSecond, humanReadableTimestamp} from '../../lib/interface/formatted-time'
+import {emojis} from '../../lib/interface/emojis'
+import {infoHeader, labeledFloat} from '../../lib/interface/formatted-strings'
 
-import {helpButtonText, createHelpMenu} from './help'
+import {helpButtonText, createHelpMenu} from '../help'
 
 async function getProduction(ctx: any): Promise<MallProduction> {
 	const store = ctx.wd.store as WikidataEntityStore

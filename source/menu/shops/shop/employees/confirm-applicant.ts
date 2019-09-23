@@ -1,16 +1,16 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Persist} from '../lib/types'
-import {Shop} from '../lib/types/shop'
-import {TalentName, Person} from '../lib/types/people'
+import {Persist} from '../../../../lib/types'
+import {Shop} from '../../../../lib/types/shop'
+import {TalentName, Person} from '../../../../lib/types/people'
 
-import {personalBonusWhenEmployed} from '../lib/game-math/personal'
+import {personalBonusWhenEmployed} from '../../../../lib/game-math/personal'
 
-import {buttonText} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {percentBonusString} from '../lib/interface/format-percent'
-import {personMarkdown} from '../lib/interface/person'
+import {buttonText} from '../../../../lib/interface/menu'
+import {emojis} from '../../../../lib/interface/emojis'
+import {infoHeader} from '../../../../lib/interface/formatted-strings'
+import {percentBonusString} from '../../../../lib/interface/format-percent'
+import {personMarkdown} from '../../../../lib/interface/person'
 
 function fromCtx(ctx: any): {shop: Shop; talent: TalentName; employee?: Person; applicantId: number; applicant: Person} {
 	const shopType = ctx.match[1]

@@ -1,18 +1,19 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
-import {Skills, CategorySkill, SimpleSkill, SIMPLE_SKILLS, CATEGORY_SKILLS, Skill} from '../lib/types/skills'
+import {Session, Persist} from '../../lib/types'
+import {Skills, CategorySkill, SimpleSkill, SIMPLE_SKILLS, CATEGORY_SKILLS, Skill} from '../../lib/types/skills'
 
-import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../lib/js-helper/dictionary'
+import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../lib/js-helper/dictionary'
 
-import {currentLevel} from '../lib/game-math/skill'
+import {currentLevel} from '../../lib/game-math/skill'
 
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../lib/interface/menu'
-import {skillQueueString} from '../lib/interface/skill'
+import {emojis} from '../../lib/interface/emojis'
+import {infoHeader} from '../../lib/interface/formatted-strings'
+import {menuPhoto, buttonText} from '../../lib/interface/menu'
+import {skillQueueString} from '../../lib/interface/skill'
 
-import {createHelpMenu, helpButtonText} from './help'
+import {createHelpMenu, helpButtonText} from '../help'
+
 import skillMenu from './skill'
 import skillSelectCategory from './skill-select-category'
 

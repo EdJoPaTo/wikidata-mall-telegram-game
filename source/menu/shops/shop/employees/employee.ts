@@ -1,22 +1,23 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Dictionary} from '../lib/js-helper/dictionary'
+import {Dictionary} from '../../../../lib/js-helper/dictionary'
 
-import {Persist} from '../lib/types'
-import {Shop} from '../lib/types/shop'
-import {TalentName, Person} from '../lib/types/people'
+import {Persist} from '../../../../lib/types'
+import {Shop} from '../../../../lib/types/shop'
+import {TalentName, Person} from '../../../../lib/types/people'
 
-import {canBeEmployed} from '../lib/game-math/applicant'
-import {personalBonusWhenEmployed} from '../lib/game-math/personal'
+import {canBeEmployed} from '../../../../lib/game-math/applicant'
+import {personalBonusWhenEmployed} from '../../../../lib/game-math/personal'
 
-import {buttonText} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {percentBonusString} from '../lib/interface/format-percent'
-import {personMarkdown, personStateEmoji} from '../lib/interface/person'
+import {buttonText} from '../../../../lib/interface/menu'
+import {emojis} from '../../../../lib/interface/emojis'
+import {infoHeader} from '../../../../lib/interface/formatted-strings'
+import {percentBonusString} from '../../../../lib/interface/format-percent'
+import {personMarkdown, personStateEmoji} from '../../../../lib/interface/person'
 
-import {createHelpMenu, helpButtonText} from './help'
-import confirmEmployee from './shop-employee-confirm-applicant'
+import {createHelpMenu, helpButtonText} from '../../../help'
+
+import confirmEmployee from './confirm-applicant'
 
 function fromCtx(ctx: any): {shop: Shop; talent: TalentName; employee?: Person} {
 	const shopType = ctx.match[1]

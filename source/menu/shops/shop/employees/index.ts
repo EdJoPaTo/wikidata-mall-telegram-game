@@ -1,16 +1,17 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Persist} from '../lib/types'
-import {Shop} from '../lib/types/shop'
-import {TALENTS, TalentName} from '../lib/types/people'
+import {Persist} from '../../../../lib/types'
+import {Shop} from '../../../../lib/types/shop'
+import {TALENTS, TalentName} from '../../../../lib/types/people'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {personInShopLine} from '../lib/interface/person'
+import {buttonText, menuPhoto} from '../../../../lib/interface/menu'
+import {emojis} from '../../../../lib/interface/emojis'
+import {infoHeader} from '../../../../lib/interface/formatted-strings'
+import {personInShopLine} from '../../../../lib/interface/person'
 
-import {createHelpMenu, helpButtonText} from './help'
-import employee from './shop-employee'
+import {createHelpMenu, helpButtonText} from '../../../help'
+
+import employee from './employee'
 
 function fromCtx(ctx: any): {shop: Shop} {
 	const shopType = ctx.match[1]

@@ -1,22 +1,23 @@
 import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
+import {Session, Persist} from '../../lib/types'
 
-import * as userInfo from '../lib/data/user-info'
+import * as userInfo from '../../lib/data/user-info'
 
-import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../lib/game-math/constants'
+import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../../lib/game-math/constants'
 
-import {applicantButtonEmoji} from '../lib/interface/applicants'
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {formatFloat} from '../lib/interface/format-number'
-import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
-import {mallMoji} from '../lib/interface/mall'
+import {applicantButtonEmoji} from '../../lib/interface/applicants'
+import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {emojis} from '../../lib/interface/emojis'
+import {formatFloat} from '../../lib/interface/format-number'
+import {infoHeader, labeledFloat} from '../../lib/interface/formatted-strings'
+import {mallMoji} from '../../lib/interface/mall'
 
-import {helpButtonText, createHelpMenu} from './help'
-import applicantsMenu from './mall-applicants'
-import productionMenu from './mall-production'
+import {helpButtonText, createHelpMenu} from '../help'
+
+import applicantsMenu from './applicants'
+import productionMenu from './production'
 
 const DONATION_AMOUNT = 10
 

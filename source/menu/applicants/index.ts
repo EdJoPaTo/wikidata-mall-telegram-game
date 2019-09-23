@@ -1,19 +1,20 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
-import {Person} from '../lib/types/people'
+import {Session, Persist} from '../../lib/types'
+import {Person} from '../../lib/types/people'
 
-import {secondsBetweenApplicants, applicantSeats, canBeEmployed, sortIndexOfPerson} from '../lib/game-math/applicant'
+import {secondsBetweenApplicants, applicantSeats, canBeEmployed, sortIndexOfPerson} from '../../lib/game-math/applicant'
 
-import {applicantInfluencesPart} from '../lib/interface/applicants'
-import {emojis} from '../lib/interface/emojis'
-import {formatFloat} from '../lib/interface/format-number'
-import {humanReadableTimestamp} from '../lib/interface/formatted-time'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../lib/interface/menu'
-import {personAllTalentsLine, nameMarkdown, personStateEmoji} from '../lib/interface/person'
+import {applicantInfluencesPart} from '../../lib/interface/applicants'
+import {emojis} from '../../lib/interface/emojis'
+import {formatFloat} from '../../lib/interface/format-number'
+import {humanReadableTimestamp} from '../../lib/interface/formatted-time'
+import {infoHeader} from '../../lib/interface/formatted-strings'
+import {menuPhoto, buttonText} from '../../lib/interface/menu'
+import {personAllTalentsLine, nameMarkdown, personStateEmoji} from '../../lib/interface/person'
 
-import {createHelpMenu, helpButtonText} from './help'
+import {createHelpMenu, helpButtonText} from '../help'
+
 import applicantMenu from './applicant'
 
 function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): string {

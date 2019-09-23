@@ -1,16 +1,17 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
-import {Skills, CategorySkill} from '../lib/types/skills'
+import {Session, Persist} from '../../lib/types'
+import {Skills, CategorySkill} from '../../lib/types/skills'
 
-import {categorySkillSpecificLevel} from '../lib/game-math/skill'
+import {categorySkillSpecificLevel} from '../../lib/game-math/skill'
 
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../lib/interface/menu'
-import {skillQueueString} from '../lib/interface/skill'
+import {emojis} from '../../lib/interface/emojis'
+import {infoHeader} from '../../lib/interface/formatted-strings'
+import {menuPhoto, buttonText} from '../../lib/interface/menu'
+import {skillQueueString} from '../../lib/interface/skill'
 
-import {createHelpMenu, helpButtonText} from './help'
+import {createHelpMenu, helpButtonText} from '../help'
+
 import skillMenu from './skill'
 
 function fromCtx(ctx: any): {skill: CategorySkill} {

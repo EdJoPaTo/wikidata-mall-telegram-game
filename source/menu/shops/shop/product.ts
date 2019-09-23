@@ -1,23 +1,23 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
-import {Session, Persist} from '../lib/types'
-import {Shop, Product} from '../lib/types/shop'
-import {Skills} from '../lib/types/skills'
-import {TalentName} from '../lib/types/people'
+import {Session, Persist} from '../../../lib/types'
+import {Shop, Product} from '../../../lib/types/shop'
+import {Skills} from '../../../lib/types/skills'
+import {TalentName} from '../../../lib/types/people'
 
-import {currentLevel} from '../lib/game-math/skill'
-import {sellingCost, purchasingCost, productBasePrice, productBasePriceCollectorFactor, sellingCostPackagingBonus, purchasingCostScissorsBonus} from '../lib/game-math/product'
-import {storageCapacity} from '../lib/game-math/shop-capacity'
+import {currentLevel} from '../../../lib/game-math/skill'
+import {sellingCost, purchasingCost, productBasePrice, productBasePriceCollectorFactor, sellingCostPackagingBonus, purchasingCostScissorsBonus} from '../../../lib/game-math/product'
+import {storageCapacity} from '../../../lib/game-math/shop-capacity'
 
-import {emojis} from '../lib/interface/emojis'
-import {formatInt} from '../lib/interface/format-number'
-import {infoHeader, labeledInt, labeledFloat} from '../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../lib/interface/menu'
-import {percentBonusString} from '../lib/interface/format-percent'
-import {personInShopLine} from '../lib/interface/person'
+import {emojis} from '../../../lib/interface/emojis'
+import {formatInt} from '../../../lib/interface/format-number'
+import {infoHeader, labeledInt, labeledFloat} from '../../../lib/interface/formatted-strings'
+import {menuPhoto, buttonText} from '../../../lib/interface/menu'
+import {percentBonusString} from '../../../lib/interface/format-percent'
+import {personInShopLine} from '../../../lib/interface/person'
 
-import {createHelpMenu, helpButtonText} from './help'
+import {createHelpMenu, helpButtonText} from '../../help'
 
 function fromCtx(ctx: any): {shop: Shop; product: Product} {
 	const shopType = ctx.match[1]

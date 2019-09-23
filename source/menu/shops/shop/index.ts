@@ -1,30 +1,31 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
-import {Session, Persist} from '../lib/types'
-import {Shop, Product} from '../lib/types/shop'
-import {Skills} from '../lib/types/skills'
+import {Session, Persist} from '../../../lib/types'
+import {Shop, Product} from '../../../lib/types/shop'
+import {Skills} from '../../../lib/types/skills'
 
-import {randomUnusedEntry} from '../lib/js-helper/array'
+import {randomUnusedEntry} from '../../../lib/js-helper/array'
 
-import {addProductToShopCost, buyAllCost, buyAllCostFactor, magnetEnabled} from '../lib/game-math/shop-cost'
-import {currentLevel} from '../lib/game-math/skill'
-import {customerInterval} from '../lib/game-math/shop-time'
-import {storageCapacity, storageCapactiyPressBonus, shopProductsPossible} from '../lib/game-math/shop-capacity'
+import {addProductToShopCost, buyAllCost, buyAllCostFactor, magnetEnabled} from '../../../lib/game-math/shop-cost'
+import {currentLevel} from '../../../lib/game-math/skill'
+import {customerInterval} from '../../../lib/game-math/shop-time'
+import {storageCapacity, storageCapactiyPressBonus, shopProductsPossible} from '../../../lib/game-math/shop-capacity'
 
-import * as wdShop from '../lib/wikidata/shops'
+import * as wdShop from '../../../lib/wikidata/shops'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {formatInt} from '../lib/interface/format-number'
-import {incomePart} from '../lib/interface/shop'
-import {infoHeader, labeledFloat, labeledInt} from '../lib/interface/formatted-strings'
-import {percentBonusString} from '../lib/interface/format-percent'
-import {personInShopLine} from '../lib/interface/person'
+import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {emojis} from '../../../lib/interface/emojis'
+import {formatInt} from '../../../lib/interface/format-number'
+import {incomePart} from '../../../lib/interface/shop'
+import {infoHeader, labeledFloat, labeledInt} from '../../../lib/interface/formatted-strings'
+import {percentBonusString} from '../../../lib/interface/format-percent'
+import {personInShopLine} from '../../../lib/interface/person'
 
-import {createHelpMenu, helpButtonText} from './help'
-import closureConfirmMenu from './shop-closure-confirm'
-import employeeMenu from './shop-employees'
+import {createHelpMenu, helpButtonText} from '../../help'
+
+import closureMenu from './shop-closure'
+import employeeMenu from './employees'
 import productMenu from './product'
 
 function fromCtx(ctx: any): {shop: Shop; indexOfShop: number} {
@@ -289,7 +290,7 @@ menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', ctx => `($
 
 menu.submenu(buttonText(emojis.person, 'menu.employee'), 'e', employeeMenu)
 
-menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureConfirmMenu, {
+menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureMenu, {
 	joinLastRow: true,
 	hide: (ctx: any) => {
 		const persist = ctx.persist as Persist

@@ -1,14 +1,15 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session} from '../lib/types'
+import {Session} from '../../lib/types'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
+import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {emojis} from '../../lib/interface/emojis'
+import {infoHeader} from '../../lib/interface/formatted-strings'
 
-import {createHelpMenu, helpButtonText} from './help'
+import {createHelpMenu, helpButtonText} from '../help'
+
 import languageMenu from './languages'
-import timezoneMenu from './settings-timezone'
+import timezoneMenu from './timezone'
 
 function menuText(ctx: any): string {
 	let text = ''

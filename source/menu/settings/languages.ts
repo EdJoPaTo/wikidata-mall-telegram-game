@@ -1,10 +1,10 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session} from '../lib/types'
+import {Session} from '../../lib/types'
 
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {menuPhoto} from '../lib/interface/menu'
+import {emojis} from '../../lib/interface/emojis'
+import {infoHeader} from '../../lib/interface/formatted-strings'
+import {menuPhoto} from '../../lib/interface/menu'
 
 /* eslint @typescript-eslint/no-var-requires: warn */
 /* eslint @typescript-eslint/no-require-imports: warn */

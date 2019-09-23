@@ -1,20 +1,21 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
+import {Session, Persist} from '../../../lib/types'
 
-import {Dictionary, sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../lib/js-helper/dictionary'
+import {Dictionary, sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../../lib/js-helper/dictionary'
 
-import {costForAdditionalShop} from '../lib/game-math/shop-cost'
+import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 
-import {getCurrentConstructions, nextConstructionChange} from '../lib/game-logic/shop-construction'
+import {getCurrentConstructions, nextConstructionChange} from '../../../lib/game-logic/shop-construction'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {countdownHourMinute} from '../lib/interface/formatted-time'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
+import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {countdownHourMinute} from '../../../lib/interface/formatted-time'
+import {emojis} from '../../../lib/interface/emojis'
+import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings'
 
-import {createHelpMenu, helpButtonText} from './help'
-import constructionOptionMenu from './shops-construction-option'
+import {createHelpMenu, helpButtonText} from '../../help'
+
+import constructionOptionMenu from './option'
 
 async function menuText(ctx: any): Promise<string> {
 	const session = ctx.session as Session

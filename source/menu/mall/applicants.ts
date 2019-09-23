@@ -1,13 +1,13 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Persist} from '../lib/types'
+import {Persist} from '../../lib/types'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader} from '../lib/interface/formatted-strings'
-import {personMarkdown} from '../lib/interface/person'
+import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {emojis} from '../../lib/interface/emojis'
+import {infoHeader} from '../../lib/interface/formatted-strings'
+import {personMarkdown} from '../../lib/interface/person'
 
-import {helpButtonText, createHelpMenu} from './help'
+import {helpButtonText, createHelpMenu} from '../help'
 
 async function menuText(ctx: any): Promise<string> {
 	const now = Date.now() / 1000

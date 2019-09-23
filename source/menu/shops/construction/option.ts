@@ -1,16 +1,16 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
-import {Shop} from '../lib/types/shop'
+import {Session, Persist} from '../../../lib/types'
+import {Shop} from '../../../lib/types/shop'
 
-import {costForAdditionalShop} from '../lib/game-math/shop-cost'
+import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
-import {emojis} from '../lib/interface/emojis'
-import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
+import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {emojis} from '../../../lib/interface/emojis'
+import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings'
 
-import {createHelpMenu, helpButtonText} from './help'
-import {replyMenu} from './shops'
+import {createHelpMenu, helpButtonText} from '../../help'
+import {replyMenu} from '..'
 
 function fromCtx(ctx: any): {construction: string} {
 	const construction = ctx.match[1]
