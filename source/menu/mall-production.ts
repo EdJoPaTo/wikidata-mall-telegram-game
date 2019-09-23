@@ -37,7 +37,6 @@ async function menuText(ctx: any): Promise<string> {
 	}
 
 	const {itemToProduce, competitionUntil} = await getProduction(ctx)
-	console.log('competition until', competitionUntil, new Date(competitionUntil * 1000))
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.production'), {titlePrefix: emojis.production})
@@ -57,7 +56,6 @@ async function menuText(ctx: any): Promise<string> {
 
 	if (mall.productionFinishes) {
 		text += emojis.countdown
-		console.log(new Date(mall.productionFinishes * 1000))
 		text += countdownMinuteSecond(mall.productionFinishes - now)
 		text += ' '
 		text += ctx.wd.r('unit.minute').label()
