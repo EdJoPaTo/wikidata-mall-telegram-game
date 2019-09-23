@@ -7,6 +7,7 @@ import {Person} from '../../lib/types/people'
 import {Persist} from '../../lib/types'
 
 import {canBeEmployed, minutesUntilGraduation, getRefinedState} from '../../lib/game-math/applicant'
+import {mallMemberAmountWithinLimits} from '../../lib/game-math/mall'
 
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
@@ -63,7 +64,7 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		const now = Date.now() / 1000
 		const {applicant} = fromCtx(ctx)
 		const {mall} = ctx.persist as Persist
-		return !mall || mall.applicants.length > 0 || !canBeEmployed(applicant, now)
+		return !mall || !mallMemberAmountWithinLimits(mall) || mall.applicants.length > 0 || !canBeEmployed(applicant, now)
 	},
 	doFunc: (ctx: any) => {
 		const {applicantId, applicant} = fromCtx(ctx)

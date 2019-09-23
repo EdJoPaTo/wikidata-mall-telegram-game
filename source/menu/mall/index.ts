@@ -5,6 +5,8 @@ import {Session, Persist} from '../../lib/types'
 
 import * as userInfo from '../../lib/data/user-info'
 
+import {mallMemberAmountWithinLimits} from '../../lib/game-math/mall'
+
 import {applicantButtonEmoji} from '../../lib/interface/applicants'
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
@@ -62,6 +64,11 @@ const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('menu.mall')
 })
 
+function hideWhenMemberAmountNotCorrect(ctx: any): boolean {
+	const {mall} = ctx.persist as Persist
+	return Boolean(!mall || !mallMemberAmountWithinLimits(mall))
+}
+
 function applicantEmoji(ctx: any): string {
 	const now = Date.now() / 1000
 	const {mall} = ctx.persist as Persist
@@ -72,7 +79,9 @@ function applicantEmoji(ctx: any): string {
 	return applicantButtonEmoji(mall.applicants, now)
 }
 
-menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicantsMenu)
+menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicantsMenu, {
+	hide: hideWhenMemberAmountNotCorrect
+})
 
 function mallProductionButtonEmoji(ctx: any): string {
 	const mall = (ctx.persist as Persist).mall!
@@ -85,17 +94,23 @@ function mallProductionButtonEmoji(ctx: any): string {
 	return emojis.requireAttention + emojis.production
 }
 
-menu.submenu(buttonText(mallProductionButtonEmoji, 'mall.production'), 'production', productionMenu)
+menu.submenu(buttonText(mallProductionButtonEmoji, 'mall.production'), 'production', productionMenu, {
+	hide: hideWhenMemberAmountNotCorrect
+})
 
 menu.button(buttonText(emojis.currency, 'mall.donation'), 'donate', {
 	hide: async (ctx: any) => {
+		const {mall} = ctx.persist as Persist
+		if (!mall || !mallMemberAmountWithinLimits(mall)) {
+			return true
+		}
+
 		const session = ctx.session as Session
 		if (session.money < DONATION_AMOUNT * 2) {
 			return true
 		}
 
-		const {mall} = ctx.persist as Persist
-		return Boolean(mall && mall.money >= DONATION_AMOUNT * 10)
+		return mall.money >= DONATION_AMOUNT * 10
 	},
 	doFunc: async (ctx: any) => {
 		const session = ctx.session as Session
