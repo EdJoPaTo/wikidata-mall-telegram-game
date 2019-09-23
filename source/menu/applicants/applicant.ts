@@ -1,3 +1,4 @@
+import {Extra, Markup} from 'telegraf'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {MINUTE_IN_SECONDS} from '../../lib/math/timestamp-constants'
@@ -66,7 +67,8 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		const {mall} = ctx.persist as Persist
 		return !mall || !mallMemberAmountWithinLimits(mall) || mall.applicants.length > 0 || !canBeEmployed(applicant, now)
 	},
-	doFunc: (ctx: any) => {
+	doFunc: async (ctx: any) => {
+		const now = Date.now() / 1000
 		const {applicantId, applicant} = fromCtx(ctx)
 		const {applicants, mall} = ctx.persist as Persist
 		if (!mall) {
@@ -76,6 +78,15 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		if (mall.applicants.length > 0) {
 			throw new Error('Mall seats are full')
 		}
+
+		let caption = ''
+		caption += personMarkdown(ctx, applicant, false, now)
+
+		const photo = ctx.wd.r(applicant.hobby).url()
+		const groupKeyboard = Markup.inlineKeyboard([
+			Markup.callbackButton(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
+		])
+		await ctx.telegram.sendPhoto(mall.chat.id, photo, new Extra({caption}).markdown().markup(groupKeyboard))
 
 		mall.applicants.push(applicant)
 		applicants.list.splice(applicantId, 1)
