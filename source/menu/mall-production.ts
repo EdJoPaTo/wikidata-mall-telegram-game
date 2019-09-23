@@ -159,7 +159,10 @@ menu.urlButton(
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, async ctx => (await getProduction(ctx)).itemToProduce),
-	async (ctx: any) => ctx.wd.r((await getProduction(ctx)).itemToProduce).url()
+	async (ctx: any) => ctx.wd.r((await getProduction(ctx)).itemToProduce).url(),
+	{
+		joinLastRow: true
+	}
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production'))
