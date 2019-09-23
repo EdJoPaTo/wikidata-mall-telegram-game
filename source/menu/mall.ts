@@ -8,13 +8,12 @@ import * as userInfo from '../lib/data/user-info'
 
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../lib/game-math/constants'
 
-import {parseTitle} from '../lib/game-logic/mall'
-
 import {applicantButtonEmoji} from '../lib/interface/applicants'
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {formatFloat} from '../lib/interface/format-number'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
+import {mallMoji} from '../lib/interface/mall'
 
 import applicantsMenu from './mall-applicants'
 import productionMenu from './mall-production'
@@ -28,17 +27,13 @@ async function menuText(ctx: any): Promise<string> {
 		throw new Error('You are not part of a mall')
 	}
 
-	const mallTitle = format.escape(parseTitle(mall.chat.title))
 	const memberInfos = (await Promise.all(
 		mall.member.map(async o => userInfo.get(o))
 	))
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.mall'), {titlePrefix: emojis.mall})
+	text += infoHeader(ctx.wd.r('menu.mall'), {titlePrefix: emojis.mall + mallMoji(mall)})
 	text += '\n\n'
-
-	text += format.bold(mallTitle)
-	text += '\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currency)
 	text += '\n\n'

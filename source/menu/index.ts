@@ -8,6 +8,7 @@ import {applicantButtonEmoji} from '../lib/interface/applicants'
 import {buttonText} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
+import {mallMoji} from '../lib/interface/mall'
 
 import applicants from './applicants'
 import botStats from './bot-stats'
@@ -75,7 +76,12 @@ menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 	}
 })
 
-menu.submenu(buttonText(emojis.mall, 'menu.mall'), 'mall', mall, {
+function mallButtonEmojis(ctx: any): string {
+	const {mall} = ctx.persist as Persist
+	return emojis.mall + String(mall && mallMoji(mall))
+}
+
+menu.submenu(buttonText(mallButtonEmojis, 'menu.mall'), 'mall', mall, {
 	hide: async (ctx: any) => {
 		const persist = ctx.persist as Persist
 		return !persist.mall

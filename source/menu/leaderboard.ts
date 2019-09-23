@@ -20,11 +20,10 @@ import {currentLevel} from '../lib/game-math/skill'
 import {lastTimeActive} from '../lib/game-math/shop-time'
 import {returnOnInvestment, sellPerMinute} from '../lib/game-math/shop-cost'
 
-import {parseTitle} from '../lib/game-logic/mall'
-
 import {emojis} from '../lib/interface/emojis'
 import {formatFloat, formatInt} from '../lib/interface/format-number'
 import {infoHeader} from '../lib/interface/formatted-strings'
+import {mallMoji} from '../lib/interface/mall'
 import {menuPhoto, buttonText} from '../lib/interface/menu'
 import {percentBonusString} from '../lib/interface/format-percent'
 
@@ -129,7 +128,7 @@ function nameOfId(allPlayerInfos: Dictionary<User>, allMallInfos: Dictionary<Mal
 
 	const mallInfo = allMallInfos[id]
 	if (mallInfo) {
-		return parseTitle(mallInfo.chat.title)
+		return mallMoji(mallInfo)
 	}
 
 	return '??'
