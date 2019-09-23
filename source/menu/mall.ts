@@ -3,7 +3,6 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../lib/types'
 
-import * as mallProduction from '../lib/data/mall-production'
 import * as userInfo from '../lib/data/user-info'
 
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../lib/game-math/constants'
@@ -37,12 +36,6 @@ async function menuText(ctx: any): Promise<string> {
 	text += '\n\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currency)
-	text += '\n\n'
-
-	text += emojis.production
-	text += ctx.wd.r('mall.production').label()
-	text += ': '
-	text += ctx.wd.r((await mallProduction.get()).itemToProduce).label()
 	text += '\n\n'
 
 	text += format.bold(
