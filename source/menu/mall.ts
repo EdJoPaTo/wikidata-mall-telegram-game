@@ -15,6 +15,7 @@ import {formatFloat} from '../lib/interface/format-number'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 import {mallMoji} from '../lib/interface/mall'
 
+import {helpButtonText, createHelpMenu} from './help'
 import applicantsMenu from './mall-applicants'
 import productionMenu from './mall-production'
 
@@ -131,5 +132,7 @@ menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
 	(ctx: any) => ctx.wd.r('menu.mall').url()
 )
+
+menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall'))
 
 export default menu

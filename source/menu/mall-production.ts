@@ -19,6 +19,8 @@ import {countdownMinuteSecond, humanReadableTimestamp} from '../lib/interface/fo
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 
+import {helpButtonText, createHelpMenu} from './help'
+
 async function getProduction(ctx: any): Promise<MallProduction> {
 	const store = ctx.wd.store as WikidataEntityStore
 	const production = await mallProduction.get()
@@ -158,5 +160,7 @@ menu.urlButton(
 	buttonText(emojis.wikidataItem, async ctx => (await getProduction(ctx)).itemToProduce),
 	async (ctx: any) => ctx.wd.r((await getProduction(ctx)).itemToProduce).url()
 )
+
+menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production'))
 
 export default menu

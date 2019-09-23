@@ -43,6 +43,9 @@ help:
 
 
     People retire after some time so you will need to find new ones from time to time.
+
+    If you are part of a mall you can send an applicant to it.
+    Your friends can hire the applicant then if they like.
   bot-stats: >
     Here you can see statistics about this bot.
 
@@ -63,6 +66,20 @@ help:
 
 
     You can view top players and direct competitors of yours based on multiple statistics.
+  mall: >
+    This is the place you share with your friends.
+
+
+    Your mall is identified with the first emoji in the mall chats title.
+    Adapt your mall chats name to have your favorite emoji. 🍕🛹🖨
+  mall-production: >
+    With your friends of your mall you can produce items.
+
+    Everyone can choose a part they want to contribute.
+    When enough parts are choosen the production starts.
+    After producing it you can produce the next one.
+
+    On the leaderboard you can see your progress compared to other malls.
   product: >
     This is a product you can sell.
 
