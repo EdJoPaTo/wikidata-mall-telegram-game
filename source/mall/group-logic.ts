@@ -158,8 +158,13 @@ bot.action('join', async ctx => {
 		}
 	}
 
+	let text = ''
+	text += '👍'
+	text += ctx.from!.first_name
+
 	mallData.member.push(ctx.from!.id)
 	await userMalls.set(mallId, mallData)
+	await ctx.reply(text)
 	return ctx.answerCbQuery('👍')
 })
 
