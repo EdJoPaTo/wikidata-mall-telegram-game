@@ -16,6 +16,7 @@ const basic: Dictionary<string> = {
 	employmentTermination: '🔫',
 	github: '🦑',
 	graduation: '🎉',
+	group: '👥',
 	help: '🃏',
 	hobbyDifferent: '❤️',
 	hobbyMatch: '💚',

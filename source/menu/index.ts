@@ -64,12 +64,10 @@ menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 	doFunc: async ctx => {
 		const {username} = (ctx as any).botInfo
 		let text = ''
-		text += '🤖 → 👥'
-		text += '\n'
 		text += '@'
 		text += username
 		text += ' → '
-		text += '👥'
+		text += emojis.group
 		text += (ctx as any).wd.r('menu.chat').label()
 
 		await ctx.answerCbQuery(text, true)
