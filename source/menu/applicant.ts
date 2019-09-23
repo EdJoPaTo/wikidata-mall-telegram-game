@@ -6,7 +6,7 @@ import {randomBetween} from '../lib/math/probability'
 import {Person} from '../lib/types/people'
 import {Persist} from '../lib/types'
 
-import {minutesUntilGraduation} from '../lib/game-math/applicant'
+import {minutesUntilGraduation, getRefinedState} from '../lib/game-math/applicant'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
@@ -59,6 +59,11 @@ menu.button(buttonText(emojis.personStudent, 'action.education'), 'educate', {
 menu.button(buttonText(emojis.door, 'other.door'), 'remove', {
 	joinLastRow: true,
 	setParentMenuAfter: true,
+	hide: (ctx: any) => {
+		const now = Date.now() / 1000
+		const {applicant} = fromCtx(ctx)
+		return applicant.type === 'refined' && getRefinedState(applicant, now) === 'student'
+	},
 	doFunc: (ctx: any) => {
 		const {applicantId} = fromCtx(ctx)
 		const {applicants} = ctx.persist as Persist
