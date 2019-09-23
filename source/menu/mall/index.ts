@@ -5,14 +5,12 @@ import {Session, Persist} from '../../lib/types'
 
 import * as userInfo from '../../lib/data/user-info'
 
-import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../../lib/game-math/constants'
-
 import {applicantButtonEmoji} from '../../lib/interface/applicants'
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
 import {formatFloat} from '../../lib/interface/format-number'
 import {infoHeader, labeledFloat} from '../../lib/interface/formatted-strings'
-import {mallMoji} from '../../lib/interface/mall'
+import {mallMoji, hintIncorrectPeopleAmount} from '../../lib/interface/mall'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
@@ -55,17 +53,7 @@ async function menuText(ctx: any): Promise<string> {
 		.join('\n')
 	text += '\n\n'
 
-	if (mall.member.length < MALL_MIN_PEOPLE) {
-		text += emojis.warning
-		text += mall.member.length
-		text += ' '
-		text += ctx.wd.r('mall.participation').label()
-		text += ' ('
-		text += MALL_MIN_PEOPLE
-		text += ' - '
-		text += MALL_MAX_PEOPLE
-		text += ')'
-	}
+	text += hintIncorrectPeopleAmount(ctx, mall)
 
 	return text
 }
