@@ -16,6 +16,7 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		// TODO: remove migration
 		if ((session as any).achievements) {
 			session.gameStarted = (session as any).achievements.gameStarted
+			delete (session as any).achievements
 		}
 
 		init(session, now)
