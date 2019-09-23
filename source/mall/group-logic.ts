@@ -6,6 +6,8 @@ import {Persist} from '../lib/types'
 
 import * as userMalls from '../lib/data/malls'
 
+import {emojis} from '../lib/interface/emojis'
+
 const bot = new Composer()
 
 async function replyJoinMessage(ctx: ContextMessageUpdate): Promise<void> {
@@ -174,6 +176,11 @@ bot.command('fix', async ctx => {
 
 	await userMalls.set(mallId, mallData)
 	return ctx.reply('everything should be in sync now.')
+})
+
+bot.command(['language', 'settings'], async ctx => {
+	const {username} = (ctx as any).botInfo
+	return ctx.reply(`${emojis.chat}@${username}`)
 })
 
 export default bot
