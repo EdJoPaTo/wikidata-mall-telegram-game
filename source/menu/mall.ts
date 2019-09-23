@@ -85,7 +85,18 @@ function applicantEmoji(ctx: any): string {
 
 menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicantsMenu)
 
-menu.submenu(buttonText(emojis.production, 'mall.production'), 'production', productionMenu)
+function mallProductionButtonEmoji(ctx: any): string {
+	const mall = (ctx.persist as Persist).mall!
+	const currentlyProducing = Boolean(mall.productionFinishes)
+	const userHasSelectedAPart = mall.partsProducedBy && Object.values(mall.partsProducedBy).includes(ctx.from.id)
+	if (currentlyProducing || userHasSelectedAPart) {
+		return emojis.production
+	}
+
+	return emojis.requireAttention + emojis.production
+}
+
+menu.submenu(buttonText(mallProductionButtonEmoji, 'mall.production'), 'production', productionMenu)
 
 menu.button(buttonText(emojis.currency, 'mall.donation'), 'donate', {
 	hide: async (ctx: any) => {
