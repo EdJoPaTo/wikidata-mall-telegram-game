@@ -49,8 +49,18 @@ function menuText(ctx: any): string {
 
 const menu = new TelegrafInlineMenu(menuText)
 
+function hideWhenNoApplicantOrEmploymentProtected(ctx: any): boolean {
+	const now = Date.now() / 1000
+	const {employee} = fromCtx(ctx)
+	if (!employee) {
+		return true
+	}
+
+	return Boolean(employee.employmentProtectionUntil && employee.employmentProtectionUntil > now)
+}
+
 menu.button(buttonText(emojis.employmentTermination, 'action.employmentTermination'), 'remove', {
-	hide: ctx => !fromCtx(ctx).employee,
+	hide: hideWhenNoApplicantOrEmploymentProtected,
 	doFunc: (ctx: any) => {
 		const {shop, talent} = fromCtx(ctx)
 		delete shop.personal[talent]
@@ -58,7 +68,7 @@ menu.button(buttonText(emojis.employmentTermination, 'action.employmentTerminati
 })
 
 menu.button(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
-	hide: ctx => !fromCtx(ctx).employee,
+	hide: hideWhenNoApplicantOrEmploymentProtected,
 	doFunc: (ctx: any) => {
 		const {applicants} = ctx.persist as Persist
 		const {shop, talent} = fromCtx(ctx)
@@ -78,7 +88,9 @@ function availableApplicants(ctx: any): string[] {
 	const now = Date.now() / 1000
 	const {applicants} = ctx.persist as Persist
 	const {employee, shop, talent} = fromCtx(ctx)
-	const currentBonus = personalBonusWhenEmployed(shop, talent, employee)
+	if (employee && employee.employmentProtectionUntil && employee.employmentProtectionUntil > now) {
+		return []
+	}
 
 	const applicantBoni: Dictionary<number> = {}
 	for (let i = 0; i < applicants.list.length; i++) {
@@ -86,6 +98,7 @@ function availableApplicants(ctx: any): string[] {
 		applicantBoni[i] = personalBonusWhenEmployed(shop, talent, applicant)
 	}
 
+	const currentBonus = personalBonusWhenEmployed(shop, talent, employee)
 	const indiciesOfInterest = applicants.list
 		.map((_, i) => i)
 		.filter(i => canBeEmployed(applicants.list[i], now))

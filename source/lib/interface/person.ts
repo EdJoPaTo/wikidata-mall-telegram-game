@@ -40,7 +40,7 @@ export function wdResourceKeyOfPerson(person: Person, now: number): string {
 
 export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now: number): string {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
-	const {name, hobby, retirementTimestamp, talents} = person
+	const {name, hobby, employmentProtectionUntil, retirementTimestamp, talents} = person
 
 	let text = ''
 	text += nameMarkdown(name)
@@ -56,6 +56,16 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += ': '
 	text += ctx.wd.r(hobby).label()
 	text += '\n'
+
+	if (employmentProtectionUntil && employmentProtectionUntil > now) {
+		text += emojis.employmentProtection
+		text += '*'
+		text += ctx.wd.r('person.employmentProtection').label()
+		text += '*'
+		text += ':\n  '
+		text += humanReadableTimestamp(employmentProtectionUntil, locale, timeZone)
+		text += '\n'
+	}
 
 	text += emojis.retirement
 	text += '*'

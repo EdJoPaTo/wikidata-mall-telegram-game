@@ -5,6 +5,7 @@ interface BasicPerson {
 	name: Name;
 	type: PersonType;
 	hobby: QNumber;
+	employmentProtectionUntil?: UnixTimestamp;
 	retirementTimestamp: UnixTimestamp;
 	talents: Talents;
 }

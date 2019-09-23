@@ -4,6 +4,7 @@ import {Persist} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
 import {TalentName, Person} from '../../../../lib/types/people'
 
+import {EMPLOYMENT_PROTECTION_SECONDS} from '../../../../lib/game-math/constants'
 import {personalBonusWhenEmployed} from '../../../../lib/game-math/personal'
 
 import {buttonText} from '../../../../lib/interface/menu'
@@ -60,7 +61,7 @@ menu.button(buttonText(emojis.yes + emojis.recruitment, 'action.recruitment'), '
 		return bonusWhenEmployed < 1
 	},
 	doFunc: (ctx: any) => {
-		const now = Date.now() / 1000
+		const now = Math.floor(Date.now() / 1000)
 		const {applicants} = ctx.persist as Persist
 		const {shop, talent, employee, applicantId, applicant} = fromCtx(ctx)
 
@@ -68,6 +69,7 @@ menu.button(buttonText(emojis.yes + emojis.recruitment, 'action.recruitment'), '
 			applicants.list.push(employee)
 		}
 
+		applicant.employmentProtectionUntil = now + EMPLOYMENT_PROTECTION_SECONDS
 		shop.personal[talent] = applicant
 		applicants.list.splice(applicantId, 1)
 		applicants.timestamp = now
