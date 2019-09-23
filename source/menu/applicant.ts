@@ -56,21 +56,6 @@ menu.button(buttonText(emojis.personStudent, 'action.education'), 'educate', {
 	}
 })
 
-menu.button(buttonText(emojis.door, 'other.door'), 'remove', {
-	joinLastRow: true,
-	setParentMenuAfter: true,
-	hide: (ctx: any) => {
-		const now = Date.now() / 1000
-		const {applicant} = fromCtx(ctx)
-		return applicant.type === 'refined' && getRefinedState(applicant, now) === 'student'
-	},
-	doFunc: (ctx: any) => {
-		const {applicantId} = fromCtx(ctx)
-		const {applicants} = ctx.persist as Persist
-		applicants.list.splice(applicantId, 1)
-	}
-})
-
 menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 	joinLastRow: true,
 	setParentMenuAfter: true,
@@ -92,6 +77,21 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		}
 
 		mall.applicants.push(applicant)
+		applicants.list.splice(applicantId, 1)
+	}
+})
+
+menu.button(buttonText(emojis.door, 'other.door'), 'remove', {
+	joinLastRow: true,
+	setParentMenuAfter: true,
+	hide: (ctx: any) => {
+		const now = Date.now() / 1000
+		const {applicant} = fromCtx(ctx)
+		return applicant.type === 'refined' && getRefinedState(applicant, now) === 'student'
+	},
+	doFunc: (ctx: any) => {
+		const {applicantId} = fromCtx(ctx)
+		const {applicants} = ctx.persist as Persist
 		applicants.list.splice(applicantId, 1)
 	}
 })
