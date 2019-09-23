@@ -84,6 +84,9 @@ async function menuText(ctx: any): Promise<string> {
 		text += '\n\n'
 	}
 
+	text += emojis.warning + emojis.underConstruction
+	text += 'Experimental!\nThe production feature is currently under testing and not fully functional. Feel free to test it and provide feedback and ideas! 🤩'
+
 	return text
 }
 
