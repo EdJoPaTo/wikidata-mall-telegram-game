@@ -56,7 +56,7 @@ function shopsButtonSuffix(ctx: any): string {
 menu.submenu(buttonText(emojis.shop, 'menu.shop', {requireAttention: shopsRequireAttention, suffix: shopsButtonSuffix}), 'shops', shops)
 
 menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
-	hide: async (ctx: any) => {
+	hide: (ctx: any) => {
 		const persist = ctx.persist as Persist
 		return Boolean(persist.mall)
 	},
@@ -79,7 +79,7 @@ function mallButtonEmojis(ctx: any): string {
 }
 
 menu.submenu(buttonText(mallButtonEmojis, 'menu.mall'), 'mall', mall, {
-	hide: async (ctx: any) => {
+	hide: (ctx: any) => {
 		const persist = ctx.persist as Persist
 		return !persist.mall
 	}

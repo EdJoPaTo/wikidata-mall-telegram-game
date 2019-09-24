@@ -9,7 +9,7 @@ import {personMarkdown} from '../../lib/interface/person'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
-async function menuText(ctx: any): Promise<string> {
+function menuText(ctx: any): string {
 	const now = Date.now() / 1000
 	const {mall, shops} = ctx.persist as Persist
 	if (!mall) {
@@ -55,7 +55,7 @@ menu.button(buttonText(emojis.seat, 'other.seat'), 'takeAll', {
 		const {mall} = ctx.persist as Persist
 		return !mall || mall.applicants.length === 0
 	},
-	doFunc: async (ctx: any) => {
+	doFunc: (ctx: any) => {
 		const {applicants, mall} = ctx.persist as Persist
 		if (!mall) {
 			throw new Error('You are not part of a mall')

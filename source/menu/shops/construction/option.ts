@@ -17,7 +17,7 @@ function fromCtx(ctx: any): {construction: string} {
 	return {construction}
 }
 
-async function menuText(ctx: any): Promise<string> {
+function menuText(ctx: any): string {
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
 	const cost = costForAdditionalShop(persist.shops.length)

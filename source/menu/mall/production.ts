@@ -118,7 +118,7 @@ async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
 menu.select('take', currentlyNotTakenParts, {
 	columns: 2,
 	textFunc: (ctx: any, key) => ctx.wd.r(key).label(),
-	setFunc: async (ctx: any, key) => {
+	setFunc: (ctx: any, key) => {
 		const now = Date.now() / 1000
 		const {mall} = ctx.persist as Persist
 		if (!mall) {

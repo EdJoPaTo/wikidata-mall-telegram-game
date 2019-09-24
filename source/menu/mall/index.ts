@@ -96,7 +96,7 @@ menu.submenu(buttonText(emojis.production, 'mall.production', {requireAttention:
 })
 
 menu.button(buttonText(emojis.currency, 'mall.donation'), 'donate', {
-	hide: async (ctx: any) => {
+	hide: (ctx: any) => {
 		const {mall} = ctx.persist as Persist
 		if (!mall || !mallMemberAmountWithinLimits(mall)) {
 			return true
