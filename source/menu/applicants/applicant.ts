@@ -1,4 +1,5 @@
 import {Extra, Markup} from 'telegraf'
+import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {MINUTE_IN_SECONDS} from '../../lib/math/timestamp-constants'
@@ -80,6 +81,9 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		}
 
 		let caption = ''
+		caption += '😘'
+		caption += format.url(ctx.from!.first_name, `tg://user?id=${ctx.from.id}`)
+		caption += '\n\n'
 		caption += personMarkdown(ctx, applicant, false, now)
 
 		const photo = ctx.wd.r(applicant.hobby).images(800)[0]
