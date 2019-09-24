@@ -3,6 +3,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../lib/types'
 
 import {canAddToSkillQueue} from '../lib/game-math/skill'
+import {storageFilledPercentage} from '../lib/game-math/shop-capacity'
 
 import {applicantButtonEmoji} from '../lib/interface/applicants'
 import {buttonText} from '../lib/interface/menu'
@@ -42,19 +43,17 @@ function menuText(ctx: any): string {
 const menu = new TelegrafInlineMenu(menuText)
 menu.setCommand('start')
 
-function shopsButtonText(ctx: any): string {
-	const persist = ctx.persist as Persist
-	let text = ''
-	text += emojis.shop
-	text += ctx.wd.r('menu.shop').label()
-	text += ' ('
-	text += persist.shops.length
-	text += ')'
-
-	return text
+function shopsRequireAttention(ctx: any): boolean {
+	const {shops, skills} = ctx.persist as Persist
+	return shops.some(o => storageFilledPercentage(o, skills) === 0)
 }
 
-menu.submenu(shopsButtonText, 'shops', shops)
+function shopsButtonSuffix(ctx: any): string {
+	const {shops} = ctx.persist as Persist
+	return `(${shops.length})`
+}
+
+menu.submenu(buttonText(emojis.shop, 'menu.shop', {requireAttention: shopsRequireAttention, suffix: shopsButtonSuffix}), 'shops', shops)
 
 menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 	hide: async (ctx: any) => {
