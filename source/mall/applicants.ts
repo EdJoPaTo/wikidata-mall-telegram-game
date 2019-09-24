@@ -21,7 +21,11 @@ bot.action('takeAllApplicants', async (ctx: any) => {
 		await ctx.answerCbQuery(emojis.noPerson)
 	}
 
-	await ctx.editMessageReplyMarkup()
+	try {
+		await ctx.deleteMessage()
+	} catch (_) {
+		await ctx.editMessageReplyMarkup()
+	}
 })
 
 export default bot
