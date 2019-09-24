@@ -82,11 +82,15 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		let caption = ''
 		caption += personMarkdown(ctx, applicant, false, now)
 
-		const photo = ctx.wd.r(applicant.hobby).url()
+		const photo = ctx.wd.r(applicant.hobby).images(800)[0]
 		const groupKeyboard = Markup.inlineKeyboard([
 			Markup.callbackButton(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
 		])
-		await ctx.telegram.sendPhoto(mall.chat.id, photo, new Extra({caption}).markdown().markup(groupKeyboard))
+		if (photo) {
+			await ctx.telegram.sendPhoto(mall.chat.id, photo, new Extra({caption}).markdown().markup(groupKeyboard))
+		} else {
+			await ctx.telegram.sendMessage(mall.chat.id, caption, Extra.markdown().markup(groupKeyboard))
+		}
 
 		mall.applicants.push(applicant)
 		applicants.list.splice(applicantId, 1)
