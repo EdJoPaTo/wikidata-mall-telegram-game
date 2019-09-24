@@ -70,7 +70,7 @@ bot.on('left_chat_member', async ctx => {
 
 	console.log(...(ctx as any).updateSubTypes, left)
 	if (myId === left.id) {
-		userMalls.remove(mallId)
+		await userMalls.remove(mallId)
 	} else {
 		const mallData = await userMalls.get(mallId)
 		if (mallData) {
