@@ -149,6 +149,11 @@ bot.action('join', async ctx => {
 		return ctx.answerCbQuery((ctx as any).i18n.t('mall.alreadyInDifferentMall'))
 	}
 
+	let text = ''
+	text += '👍'
+	text += ctx.from!.first_name
+	await ctx.reply(text)
+
 	if (!mallData) {
 		mallData = {
 			applicants: [],
@@ -158,13 +163,8 @@ bot.action('join', async ctx => {
 		}
 	}
 
-	let text = ''
-	text += '👍'
-	text += ctx.from!.first_name
-
 	mallData.member.push(ctx.from!.id)
 	await userMalls.set(mallId, mallData)
-	await ctx.reply(text)
 	return ctx.answerCbQuery('👍')
 })
 
