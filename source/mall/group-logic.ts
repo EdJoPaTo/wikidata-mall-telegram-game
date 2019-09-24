@@ -109,12 +109,6 @@ bot.use(async (ctx, next) => {
 	return next && next()
 })
 
-bot.on('migrate_to_chat_id', async ctx => {
-	const newId = ctx.message!.migrate_to_chat_id!
-	const oldId = ctx.chat!.id
-	console.log('migrate_to_chat_id', oldId, newId)
-})
-
 bot.on('migrate_from_chat_id', async ctx => {
 	await ctx.reply('Chat is now a supergroup 😎')
 	return replyJoinMessage(ctx)
