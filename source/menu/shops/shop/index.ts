@@ -254,10 +254,11 @@ menu.button(buttonText(emojis.add, 'other.assortment'), 'addProduct', {
 function buyAllAdditionalCostString(ctx: any): string {
 	const persist = ctx.persist as Persist
 	const factor = buyAllCostFactor(persist.skills, 1)
-	return percentBonusString(factor) + emojis.currency
+	const content = percentBonusString(factor) + emojis.currency
+	return `(${content})`
 }
 
-menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', ctx => `(${buyAllAdditionalCostString(ctx)})`), 'buy-all', {
+menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: buyAllAdditionalCostString}), 'buy-all', {
 	hide: (ctx: any) => {
 		const {shop} = fromCtx(ctx)
 		const session = ctx.session as Session

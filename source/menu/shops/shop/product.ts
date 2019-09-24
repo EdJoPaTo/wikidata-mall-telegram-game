@@ -75,6 +75,10 @@ function itemsPurchasable(session: Session, shop: Shop, product: Product, skills
 	return Math.max(0, Math.min(freeCapacity, moneyAvailableForAmount))
 }
 
+function itemsPurchasableButtonSuffix(ctx: any): string {
+	return `(${itemsPurchasableCtx(ctx)})`
+}
+
 function menuText(ctx: any): string {
 	const {product, shop} = fromCtx(ctx)
 	const session = ctx.session as Session
@@ -163,7 +167,7 @@ function buyAmount(ctx: any, amount: number, now: number): void {
 	session.stats.productsBought += buyItems
 }
 
-menu.button(buttonText(emojis.purchasing, 'person.talents.purchasing', ctx => `(${itemsPurchasableCtx(ctx)})`), 'fill', {
+menu.button(buttonText(emojis.purchasing, 'person.talents.purchasing', {suffix: itemsPurchasableButtonSuffix}), 'fill', {
 	hide: ctx => itemsPurchasableCtx(ctx) < 1,
 	doFunc: (ctx: any) => {
 		const now = Math.floor(Date.now() / 1000)

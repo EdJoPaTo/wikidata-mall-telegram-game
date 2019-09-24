@@ -63,7 +63,8 @@ const menu = new TelegrafInlineMenu(menuText, {
 function buyAllAdditionalCostString(ctx: any): string {
 	const persist = ctx.persist as Persist
 	const factor = buyAllCostFactor(persist.skills, persist.shops.length)
-	return percentBonusString(factor) + emojis.currency
+	const content = percentBonusString(factor) + emojis.currency
+	return `(${content})`
 }
 
 function userShops(ctx: any): string[] {
@@ -78,7 +79,7 @@ menu.selectSubmenu('s', userShops, shopMenu, {
 
 menu.submenu(buttonText(emojis.construction, 'action.construction'), 'build', constructionMenu)
 
-menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', ctx => `(${buyAllAdditionalCostString(ctx)})`), 'buy-all', {
+menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: buyAllAdditionalCostString}), 'buy-all', {
 	hide: (ctx: any) => {
 		const session = ctx.session as Session
 		const persist = ctx.persist as Persist

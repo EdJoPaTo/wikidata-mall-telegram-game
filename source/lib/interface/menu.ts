@@ -4,7 +4,12 @@ type ConstOrPromise<T> = T | Promise<T>
 type Func<T> = (ctx: any, key?: string) => ConstOrPromise<T>
 type ConstOrContextFunc<T> = T | Func<T>
 
-export function buttonText(emoji: ConstOrContextFunc<string>, resourceKey: ConstOrContextFunc<string>, suffix?: ConstOrContextFunc<string>): (ctx: any, key?: string) => Promise<string> {
+export interface ButtonTextOptions {
+	suffix?: ConstOrContextFunc<string>;
+}
+
+export function buttonText(emoji: ConstOrContextFunc<string>, resourceKey: ConstOrContextFunc<string>, options: ButtonTextOptions = {}): (ctx: any, key?: string) => Promise<string> {
+	const {suffix} = options
 	return async (ctx: any, key?: string) => {
 		const emojiString = typeof emoji === 'function' ? await emoji(ctx, key) : emoji
 		const resourceKeyString = typeof resourceKey === 'function' ? await resourceKey(ctx, key) : resourceKey
