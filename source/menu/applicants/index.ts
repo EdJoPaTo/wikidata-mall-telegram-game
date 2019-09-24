@@ -86,6 +86,11 @@ function availableApplicants(ctx: any): string[] {
 
 menu.selectSubmenu('a', availableApplicants, applicantMenu, {
 	columns: 2,
+	getCurrentPage: (ctx: any) => (ctx.session as Session).page,
+	setPage: (ctx: any, page) => {
+		const session = ctx.session as Session
+		session.page = page
+	},
 	prefixFunc: (ctx: any, key) => {
 		const now = Date.now() / 1000
 		const {applicants} = ctx.persist as Persist
