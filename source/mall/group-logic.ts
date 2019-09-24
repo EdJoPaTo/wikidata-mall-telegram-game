@@ -68,7 +68,6 @@ bot.on('left_chat_member', async ctx => {
 	const left = ctx.message!.left_chat_member!
 	const myId = (ctx as any).botInfo.id as number
 
-	console.log(...(ctx as any).updateSubTypes, left)
 	if (myId === left.id) {
 		await userMalls.remove(mallId)
 	} else {
