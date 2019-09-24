@@ -8,7 +8,7 @@ export class NotificationManager {
 	private readonly _currentJobs: Dictionary<Job[]> = {}
 
 	constructor(
-		private readonly sendFunc: (chatId: string | number, notification: Notification, fireDate: Date) => (Promise<void> | void)
+		private readonly _sendFunc: (chatId: string | number, notification: Notification, fireDate: Date) => (Promise<void> | void)
 	) {}
 
 	clear(chatId: string | number): void {
@@ -25,7 +25,7 @@ export class NotificationManager {
 		}
 
 		const job = scheduleJob(notification.date, async fireDate =>
-			this.sendFunc(chatId, notification, fireDate)
+			this._sendFunc(chatId, notification, fireDate)
 		)
 
 		if (job) {

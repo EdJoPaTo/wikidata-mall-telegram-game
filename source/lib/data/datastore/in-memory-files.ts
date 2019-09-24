@@ -10,9 +10,9 @@ export class InMemoryFiles<T> implements Datastore<T> {
 	private _inMemoryStorage: Dictionary<T> = {}
 
 	constructor(
-		private readonly directory: string
+		private readonly _directory: string
 	) {
-		mkdirSync(directory, {recursive: true})
+		mkdirSync(_directory, {recursive: true})
 
 		const entries = this._listFromFS()
 		for (const e of entries) {
@@ -45,11 +45,11 @@ export class InMemoryFiles<T> implements Datastore<T> {
 	}
 
 	private _pathOfKey(key: string): string {
-		return `${this.directory}/${key}.json`
+		return `${this._directory}/${key}.json`
 	}
 
 	private _listFromFS(): readonly string[] {
-		return readdirSync(this.directory)
+		return readdirSync(this._directory)
 			.map(o => o.replace('.json', ''))
 	}
 
