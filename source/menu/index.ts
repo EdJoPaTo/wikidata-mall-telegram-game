@@ -107,13 +107,13 @@ menu.submenu(buttonText(emojis.person, 'menu.employee'), 'employees', employees,
 	}
 })
 
-function skillEmoji(ctx: any): string {
+function skillRequireAttention(ctx: any): boolean {
 	const {skillQueue} = ctx.session as Session
 	const now = Date.now() / 1000
-	return (skillQueue && !canAddToSkillQueue(skillQueue, now) ? '' : emojis.requireAttention) + emojis.skill
+	return !skillQueue || canAddToSkillQueue(skillQueue, now)
 }
 
-menu.submenu(buttonText(skillEmoji, 'menu.skill'), 'skill', skills, {
+menu.submenu(buttonText(emojis.skill, 'menu.skill', {requireAttention: skillRequireAttention}), 'skill', skills, {
 	hide: (ctx: any) => {
 		const persist = ctx.persist as Persist
 		return persist.shops.length === 0

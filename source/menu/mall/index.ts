@@ -83,18 +83,15 @@ menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applica
 	hide: hideWhenMemberAmountNotCorrect
 })
 
-function mallProductionButtonEmoji(ctx: any): string {
+function mallProductionRequiresAttention(ctx: any): boolean {
 	const mall = (ctx.persist as Persist).mall!
 	const currentlyProducing = Boolean(mall.productionFinishes)
 	const userHasSelectedAPart = mall.partsProducedBy && Object.values(mall.partsProducedBy).includes(ctx.from.id)
-	if (currentlyProducing || userHasSelectedAPart) {
-		return emojis.production
-	}
-
-	return emojis.requireAttention + emojis.production
+	const noAttentionNeeded = currentlyProducing || userHasSelectedAPart
+	return !noAttentionNeeded
 }
 
-menu.submenu(buttonText(mallProductionButtonEmoji, 'mall.production'), 'production', productionMenu, {
+menu.submenu(buttonText(emojis.production, 'mall.production', {requireAttention: mallProductionRequiresAttention}), 'production', productionMenu, {
 	hide: hideWhenMemberAmountNotCorrect
 })
 
