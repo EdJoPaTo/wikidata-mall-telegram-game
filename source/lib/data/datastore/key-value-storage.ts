@@ -1,8 +1,6 @@
-type Dictionary<T> = {[key: string]: T}
+import {Dictionary, MaybePromise} from './types'
 
-type MaybePromise<T> = T | Promise<T>
-
-export interface Datastore<T> {
+export interface KeyValueStorage<T> {
 	delete(key: string): MaybePromise<void>;
 	entries(): MaybePromise<Dictionary<T>>;
 	get(key: string): MaybePromise<T | undefined>;

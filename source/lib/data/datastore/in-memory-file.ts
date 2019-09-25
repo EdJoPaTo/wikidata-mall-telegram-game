@@ -2,7 +2,9 @@ import {readFileSync, unlinkSync, existsSync} from 'fs'
 
 import writeJsonFile from 'write-json-file'
 
-export class InMemoryFile<T> {
+import {SimpleStorage} from './simple-storage'
+
+export class InMemoryFile<T> implements SimpleStorage<T> {
 	private _content: T | undefined
 
 	constructor(

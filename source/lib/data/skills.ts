@@ -1,12 +1,10 @@
 import {Skills} from '../types/skills'
 
-import {InMemoryFiles} from './datastore'
+import {Dictionary, KeyValueStorage, PerKeyInMemoryFile} from './datastore'
 import {generatePersistMiddleware} from './persist-middleware'
 
-type Dictionary<T> = {[key: string]: T}
-
 console.time('load user skills')
-const data = new InMemoryFiles<Skills>('persist/skills')
+const data: KeyValueStorage<Skills> = new PerKeyInMemoryFile<Skills>('persist/skills')
 console.timeEnd('load user skills')
 
 export async function getAllSkills(): Promise<Dictionary<Skills>> {

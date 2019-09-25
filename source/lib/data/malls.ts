@@ -1,12 +1,10 @@
 import {Mall} from '../types/mall'
 
 import {generatePersistMiddleware} from './persist-middleware'
-import {InMemoryFiles} from './datastore'
-
-type Dictionary<T> = {[key: string]: T}
+import {Dictionary, KeyValueStorage, PerKeyInMemoryFile} from './datastore'
 
 console.time('load malls')
-const data = new InMemoryFiles<Mall>('persist/malls')
+const data: KeyValueStorage<Mall> = new PerKeyInMemoryFile<Mall>('persist/malls')
 console.timeEnd('load malls')
 
 export async function getAll(): Promise<Dictionary<Mall>> {

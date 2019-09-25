@@ -2,11 +2,10 @@ import {mkdirSync, readdirSync, readFileSync, unlinkSync, existsSync} from 'fs'
 
 import writeJsonFile from 'write-json-file'
 
-import {Datastore} from './datastore'
+import {Dictionary} from './types'
+import {KeyValueStorage} from './key-value-storage'
 
-type Dictionary<T> = {[key: string]: T}
-
-export class InMemoryFiles<T> implements Datastore<T> {
+export class PerKeyInMemoryFile<T> implements KeyValueStorage<T> {
 	private _inMemoryStorage: Dictionary<T> = {}
 
 	constructor(

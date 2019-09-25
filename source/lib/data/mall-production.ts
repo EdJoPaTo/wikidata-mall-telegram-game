@@ -1,8 +1,8 @@
 import {MallProduction} from '../types/mall'
 
-import {InMemoryFile} from './datastore/in-memory-file'
+import {SimpleStorage, InMemoryFile} from './datastore'
 
-const data = new InMemoryFile<MallProduction>('persist/mall-production.json')
+const data: SimpleStorage<MallProduction> = new InMemoryFile<MallProduction>('persist/mall-production.json')
 
 export async function get(): Promise<MallProduction> {
 	const current = await data.get()

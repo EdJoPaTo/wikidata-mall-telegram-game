@@ -2,12 +2,10 @@ import {ContextMessageUpdate, Middleware} from 'telegraf'
 import {User} from 'telegram-typings'
 import stringify from 'json-stable-stringify'
 
-import {InMemoryFiles} from './datastore'
-
-type Dictionary<T> = {[key: string]: T}
+import {Dictionary, KeyValueStorage, PerKeyInMemoryFile} from './datastore'
 
 console.time('load user info')
-const data = new InMemoryFiles<User>('persist/user-info')
+const data: KeyValueStorage<User> = new PerKeyInMemoryFile<User>('persist/user-info')
 console.timeEnd('load user info')
 
 export async function get(id: number): Promise<User | undefined> {

@@ -1,8 +1,8 @@
 import {Construction} from '../types/shop'
 
-import {InMemoryFile} from './datastore/in-memory-file'
+import {SimpleStorage, InMemoryFile} from './datastore'
 
-const data = new InMemoryFile<Construction>('persist/shop-construction.json')
+const data: SimpleStorage<Construction> = new InMemoryFile<Construction>('persist/shop-construction.json')
 
 export default data
 

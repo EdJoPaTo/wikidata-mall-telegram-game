@@ -2,7 +2,7 @@ import stringify from 'json-stable-stringify'
 
 import {Session, Persist} from '../types'
 
-import {Datastore} from './datastore'
+import {KeyValueStorage} from './datastore'
 
 interface Context {
 	from: {
@@ -51,7 +51,7 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 }
 
 export function generatePersistMiddleware<Key extends keyof Persist>(
-	key: Key, datastore: Datastore<Persist[Key]>, getIdFunc: (ctx: Context) => string | Promise<string>
+	key: Key, datastore: KeyValueStorage<Persist[Key]>, getIdFunc: (ctx: Context) => string | Promise<string>
 ): (ctx: any, next: any) => Promise<void> {
 	return generatePersistMiddlewareManually(
 		key,
