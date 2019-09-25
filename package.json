@@ -17,7 +17,7 @@
 		"build": "del dist && tsc",
 		"prepack": "npm run build",
 		"start": "ts-node source/index.ts",
-		"test": "xo && NODE_ICU_DATA='node_modules/full-icu' nyc ava"
+		"test": "tsc && xo && NODE_ICU_DATA='node_modules/full-icu' nyc ava"
 	},
 	"main": "dist/source",
 	"types": "dist/source",
@@ -68,20 +68,14 @@
 	},
 	"ava": {
 		"babel": false,
-		"compileEnhancements": false,
-		"extensions": [
-			"ts"
-		],
-		"require": [
-			"ts-node/register"
-		]
+		"compileEnhancements": false
 	},
 	"nyc": {
 		"extension": [
 			".ts"
 		],
 		"include": [
-			"source"
+			"dist/source"
 		],
 		"exclude": [
 			"**/*.test.ts"
