@@ -8,3 +8,4 @@ botfather-settings/*.png
 
 bot-token.txt
 persist
+tmp

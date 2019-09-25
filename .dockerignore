@@ -10,3 +10,4 @@ test
 # botfiles
 bot-token.txt
 persist
+tmp
