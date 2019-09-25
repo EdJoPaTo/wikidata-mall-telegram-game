@@ -1,8 +1,8 @@
+import {RawObjectStorage, RawObjectInMemoryFile} from '@edjopato/datastore'
+
 import {MallProduction} from '../types/mall'
 
-import {SimpleStorage, InMemoryFile} from './datastore'
-
-const data: SimpleStorage<MallProduction> = new InMemoryFile<MallProduction>('persist/mall-production.json')
+const data: RawObjectStorage<MallProduction> = new RawObjectInMemoryFile<MallProduction>('persist/mall-production.json')
 
 export async function get(): Promise<MallProduction> {
 	const current = await data.get()

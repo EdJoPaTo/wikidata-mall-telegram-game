@@ -1,8 +1,8 @@
+import {KeyValueStorage} from '@edjopato/datastore'
+
 import stringify from 'json-stable-stringify'
 
 import {Session, Persist} from '../types'
-
-import {KeyValueStorage} from './datastore'
 
 interface Context {
 	from: {

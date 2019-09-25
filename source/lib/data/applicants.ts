@@ -1,12 +1,13 @@
+import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+
 import {Applicants} from '../types/people'
 
 import {Dictionary} from '../js-helper/dictionary'
 
-import {KeyValueStorage, PerKeyInMemoryFile} from './datastore'
 import {generatePersistMiddleware} from './persist-middleware'
 
 console.time('load user applicants')
-const data: KeyValueStorage<Applicants> = new PerKeyInMemoryFile<Applicants>('persist/applicants')
+const data: KeyValueStorage<Applicants> = new KeyValueInMemoryFiles<Applicants>('persist/applicants')
 console.timeEnd('load user applicants')
 
 export async function getAll(): Promise<Dictionary<Applicants>> {

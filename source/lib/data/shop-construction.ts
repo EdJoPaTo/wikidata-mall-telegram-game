@@ -1,8 +1,8 @@
+import {RawObjectStorage, RawObjectInMemoryFile} from '@edjopato/datastore'
+
 import {Construction} from '../types/shop'
 
-import {SimpleStorage, InMemoryFile} from './datastore'
-
-const data: SimpleStorage<Construction> = new InMemoryFile<Construction>('persist/shop-construction.json')
+const data: RawObjectStorage<Construction> = new RawObjectInMemoryFile<Construction>('persist/shop-construction.json')
 
 export default data
 

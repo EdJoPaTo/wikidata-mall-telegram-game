@@ -1,11 +1,11 @@
+import {Dictionary, KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+
 import {ContextMessageUpdate, Middleware} from 'telegraf'
 import {User} from 'telegram-typings'
 import stringify from 'json-stable-stringify'
 
-import {Dictionary, KeyValueStorage, PerKeyInMemoryFile} from './datastore'
-
 console.time('load user info')
-const data: KeyValueStorage<User> = new PerKeyInMemoryFile<User>('persist/user-info')
+const data: KeyValueStorage<User> = new KeyValueInMemoryFiles<User>('persist/user-info')
 console.timeEnd('load user info')
 
 export async function get(id: number): Promise<User | undefined> {

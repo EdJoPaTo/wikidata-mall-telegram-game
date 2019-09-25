@@ -1,10 +1,11 @@
+import {Dictionary, KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+
 import {Skills} from '../types/skills'
 
-import {Dictionary, KeyValueStorage, PerKeyInMemoryFile} from './datastore'
 import {generatePersistMiddleware} from './persist-middleware'
 
 console.time('load user skills')
-const data: KeyValueStorage<Skills> = new PerKeyInMemoryFile<Skills>('persist/skills')
+const data: KeyValueStorage<Skills> = new KeyValueInMemoryFiles<Skills>('persist/skills')
 console.timeEnd('load user skills')
 
 export async function getAllSkills(): Promise<Dictionary<Skills>> {
