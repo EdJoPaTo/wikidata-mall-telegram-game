@@ -20,15 +20,15 @@ export class InMemoryFiles<T> implements Datastore<T> {
 		}
 	}
 
-	async entries(): Promise<Dictionary<T>> {
+	entries(): Dictionary<T> {
 		return this._inMemoryStorage
 	}
 
-	async keys(): Promise<readonly string[]> {
+	keys(): readonly string[] {
 		return Object.keys(this._inMemoryStorage)
 	}
 
-	async get(key: string): Promise<T | undefined> {
+	get(key: string): T | undefined {
 		return this._inMemoryStorage[key]
 	}
 
@@ -37,7 +37,7 @@ export class InMemoryFiles<T> implements Datastore<T> {
 		await writeJsonFile(this._pathOfKey(key), value, {sortKeys: true})
 	}
 
-	async delete(key: string): Promise<void> {
+	delete(key: string): void {
 		delete this._inMemoryStorage[key]
 		if (existsSync(this._pathOfKey(key))) {
 			unlinkSync(this._pathOfKey(key))

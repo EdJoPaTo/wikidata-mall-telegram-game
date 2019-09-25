@@ -15,7 +15,7 @@ export class InMemoryFile<T> {
 		}
 	}
 
-	async get(): Promise<T | undefined> {
+	get(): T | undefined {
 		return this._content
 	}
 
@@ -24,7 +24,7 @@ export class InMemoryFile<T> {
 		await writeJsonFile(this._filepath, value, {sortKeys: true})
 	}
 
-	async delete(): Promise<void> {
+	delete(): void {
 		this._content = undefined
 		if (existsSync(this._filepath)) {
 			unlinkSync(this._filepath)
