@@ -9,6 +9,7 @@ type Dictionary<T> = {[key: string]: T}
 const toplevelShopCategories: string[] = [
 	'Q11410', // Game
 	'Q11460', // Clothing
+	'Q1357761', // Utensil (everyday use)
 	'Q13629441', // Electric vehicle
 	'Q2095', // Food
 	'Q210729', // Electrical element
