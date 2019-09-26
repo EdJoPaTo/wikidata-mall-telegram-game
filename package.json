@@ -94,8 +94,9 @@
 		],
 		"rules": {
 			"ava/no-ignored-test-files": "off",
+			"require-atomic-updates": "warn",
 			"@typescript-eslint/array-type": "warn",
-			"@typescript-eslint/require-await": "warn",
+			"@typescript-eslint/require-await": "off",
 			"@typescript-eslint/semi": [
 				"error",
 				"never"
