@@ -1,9 +1,10 @@
 import {existsSync, readFileSync} from 'fs'
 
+import {KeyValueInMemoryFiles} from '@edjopato/datastore'
 import Telegraf, {Extra, Markup} from 'telegraf'
 import TelegrafI18n from 'telegraf-i18n'
 import TelegrafWikibase from 'telegraf-wikibase'
-import WikidataEntityStore from 'wikidata-entity-store'
+import WikidataEntityStore, {EntityEntry} from 'wikidata-entity-store'
 
 import * as wikidata from './lib/wikidata'
 
@@ -66,9 +67,12 @@ const i18n = new TelegrafI18n({
 
 bot.use(i18n.middleware())
 
+console.time('wdEntityStore')
 const wdEntityStore = new WikidataEntityStore({
+	entityStore: new KeyValueInMemoryFiles<EntityEntry>('wikidata-cache/entity-store'),
 	properties: ['labels', 'descriptions', 'claims']
 })
+console.timeEnd('wdEntityStore')
 
 const notificationManager = new NotificationManager(
 	async (chatId, notification, fireDate) => {
@@ -107,7 +111,7 @@ wikidata.preload(wdEntityStore)
 		bot.launch()
 		console.log(new Date(), 'Bot started')
 
-		setInterval(async () => wikidata.update(wdEntityStore), 12 * HOUR_IN_SECONDS * 1000)
+		setInterval(async () => wikidata.update(wdEntityStore), 4 * HOUR_IN_SECONDS * 1000)
 	})
 	.catch(error => {
 		console.error('startup failed:', error)

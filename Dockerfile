@@ -14,6 +14,7 @@ FROM node:12-alpine
 WORKDIR /app
 VOLUME /app/persist
 VOLUME /app/tmp
+VOLUME /app/wikidata-cache
 
 ENV NODE_ENV=production
 ENV NODE_ICU_DATA="node_modules/full-icu"

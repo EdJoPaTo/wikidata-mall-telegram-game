@@ -1,5 +1,4 @@
 import randomItem from 'random-item'
-import WikidataEntityStore from 'wikidata-entity-store'
 import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 
 type Dictionary<T> = {[key: string]: T}
@@ -21,7 +20,7 @@ FILTER((LANG(?label)) = "en")
 
 const entities: Dictionary<string[]> = {}
 
-export async function preload(store: WikidataEntityStore): Promise<void> {
+export async function preload(): Promise<string[]> {
 	console.time('wikidata-sets')
 	await Promise.all(
 		Object.keys(queries)
@@ -30,8 +29,8 @@ export async function preload(store: WikidataEntityStore): Promise<void> {
 
 	const qNumbers = Object.values(entities).flat()
 	console.timeLog('wikidata-sets', 'sum', qNumbers.length)
-	await store.preloadQNumbers(...qNumbers)
 	console.timeEnd('wikidata-sets')
+	return qNumbers
 }
 
 async function loadQNumbersOfKey(key: string): Promise<void> {

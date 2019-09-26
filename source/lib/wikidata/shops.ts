@@ -1,4 +1,3 @@
-import WikidataEntityStore from 'wikidata-entity-store'
 import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 import arrayFilterUnique from 'array-filter-unique'
 
@@ -48,7 +47,7 @@ FILTER(LANG(?label) = "en")
 }`
 }
 
-export async function preload(store: WikidataEntityStore): Promise<void> {
+export async function preload(): Promise<string[]> {
 	console.time('wikidata-shops')
 
 	const shopTypesArr = await stagedAsync(
@@ -67,14 +66,11 @@ export async function preload(store: WikidataEntityStore): Promise<void> {
 	)
 
 	console.timeLog('wikidata-shops', 'products', products.length)
-	await store.preloadQNumbers(...[
+	console.timeEnd('wikidata-shops')
+	return [
 		...shopTypes,
 		...products
-	])
-
-	// DEBUG
-	// console.log('shopTypes', shopTypes.length, shopTypes.map(o => store.entity(o).labels!.en).sort((a, b) => a.localeCompare(b, 'en')))
-	console.timeEnd('wikidata-shops')
+	]
 }
 
 async function loadProducts(shopType: string): Promise<string[]> {

@@ -22,9 +22,10 @@ import {infoHeader, labeledFloat} from '../../lib/interface/formatted-strings'
 import {helpButtonText, createHelpMenu} from '../help'
 
 async function getProduction(ctx: any): Promise<MallProduction> {
+	const now = Date.now() / 1000
 	const store = ctx.wd.store as WikidataEntityStore
 	const production = await mallProduction.get()
-	await preloadWithParts(store, production.itemToProduce)
+	await preloadWithParts(store, production.itemToProduce, now)
 	return production
 }
 
