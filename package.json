@@ -75,7 +75,8 @@
 			".ts"
 		],
 		"include": [
-			"dist/source"
+			"dist/source",
+			"source"
 		],
 		"exclude": [
 			"**/*.test.ts"
