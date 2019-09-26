@@ -6,6 +6,7 @@ import {Shop} from '../../../lib/types/shop'
 import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 
 import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {collectorSuffix} from '../../../lib/interface/shop-construction'
 import {emojis} from '../../../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings'
 
@@ -25,7 +26,8 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r(construction), {
-		titlePrefix: emojis.construction + emojis.shop
+		titlePrefix: emojis.construction + emojis.shop,
+		titleSuffix: collectorSuffix(persist.skills, construction)
 	})
 	text += '\n\n'
 
