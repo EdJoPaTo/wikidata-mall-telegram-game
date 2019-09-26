@@ -54,9 +54,14 @@ function menuText(ctx: any): string {
 
 	text += '\n'
 	if (persist.applicants.list.length > 0) {
+		const maxPages = Math.ceil(persist.applicants.list.length / 20)
+		const page = Math.min(session.page || 1, maxPages)
+		const offset = (page - 1) * 20
+
 		const shopIds = persist.shops.map(o => o.id)
 		text += persist.applicants.list
 			.sort((a, b) => sortIndexOfPerson(a, now) - sortIndexOfPerson(b, now))
+			.slice(offset, offset + 20)
 			.map(o => applicantEntry(ctx, o, shopIds.includes(o.hobby)))
 			.join('\n')
 		text += '\n\n'
