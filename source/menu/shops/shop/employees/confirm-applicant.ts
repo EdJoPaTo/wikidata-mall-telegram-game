@@ -69,7 +69,10 @@ menu.button(buttonText(emojis.yes + emojis.recruitment, 'action.recruitment'), '
 			applicants.list.push(employee)
 		}
 
-		applicant.employmentProtectionUntil = now + EMPLOYMENT_PROTECTION_SECONDS
+		if (applicant.type !== 'robot') {
+			applicant.seatProtectionUntil = now + EMPLOYMENT_PROTECTION_SECONDS
+		}
+
 		shop.personal[talent] = applicant
 		applicants.list.splice(applicantId, 1)
 		applicants.timestamp = now

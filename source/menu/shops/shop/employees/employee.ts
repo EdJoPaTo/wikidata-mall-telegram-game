@@ -56,11 +56,10 @@ function hideWhenNoApplicantOrEmploymentProtected(ctx: any): boolean {
 		return true
 	}
 
-	return Boolean(employee.employmentProtectionUntil && employee.employmentProtectionUntil > now)
+	return Boolean(employee.seatProtectionUntil && employee.seatProtectionUntil > now)
 }
 
 menu.button(buttonText(emojis.employmentTermination, 'action.employmentTermination'), 'remove', {
-	hide: hideWhenNoApplicantOrEmploymentProtected,
 	doFunc: (ctx: any) => {
 		const {shop, talent} = fromCtx(ctx)
 		delete shop.personal[talent]
@@ -88,7 +87,7 @@ function availableApplicants(ctx: any): string[] {
 	const now = Date.now() / 1000
 	const {applicants} = ctx.persist as Persist
 	const {employee, shop, talent} = fromCtx(ctx)
-	if (employee && employee.employmentProtectionUntil && employee.employmentProtectionUntil > now) {
+	if (employee && employee.seatProtectionUntil && employee.seatProtectionUntil > now) {
 		return []
 	}
 

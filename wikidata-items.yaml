@@ -28,10 +28,10 @@ action:
   search: Q36963
   upgrade: Q920419
 person:
-  employmentProtection: Q302562
   hobby: Q47728
   retirement: Q946865
   robotHobby: Q411713
+  seatProtection: Q193176
   talent: Q1200995
   talents:
     purchasing: Q1369832
