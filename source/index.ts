@@ -8,7 +8,7 @@ import WikidataEntityStore, {EntityEntry} from 'wikidata-entity-store'
 
 import * as wikidata from './lib/wikidata'
 
-import {HOUR_IN_SECONDS} from './lib/math/timestamp-constants'
+import {HOUR_IN_SECONDS, MINUTE_IN_SECONDS} from './lib/math/timestamp-constants'
 
 import data from './lib/data'
 
@@ -112,6 +112,7 @@ wikidata.preload(wdEntityStore)
 		console.log(new Date(), 'Bot started')
 
 		setInterval(async () => wikidata.update(wdEntityStore), 4 * HOUR_IN_SECONDS * 1000)
+		setTimeout(async () => wikidata.update(wdEntityStore), 15 * MINUTE_IN_SECONDS * 1000)
 	})
 	.catch(error => {
 		console.error('startup failed:', error)
