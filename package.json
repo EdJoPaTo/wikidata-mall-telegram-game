@@ -41,7 +41,7 @@
 		"telegraf-i18n": "^6.5.0",
 		"telegraf-inline-menu": "^3.6.2",
 		"telegraf-session-local": "^1.0.2",
-		"telegraf-wikibase": "^0.3.0",
+		"telegraf-wikibase": "^0.4.0",
 		"telegram-format": "^1.1.0",
 		"telegram-typings": "^3.6.1",
 		"timezone-support": "^2.0.2",

@@ -5,6 +5,7 @@ import {Session} from '../../lib/types'
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
 import {menuPhoto} from '../../lib/interface/menu'
+import {percentString} from '../../lib/interface/format-percent'
 
 /* eslint @typescript-eslint/no-var-requires: warn */
 /* eslint @typescript-eslint/no-require-imports: warn */
@@ -12,7 +13,20 @@ const localeEmoji = require('locale-emoji')
 
 function menuText(ctx: any): string {
 	const flag = flagString(ctx.wd.locale(), true)
-	const text = infoHeader(ctx.wd.r('menu.language'), {titlePrefix: flag})
+	let text = ''
+	text += infoHeader(ctx.wd.r('menu.language'), {titlePrefix: flag})
+	text += '\n\n'
+
+	if (ctx.wd.locale() !== 'wikidatanish') {
+		text += ctx.wd.r('other.translation').label()
+		text += ' '
+		text += '`'
+		text += ctx.wd.locale()
+		text += '`'
+		text += ': '
+		text += percentString(ctx.wd.localeProgress())
+	}
+
 	return text
 }
 
