@@ -1,6 +1,4 @@
-import {Dictionary} from '../js-helper/dictionary'
-
-import {Skill, Skills, SkillInTraining, SimpleSkill, CategorySkill} from '../types/skills'
+import {Skill, Skills, SkillInTraining, SimpleSkill, CategorySkill, SkillCategorySet} from '../types/skills'
 
 import {skillUpgradeEndTimestamp, levelAfterSkillQueue, isCategorySkill, isSimpleSkill} from '../game-math/skill'
 
@@ -23,7 +21,7 @@ export function increaseLevelByOne(skills: Skills, skill: CategorySkill, categor
 export function increaseLevelByOne(skills: Skills, skill: SimpleSkill | CategorySkill, category?: string): void {
 	if (!skills[skill]) {
 		if (isCategorySkill(skill)) {
-			const initialContent: Dictionary<number> = {}
+			const initialContent: SkillCategorySet = {}
 			initialContent[category!] = 0
 			skills[skill] = initialContent as any
 		} else {

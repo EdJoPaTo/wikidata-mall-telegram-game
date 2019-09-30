@@ -1,9 +1,7 @@
 import randomItem from 'random-item'
 import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 
-type Dictionary<T> = {[key: string]: T}
-
-const queries: Dictionary<string> = {
+const queries: Record<string, string> = {
 	alienHobby: `SELECT DISTINCT ?planet WHERE {
 ?planet wdt:P31 ?class.
 ?class wdt:P279* wd:Q128207.
@@ -18,7 +16,7 @@ FILTER((LANG(?label)) = "en")
 }`
 }
 
-const entities: Dictionary<string[]> = {}
+const entities: Record<string, string[]> = {}
 
 export async function preload(): Promise<string[]> {
 	console.time('wikidata-sets')

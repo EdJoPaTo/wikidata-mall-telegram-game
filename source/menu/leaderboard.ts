@@ -2,7 +2,7 @@ import {markdown as format} from 'telegram-format'
 import {User} from 'telegram-typings'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Dictionary, sortDictKeysByNumericValues} from '../lib/js-helper/dictionary'
+import {sortDictKeysByNumericValues} from '../lib/js-helper/dictionary'
 
 import {Session, Persist, LeaderboardView, LEADERBOARD_VIEWS} from '../lib/types'
 import {Skills} from '../lib/types/skills'
@@ -33,7 +33,7 @@ const DEFAULT_VIEW: LeaderboardView = 'returnOnInvestment'
 
 interface LeaderboardEntries {
 	order: string[];
-	values: Dictionary<number>;
+	values: Record<string, number>;
 }
 
 async function getROITable(now: number): Promise<LeaderboardEntries> {
@@ -42,7 +42,7 @@ async function getROITable(now: number): Promise<LeaderboardEntries> {
 	const playerIds = Object.keys(allUserShops)
 		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
 
-	const values: Dictionary<number> = {}
+	const values: Record<string, number> = {}
 	for (const playerId of playerIds) {
 		const shops = allUserShops[playerId]
 		const skills: Skills = allUserSkills[playerId] || {}
@@ -66,7 +66,7 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries> {
 	const playerIds = Object.keys(allUserShops)
 		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
 
-	const values: Dictionary<number> = {}
+	const values: Record<string, number> = {}
 	for (const playerId of playerIds) {
 		const shops = allUserShops[playerId]
 		const skills: Skills = allUserSkills[playerId] || {}
@@ -88,7 +88,7 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries> {
 
 async function getCollectorTable(): Promise<LeaderboardEntries> {
 	const allUserSkills = await userSkills.getAllSkills()
-	const values: Dictionary<number> = {}
+	const values: Record<string, number> = {}
 	for (const playerId of Object.keys(allUserSkills)) {
 		const level = currentLevel(allUserSkills[playerId], 'collector')
 		values[playerId] = level
@@ -120,7 +120,7 @@ function entryLine(index: number, name: string, formattedValue: string, highligh
 	return parts.join(' ')
 }
 
-function nameOfId(allPlayerInfos: Dictionary<User>, allMallInfos: Dictionary<Mall>, id: string): string {
+function nameOfId(allPlayerInfos: Record<string, User>, allMallInfos: Record<string, Mall>, id: string): string {
 	const playerInfo = allPlayerInfos[id]
 	if (playerInfo) {
 		return playerInfo.first_name

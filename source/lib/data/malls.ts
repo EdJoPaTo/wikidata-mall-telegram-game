@@ -1,4 +1,4 @@
-import {Dictionary, KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {Mall} from '../types/mall'
 
@@ -8,7 +8,7 @@ console.time('load malls')
 const data: KeyValueStorage<Mall> = new KeyValueInMemoryFiles<Mall>('persist/malls')
 console.timeEnd('load malls')
 
-export async function getAll(): Promise<Dictionary<Mall>> {
+export async function getAll(): Promise<Record<string, Mall>> {
 	return data.entries()
 }
 

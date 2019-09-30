@@ -1,7 +1,5 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Dictionary} from '../../../../lib/js-helper/dictionary'
-
 import {Persist} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
 import {TalentName, Person} from '../../../../lib/types/people'
@@ -91,7 +89,7 @@ function availableApplicants(ctx: any): string[] {
 		return []
 	}
 
-	const applicantBoni: Dictionary<number> = {}
+	const applicantBoni: Record<number, number> = {}
 	for (let i = 0; i < applicants.list.length; i++) {
 		const applicant = applicants.list[i]
 		applicantBoni[i] = personalBonusWhenEmployed(shop, talent, applicant)

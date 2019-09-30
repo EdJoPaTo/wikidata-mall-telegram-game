@@ -1,4 +1,4 @@
-import {Dictionary, KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {ContextMessageUpdate, Middleware} from 'telegraf'
 import {User} from 'telegram-typings'
@@ -12,7 +12,7 @@ export async function get(id: number): Promise<User | undefined> {
 	return data.get(String(id))
 }
 
-export async function getAll(): Promise<Dictionary<User>> {
+export async function getAll(): Promise<Record<string, User>> {
 	return data.entries()
 }
 

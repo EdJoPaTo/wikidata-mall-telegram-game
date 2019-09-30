@@ -1,11 +1,10 @@
 import {Chat} from 'telegram-typings'
 
-import {Dictionary} from '../js-helper/dictionary'
-
 import {Person} from './people'
 
-type UserId = number
+type QNumber = string
 type UnixTimestamp = number
+type UserId = number
 
 export interface Mall {
 	applicants: Person[];
@@ -14,13 +13,13 @@ export interface Mall {
 	chat: Chat;
 	member: UserId[];
 	money: number;
-	partsProducedBy?: Dictionary<UserId>;
+	partsProducedBy?: Record<QNumber, UserId>;
 	productionFinishes?: UnixTimestamp;
 }
 
 export interface MallProduction {
 	competitionSince: UnixTimestamp;
 	competitionUntil: UnixTimestamp;
-	itemsProducedPerMall: Dictionary<number>;
-	itemToProduce: string;
+	itemsProducedPerMall: Record<string, number>;
+	itemToProduce: QNumber;
 }

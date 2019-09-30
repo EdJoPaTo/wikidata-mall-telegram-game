@@ -2,10 +2,8 @@ import {scheduleJob, Job} from 'node-schedule'
 
 import {Notification} from '../types/notification'
 
-type Dictionary<T> = {[key: string]: T}
-
 export class NotificationManager {
-	private readonly _currentJobs: Dictionary<Job[]> = {}
+	private readonly _currentJobs: Record<string | number, Job[]> = {}
 
 	constructor(
 		private readonly _sendFunc: (chatId: string | number, notification: Notification, fireDate: Date) => (Promise<void> | void)

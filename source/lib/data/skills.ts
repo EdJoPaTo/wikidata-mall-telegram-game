@@ -1,4 +1,4 @@
-import {Dictionary, KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {Skills} from '../types/skills'
 
@@ -8,7 +8,7 @@ console.time('load user skills')
 const data: KeyValueStorage<Skills> = new KeyValueInMemoryFiles<Skills>('persist/skills')
 console.timeEnd('load user skills')
 
-export async function getAllSkills(): Promise<Dictionary<Skills>> {
+export async function getAllSkills(): Promise<Record<string, Skills>> {
 	return data.entries()
 }
 

@@ -1,6 +1,4 @@
-type Dictionary<T> = {[key: string]: T}
-
-const basic: Dictionary<string> = {
+const basic: Record<string, string> = {
 	add: '➕',
 	applicantsAvailable: '📬',
 	applicantsEmpty: '📭',
@@ -53,7 +51,7 @@ const basic: Dictionary<string> = {
 	yes: '👍'
 }
 
-export const emojis: Dictionary<string> = {
+export const emojis: Record<string, string> = {
 	...basic,
 	applicantSeats: basic.seat,
 	applicantSpeed: basic.applicantsAvailable,

@@ -3,8 +3,6 @@ import arrayFilterUnique from 'array-filter-unique'
 
 import {stagedAsync} from '../js-helper/async'
 
-type Dictionary<T> = {[key: string]: T}
-
 const toplevelShopCategories: string[] = [
 	'Q11410', // Game
 	'Q11460', // Clothing
@@ -23,7 +21,7 @@ const toplevelShopCategories: string[] = [
 	'Q848944' // Merchant ship
 ]
 
-const shopsWithProducts: Dictionary<string[]> = {}
+const shopsWithProducts: Record<string, string[]> = {}
 
 function shopTypesQuery(topmost: string): string {
 	return `SELECT ?shop WHERE {

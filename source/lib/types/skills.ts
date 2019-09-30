@@ -1,5 +1,7 @@
-type Dictionary<T> = {[key: string]: T}
-type SkillCategorySet = Dictionary<number>
+type QNumber = string
+type UnixTimestamp = number
+
+export type SkillCategorySet = Record<QNumber, number>
 
 /**
  * Contains Skill Levels
@@ -58,8 +60,8 @@ export interface Skills extends SimpleSkills, CategorySkills {
 
 export interface SkillInTraining {
 	skill: Skill;
-	category?: string;
-	endTimestamp: number;
+	category?: QNumber;
+	endTimestamp: UnixTimestamp;
 }
 
 export type SimpleSkill = keyof SimpleSkills

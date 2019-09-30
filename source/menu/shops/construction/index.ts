@@ -2,7 +2,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../../../lib/types'
 
-import {Dictionary, sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../../lib/js-helper/dictionary'
+import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../../lib/js-helper/dictionary'
 
 import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 
@@ -17,6 +17,8 @@ import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings
 import {createHelpMenu, helpButtonText} from '../../help'
 
 import constructionOptionMenu from './option'
+
+type QNumber = string
 
 async function menuText(ctx: any): Promise<string> {
 	const session = ctx.session as Session
@@ -63,12 +65,12 @@ const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('action.construction')
 })
 
-async function constructionOptions(ctx: any): Promise<Dictionary<string>> {
+async function constructionOptions(ctx: any): Promise<Record<QNumber, string>> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
 	const now = Date.now() / 1000
 	const construction = await getCurrentConstructions(now)
 
-	const labels: Dictionary<string> = {}
+	const labels: Record<QNumber, string> = {}
 	for (const shopId of construction.possibleShops) {
 		labels[shopId] = ctx.wd.r(shopId).label()
 	}

@@ -17,8 +17,6 @@ import {createHelpMenu, helpButtonText} from '../help'
 import skillMenu from './skill'
 import skillSelectCategory from './skill-select-category'
 
-type Dictionary<T> = {[key: string]: T}
-
 function skillInfo(ctx: any, skills: Skills, skill: SimpleSkill | CategorySkill): {emoji: string; label: string; level: number} {
 	return {
 		emoji: emojis[skill],
@@ -84,9 +82,9 @@ menu.button(buttonText(emojis.clearSkillQueue, 'skill.queue'), 'clearQueue', {
 	}
 })
 
-function skillOptions(ctx: any, skills: readonly Skill[]): Dictionary<string> {
+function skillOptions(ctx: any, skills: readonly Skill[]): Record<string, string> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
-	const labels: Dictionary<string> = {}
+	const labels: Record<string, string> = {}
 	for (const key of skills) {
 		labels[key] = ctx.wd.r(`skill.${key}`).label()
 	}
