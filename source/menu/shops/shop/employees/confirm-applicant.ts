@@ -2,7 +2,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Persist} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
-import {TalentName, Person} from '../../../../lib/types/people'
+import {Talent, Person} from '../../../../lib/types/people'
 
 import {EMPLOYMENT_PROTECTION_SECONDS} from '../../../../lib/game-math/constants'
 import {personalBonusWhenEmployed} from '../../../../lib/game-math/personal'
@@ -13,9 +13,9 @@ import {infoHeader} from '../../../../lib/interface/formatted-strings'
 import {percentBonusString} from '../../../../lib/interface/format-percent'
 import {personMarkdown} from '../../../../lib/interface/person'
 
-function fromCtx(ctx: any): {shop: Shop; talent: TalentName; employee?: Person; applicantId: number; applicant: Person} {
+function fromCtx(ctx: any): {shop: Shop; talent: Talent; employee?: Person; applicantId: number; applicant: Person} {
 	const shopType = ctx.match[1]
-	const talent = ctx.match[2] as TalentName
+	const talent = ctx.match[2] as Talent
 	const applicantId = Number(ctx.match[3])
 
 	const persist = ctx.persist as Persist

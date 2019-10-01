@@ -1,6 +1,6 @@
 import WikidataEntityReader from 'wikidata-entity-reader'
 
-import {Person, TalentName, Name, TALENTS, Talents} from '../types/people'
+import {Person, Talent, Name, TALENTS, Talents} from '../types/people'
 import {Session} from '../types'
 import {Shop} from '../types/shop'
 
@@ -81,7 +81,7 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 		text += '*'
 		text += '\n'
 
-		text += (Object.keys(talents) as TalentName[])
+		text += (Object.keys(talents) as Talent[])
 			.map(t => talentLine(ctx, t, talents[t]))
 			.join('\n')
 	}
@@ -94,7 +94,7 @@ export function nameMarkdown(name: Name): string {
 	return `*${given}* ${family}`
 }
 
-function talentLine(ctx: any, t: TalentName, percentage: number): string {
+function talentLine(ctx: any, t: Talent, percentage: number): string {
 	const reader = ctx.wd.r(`person.talents.${t}`) as WikidataEntityReader
 	return `${emojis[t]} ${reader.label()}: ${percentBonusString(percentage)}`
 }
@@ -105,7 +105,7 @@ export function personAllTalentsLine(talents: Talents): string {
 		.join(' ')
 }
 
-export function personInShopLine(shop: Shop, talent: TalentName): string {
+export function personInShopLine(shop: Shop, talent: Talent): string {
 	const person = shop.personal[talent]
 	if (!person) {
 		throw new Error(`There is no person in the shop assigned to the position + ${talent}`)
@@ -136,7 +136,7 @@ export function shopEmployeeOverview(ctx: any, shop: Shop): string {
 	return text
 }
 
-function shopEmployeeEntry(ctx: any, shop: Shop, talent: TalentName): string {
+function shopEmployeeEntry(ctx: any, shop: Shop, talent: Talent): string {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
 	const person = shop.personal[talent]
 

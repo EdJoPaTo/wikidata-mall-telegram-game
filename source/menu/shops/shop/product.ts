@@ -4,7 +4,7 @@ import WikidataEntityReader from 'wikidata-entity-reader'
 import {Session, Persist} from '../../../lib/types'
 import {Shop, Product} from '../../../lib/types/shop'
 import {Skills} from '../../../lib/types/skills'
-import {TalentName} from '../../../lib/types/people'
+import {Talent} from '../../../lib/types/people'
 
 import {currentLevel} from '../../../lib/game-math/skill'
 import {sellingCost, purchasingCost, productBasePrice, productBasePriceCollectorFactor, sellingCostPackagingBonus, purchasingCostScissorsBonus} from '../../../lib/game-math/product'
@@ -28,7 +28,7 @@ function fromCtx(ctx: any): {shop: Shop; product: Product} {
 	return {shop, product}
 }
 
-function bonusPerson(shop: Shop, talent: TalentName): string {
+function bonusPerson(shop: Shop, talent: Talent): string {
 	const person = shop.personal[talent]
 	if (!person) {
 		return ''

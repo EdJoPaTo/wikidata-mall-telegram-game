@@ -24,6 +24,8 @@ const exampleShop: Shop = {
 	id: 'Q5',
 	opening: 0,
 	personal: {
+		purchasing: undefined,
+		selling: undefined,
 		storage: {
 			...examplePerson
 		}

@@ -2,7 +2,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Persist} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
-import {TALENTS, TalentName} from '../../../../lib/types/people'
+import {TALENTS, Talent} from '../../../../lib/types/people'
 
 import {buttonText, menuPhoto} from '../../../../lib/interface/menu'
 import {emojis} from '../../../../lib/interface/emojis'
@@ -20,7 +20,7 @@ function fromCtx(ctx: any): {shop: Shop} {
 	return {shop}
 }
 
-function talentLine(ctx: any, shop: Shop, talent: TalentName): string {
+function talentLine(ctx: any, shop: Shop, talent: Talent): string {
 	const person = shop.personal[talent]
 
 	let text = ''

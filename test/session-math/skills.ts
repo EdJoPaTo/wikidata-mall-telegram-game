@@ -29,7 +29,11 @@ test('removes skills and all behind from queue when shop doesnt exist anymore', 
 			{
 				id: 'Q5',
 				opening: 0,
-				personal: {},
+				personal: {
+					purchasing: undefined,
+					selling: undefined,
+					storage: undefined
+				},
 				products: []
 			}
 		],
@@ -81,7 +85,11 @@ test('removes nothing when all shops still exist', t => {
 			{
 				id: 'Q5',
 				opening: 0,
-				personal: {},
+				personal: {
+					purchasing: undefined,
+					selling: undefined,
+					storage: undefined
+				},
 				products: []
 			}
 		],
@@ -123,7 +131,11 @@ test('skills simple skill when time is up', t => {
 			{
 				id: 'Q5',
 				opening: 0,
-				personal: {},
+				personal: {
+					purchasing: undefined,
+					selling: undefined,
+					storage: undefined
+				},
 				products: []
 			}
 		],
@@ -155,7 +167,11 @@ test('skills category skill when time is up', t => {
 			{
 				id: 'Q5',
 				opening: 0,
-				personal: {},
+				personal: {
+					purchasing: undefined,
+					selling: undefined,
+					storage: undefined
+				},
 				products: []
 			}
 		],

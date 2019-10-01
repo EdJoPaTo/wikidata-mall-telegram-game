@@ -29,14 +29,9 @@ export interface Name {
 export type PersonType = 'refined' | 'temporary' | 'robot' | 'alien'
 export type RefinedState = 'toddler' | 'student' | 'finished'
 
-export interface Talents {
-	purchasing: number;
-	selling: number;
-	storage: number;
-}
-
-export type TalentName = keyof Talents
-export const TALENTS: TalentName[] = ['purchasing', 'selling', 'storage']
+export type Talent = 'purchasing' | 'selling' | 'storage'
+export type Talents = Record<Talent, number>
+export const TALENTS: Talent[] = ['purchasing', 'selling', 'storage']
 
 export interface Applicants {
 	list: Person[];

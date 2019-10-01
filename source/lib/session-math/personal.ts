@@ -1,6 +1,6 @@
 import {Persist} from '../types'
 import {Shop} from '../types/shop'
-import {TalentName} from '../types/people'
+import {Talent} from '../types/people'
 
 export default function calcPersonal(persist: Persist, now: number): void {
 	retirePersonal(persist, now)
@@ -13,7 +13,7 @@ function retirePersonal(persist: Persist, now: number): void {
 }
 
 function retireShopPersonal(shop: Shop, now: number): void {
-	const takenSpots = Object.keys(shop.personal) as TalentName[]
+	const takenSpots = Object.keys(shop.personal) as Talent[]
 
 	for (const talent of takenSpots) {
 		const person = shop.personal[talent]

@@ -1,12 +1,12 @@
 import {Shop, Personal} from '../types/shop'
-import {TalentName, Person} from '../types/people'
+import {Talent, Person} from '../types/people'
 
-export function personalBonus(shop: Shop, talent: TalentName): number {
+export function personalBonus(shop: Shop, talent: Talent): number {
 	const person = shop.personal[talent]
 	return personalBonusWhenEmployed(shop, talent, person)
 }
 
-export function personalBonusWhenEmployed(shop: Shop, talent: TalentName, person?: Person): number {
+export function personalBonusWhenEmployed(shop: Shop, talent: Talent, person?: Person): number {
 	if (!person) {
 		return 1
 	}
@@ -20,5 +20,6 @@ export function personalBonusWhenEmployed(shop: Shop, talent: TalentName, person
 }
 
 export function allEmployees(personal: Personal): readonly Person[] {
-	return Object.values(personal).filter(o => o)
+	const withUndefined: (Person | undefined)[] = Object.values(personal)
+	return withUndefined.filter(o => o) as Person[]
 }

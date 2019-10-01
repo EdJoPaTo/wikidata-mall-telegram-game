@@ -2,7 +2,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Persist} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
-import {TalentName, Person} from '../../../../lib/types/people'
+import {Talent, Person} from '../../../../lib/types/people'
 
 import {canBeEmployed} from '../../../../lib/game-math/applicant'
 import {personalBonusWhenEmployed} from '../../../../lib/game-math/personal'
@@ -17,9 +17,9 @@ import {createHelpMenu, helpButtonText} from '../../../help'
 
 import confirmEmployee from './confirm-applicant'
 
-function fromCtx(ctx: any): {shop: Shop; talent: TalentName; employee?: Person} {
+function fromCtx(ctx: any): {shop: Shop; talent: Talent; employee?: Person} {
 	const shopType = ctx.match[1]
-	const talent = ctx.match[2] as TalentName
+	const talent = ctx.match[2] as Talent
 
 	const persist = ctx.persist as Persist
 	const shop = persist.shops.filter(o => o.id === shopType)[0]

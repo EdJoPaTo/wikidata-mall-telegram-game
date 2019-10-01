@@ -1,4 +1,4 @@
-import {Person} from './people'
+import {Person, Talent} from './people'
 
 type UnixTimestamp = number
 
@@ -8,11 +8,7 @@ export interface Product {
 	itemTimestamp: UnixTimestamp;
 }
 
-export interface Personal {
-	purchasing?: Person;
-	selling?: Person;
-	storage?: Person;
-}
+export type Personal = Record<Talent, Person | undefined>
 
 export interface Shop {
 	id: string;

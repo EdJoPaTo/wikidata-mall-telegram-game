@@ -82,7 +82,11 @@ menu.simpleButton(buttonText(emojis.construction, 'action.construction'), 'const
 		const newShop: Shop = {
 			id: construction,
 			opening: now,
-			personal: {},
+			personal: {
+				purchasing: undefined,
+				selling: undefined,
+				storage: undefined
+			},
 			products: []
 		}
 
