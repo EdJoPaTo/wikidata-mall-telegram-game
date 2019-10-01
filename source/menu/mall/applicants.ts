@@ -2,6 +2,8 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Persist} from '../../lib/types'
 
+import {applicantSeats} from '../../lib/game-math/applicant'
+
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
@@ -11,7 +13,7 @@ import {helpButtonText, createHelpMenu} from '../help'
 
 function menuText(ctx: any): string {
 	const now = Date.now() / 1000
-	const {mall, shops} = ctx.persist as Persist
+	const {applicants, mall, shops, skills} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
@@ -36,6 +38,13 @@ function menuText(ctx: any): string {
 
 	text += '\n\n'
 
+	const maxSeats = applicantSeats(skills)
+	const maxSeatsReached = applicants.list.length > maxSeats
+	if (maxSeatsReached) {
+		text += emojis.requireAttention + emojis.seat
+		text += '\n\n'
+	}
+
 	return text
 }
 
@@ -52,8 +61,10 @@ const menu = new TelegrafInlineMenu(menuText, {
 
 menu.button(buttonText(emojis.seat, 'other.seat'), 'takeAll', {
 	hide: (ctx: any) => {
-		const {mall} = ctx.persist as Persist
-		return !mall || mall.applicants.length === 0
+		const {applicants, mall, skills} = ctx.persist as Persist
+		const maxSeats = applicantSeats(skills)
+		const maxSeatsReached = applicants.list.length > maxSeats
+		return !mall || mall.applicants.length === 0 || maxSeatsReached
 	},
 	doFunc: (ctx: any) => {
 		const {applicants, mall} = ctx.persist as Persist
