@@ -4,10 +4,12 @@ import WikidataEntityReader from 'wikidata-entity-reader'
 import {Session, Persist} from '../../../lib/types'
 import {Shop, Product} from '../../../lib/types/shop'
 import {Skills} from '../../../lib/types/skills'
+import {TALENTS} from '../../../lib/types/people'
 
 import {randomUnusedEntry} from '../../../lib/js-helper/array'
 
 import {addProductToShopCost, buyAllCost, buyAllCostFactor, magnetEnabled} from '../../../lib/game-math/shop-cost'
+import {allEmployees} from '../../../lib/game-math/personal'
 import {currentLevel} from '../../../lib/game-math/skill'
 import {customerInterval} from '../../../lib/game-math/shop-time'
 import {storageCapacity, storageCapactiyPressBonus, shopProductsPossible} from '../../../lib/game-math/shop-capacity'
@@ -289,7 +291,12 @@ menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: b
 	}
 })
 
-menu.submenu(buttonText(emojis.person, 'menu.employee'), 'e', employeeMenu)
+function employeesRequireAttention(ctx: any): boolean {
+	const {shop} = fromCtx(ctx)
+	return TALENTS.length - allEmployees(shop.personal).length > 0
+}
+
+menu.submenu(buttonText(emojis.person, 'menu.employee', {requireAttention: employeesRequireAttention}), 'e', employeeMenu)
 
 menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureMenu, {
 	joinLastRow: true,
