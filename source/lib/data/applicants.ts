@@ -5,7 +5,7 @@ import {Applicants} from '../types/people'
 import {generatePersistMiddleware} from './persist-middleware'
 
 console.time('load user applicants')
-const data: KeyValueStorage<Applicants> = new KeyValueInMemoryFiles<Applicants>('persist/applicants')
+const data: KeyValueStorage<Applicants> = new KeyValueInMemoryFiles<Applicants>('tmp/applicants')
 console.timeEnd('load user applicants')
 
 export async function getAll(): Promise<Record<string, Applicants>> {
