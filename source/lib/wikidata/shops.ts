@@ -29,8 +29,6 @@ function shopTypesQuery(topmost: string): string {
 ?product wdt:P279 ?shop.
 FILTER(EXISTS { ?shop wdt:P18 ?image. })
 FILTER(EXISTS { ?product wdt:P18 ?image. })
-?product rdfs:label ?label.
-FILTER(LANG(?label) = "en")
 }
 GROUP BY ?shop
 HAVING ((COUNT(?product)) >= 5 )`
@@ -40,8 +38,6 @@ function productsQuery(shopType: string): string {
 	return `SELECT ?product WHERE {
 ?product wdt:P279 wd:${shopType}.
 FILTER(EXISTS { ?product wdt:P18 ?image. })
-?product rdfs:label ?label.
-FILTER(LANG(?label) = "en")
 }`
 }
 
