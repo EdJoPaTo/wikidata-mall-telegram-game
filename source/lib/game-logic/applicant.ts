@@ -13,10 +13,8 @@ import {randomBetween} from '../math/probability'
 
 import {daysUntilRetirement} from '../game-math/applicant'
 
-export function createApplicant(skills: Skills, now: number): Person {
+export function createApplicant(skills: Skills, now: number, retirementRandom = Math.random()): Person {
 	const name = wdName.randomName()
-
-	const retirementRandom = Math.random()
 	const type = typeFromRandom(retirementRandom)
 
 	const retirement = daysUntilRetirement(skills)
@@ -75,7 +73,7 @@ const MINIMAL_TALENT = 0.001
 const distribution: Record<string, Gaussian> = {
 	refined: gaussian(1.25, 0.2 ** 2),
 	temporary: gaussian(1.1, 0.15 ** 2),
-	robot: gaussian(1.28, 0.005 ** 2),
+	robot: gaussian(1.35, 0.005 ** 2),
 	alienSell: gaussian(6, 0.5 ** 2),
 	alienOther: gaussian(1.4, 0.1 ** 2)
 }
