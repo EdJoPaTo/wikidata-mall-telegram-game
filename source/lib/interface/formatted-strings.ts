@@ -1,3 +1,4 @@
+import {markdown as format} from 'telegram-format'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
 import {formatFloat, formatInt} from './format-number'
@@ -19,7 +20,7 @@ export function infoHeader(wdr: WikidataEntityReader, options: InfoHeaderOptions
 		text += ' '
 	}
 
-	text += `*${label}*`
+	text += format.bold(label)
 
 	if (titleSuffix) {
 		text += ' '
@@ -28,7 +29,7 @@ export function infoHeader(wdr: WikidataEntityReader, options: InfoHeaderOptions
 
 	if (description) {
 		text += '\n'
-		text += `${description}`
+		text += format.escape(description)
 	}
 
 	return text
