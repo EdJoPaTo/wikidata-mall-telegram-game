@@ -49,6 +49,8 @@ const basePerson = {
 	name: {given: 'A', family: 'B'},
 	hobby: 'Q5',
 	retirementTimestamp: 0,
+	talentModificationMean: 0,
+	talentModificationSigma: 0,
 	talents: {
 		purchasing: 0,
 		selling: 0,

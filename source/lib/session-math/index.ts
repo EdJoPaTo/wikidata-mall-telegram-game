@@ -1,10 +1,10 @@
 import {Session, Persist} from '../types'
 
-import applicants from './applicants'
+import * as applicants from './applicants'
 import income from './income'
 import mall from './mall'
 import notification from './notification'
-import personal from './personal'
+import * as personal from './personal'
 import skills from './skills'
 
 export default function middleware(): (ctx: any, next: any) => Promise<void> {
@@ -27,15 +27,17 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 			delete (session as any).construction
 		}
 
-		applicants(session, persist, now)
+		applicants.before(session, persist, now)
 		await mall(persist, now)
-		personal(persist, now)
+		personal.before(persist, now)
 
 		income(session, persist, now)
 
 		skills(session, persist, now)
 
 		await next()
+
+		applicants.after(persist)
 
 		notification(ctx.from.id, session, persist)
 	}

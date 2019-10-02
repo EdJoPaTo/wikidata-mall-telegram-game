@@ -6,7 +6,7 @@ import {secondsBetweenApplicants, applicantSeats} from '../game-math/applicant'
 
 import {createApplicant} from '../game-logic/applicant'
 
-export default function calcApplicants(session: Session, persist: Persist, now: number): void {
+export function before(session: Session, persist: Persist, now: number): void {
 	// TODO: remove migration
 	if ((session as any).applicantWaiting) {
 		delete (session as any).applicantWaiting
@@ -50,4 +50,14 @@ function addWaitingApplicants(applicants: Applicants, skills: Skills, now: numbe
 	// Ensure timer is still running when there are free seats.
 	// If not reset the timer to now
 	applicants.timestamp = Math.floor(maxSeats - applicants.list.length > 0 ? newTimestamp : now)
+}
+
+export function after(persist: Persist): void {
+	removeNextTalentModification(persist.applicants)
+}
+
+function removeNextTalentModification(applicants: Applicants): void {
+	for (const applicant of applicants.list) {
+		delete applicant.nextTalentModification
+	}
 }

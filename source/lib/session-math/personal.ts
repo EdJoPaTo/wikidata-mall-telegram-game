@@ -1,11 +1,19 @@
 import {Persist} from '../types'
 import {Personal} from '../types/shop'
-import {TALENTS} from '../types/people'
+import {TALENTS, Person} from '../types/people'
 
-export default function calcPersonal(persist: Persist, now: number): void {
+import {allEmployees, modifyDistributionOfType} from '../game-math/personal'
+import {EMPLOYMENT_TALENT_MODIFICATION_SECONDS} from '../game-math/constants'
+
+export function before(persist: Persist, now: number): void {
 	for (const shop of persist.shops) {
 		retireShopPersonal(shop.personal, now)
 	}
+
+	const employees = persist.shops
+		.flatMap(o => allEmployees(o.personal))
+
+	modifyTalents(employees, now)
 }
 
 function retireShopPersonal(personal: Personal, now: number): void {
@@ -15,5 +23,35 @@ function retireShopPersonal(personal: Personal, now: number): void {
 		if (retire) {
 			delete personal[talent]
 		}
+	}
+}
+
+function modifyTalents(employees: readonly Person[], now: number): void {
+	const nextModify = now + EMPLOYMENT_TALENT_MODIFICATION_SECONDS
+
+	for (const person of employees) {
+		modifyTalentsPerson(person, now, nextModify)
+	}
+}
+
+function modifyTalentsPerson(person: Person, now: number, nextModify: number): void {
+	if (person.nextTalentModification === undefined) {
+		person.nextTalentModification = nextModify
+		return
+	}
+
+	if (person.nextTalentModification > now) {
+		return
+	}
+
+	person.nextTalentModification = nextModify
+
+	const distribution = modifyDistributionOfType(person.type)
+	for (const t of TALENTS) {
+		const beforeModify = person.talents[t]
+		const rand = Math.random()
+		const change = distribution.ppf(rand)
+		const afterModify = beforeModify + change
+		person.talents[t] = afterModify
 	}
 }

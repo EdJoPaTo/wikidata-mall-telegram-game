@@ -1,5 +1,7 @@
+import gaussian, {Gaussian} from 'gaussian'
+
 import {Shop, Personal} from '../types/shop'
-import {Talent, Person} from '../types/people'
+import {Talent, Person, PersonType} from '../types/people'
 
 export function personalBonus(shop: Shop, talent: Talent): number {
 	const person = shop.personal[talent]
@@ -22,4 +24,12 @@ export function personalBonusWhenEmployed(shop: Shop, talent: Talent, person?: P
 export function allEmployees(personal: Personal): readonly Person[] {
 	const withUndefined: (Person | undefined)[] = Object.values(personal)
 	return withUndefined.filter(o => o) as Person[]
+}
+
+export function modifyDistributionOfType(type: PersonType): Gaussian {
+	switch (type) {
+		case 'robot': return gaussian(0, 0.001 ** 2)
+		case 'refined': return gaussian(0.01, 0.01 ** 2)
+		default: return gaussian(0, 0.01 ** 2)
+	}
 }
