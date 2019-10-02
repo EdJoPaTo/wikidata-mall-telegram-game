@@ -42,7 +42,7 @@ function menuText(ctx: any): string {
 	text += infoHeader(ctx.wd.r('menu.timezone'), {titlePrefix: emojis.timezone})
 	text += '\n\n'
 
-	text += current
+	text += format.escape(current)
 	text += ':\n  '
 	text += humanReadableTimestamp(Date.now() / 1000, locale, session.timeZone)
 	text += '\n\n'
