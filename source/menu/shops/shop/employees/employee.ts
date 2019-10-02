@@ -58,6 +58,7 @@ function hideWhenNoApplicantOrEmploymentProtected(ctx: any): boolean {
 }
 
 menu.button(buttonText(emojis.employmentTermination, 'action.employmentTermination'), 'remove', {
+	hide: ctx => !fromCtx(ctx).employee,
 	doFunc: (ctx: any) => {
 		const {shop, talent} = fromCtx(ctx)
 		delete shop.personal[talent]
