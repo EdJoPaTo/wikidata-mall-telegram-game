@@ -1,25 +1,19 @@
 import {Persist} from '../types'
-import {Shop} from '../types/shop'
-import {Talent} from '../types/people'
+import {Personal} from '../types/shop'
+import {TALENTS} from '../types/people'
 
 export default function calcPersonal(persist: Persist, now: number): void {
-	retirePersonal(persist, now)
-}
-
-function retirePersonal(persist: Persist, now: number): void {
 	for (const shop of persist.shops) {
-		retireShopPersonal(shop, now)
+		retireShopPersonal(shop.personal, now)
 	}
 }
 
-function retireShopPersonal(shop: Shop, now: number): void {
-	const takenSpots = Object.keys(shop.personal) as Talent[]
-
-	for (const talent of takenSpots) {
-		const person = shop.personal[talent]
+function retireShopPersonal(personal: Personal, now: number): void {
+	for (const talent of TALENTS) {
+		const person = personal[talent]
 		const retire = !person || person.retirementTimestamp < now
 		if (retire) {
-			delete shop.personal[talent]
+			delete personal[talent]
 		}
 	}
 }
