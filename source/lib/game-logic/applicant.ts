@@ -58,53 +58,56 @@ function hobbyForType(type: PersonType): string {
 
 function talentsForType(type: PersonType): Talents {
 	switch (type) {
-		case 'robot': return randomTalents(distributionRobot)
-		case 'refined': return randomTalents(distributionRefined)
+		case 'robot': return randomTalents(distribution.robot)
+		case 'refined': return randomTalents(distribution.refined)
 		case 'alien': return {
-			purchasing: distributionAlienOther.ppf(Math.random()),
-			selling: distributionAlienSell.ppf(Math.random()),
-			storage: distributionAlienOther.ppf(Math.random())
+			purchasing: distribution.alienOther.ppf(Math.random()),
+			selling: distribution.alienSell.ppf(Math.random()),
+			storage: distribution.alienOther.ppf(Math.random())
 		}
-		default: return randomTalents(distributionTemporary)
+		default: return randomTalents(distribution.temporary)
 	}
 }
 
 const MINIMAL_TALENT = 0.001
 // Gaussian takes sigma^2, everyone else takes sigma (standardDeviation)
 // -> use sigma and square it on startup
-const distributionRefined = gaussian(1.25, 0.2 ** 2)
-const distributionTemporary = gaussian(1.1, 0.15 ** 2)
-const distributionRobot = gaussian(1.28, 0.005 ** 2)
-const distributionAlienSell = gaussian(6, 0.5 ** 2)
-const distributionAlienOther = gaussian(1.4, 0.1 ** 2)
+const distribution: Record<string, Gaussian> = {
+	refined: gaussian(1.25, 0.2 ** 2),
+	temporary: gaussian(1.1, 0.15 ** 2),
+	robot: gaussian(1.28, 0.005 ** 2),
+	alienSell: gaussian(6, 0.5 ** 2),
+	alienOther: gaussian(1.4, 0.1 ** 2)
+}
 /* DEBUG
-debugDistribution('before', gaussian(1.1, 0.06))
-debugDistribution('refined', distributionRefined)
-debugDistribution('temporary', distributionTemporary)
-debugDistribution('robot', distributionRobot)
-debugDistribution('alien sell', distributionAlienSell)
-debugDistribution('alien other', distributionAlienOther)
+for (const name of Object.keys(distribution)) {
+	debugDistribution(name, distribution[name])
+}
+
 function debugDistribution(name: string, distribution: Gaussian): void {
 	console.log('debugDistribution', name, distribution.mean, distribution.standardDeviation)
-	console.log('probability', '<0  :', distribution.cdf(MINIMAL_TALENT))
-	console.log('probability', '<0.2:', distribution.cdf(0.2))
-	console.log('probability', '>1  :', 1 - distribution.cdf(1))
-	console.log('probability', '>1.2:', 1 - distribution.cdf(1.2))
-	console.log('probability', '>1.4:', 1 - distribution.cdf(1.4))
-	console.log('probability', '>1.6:', 1 - distribution.cdf(1.6))
-	console.log('probability', '>1.8:', 1 - distribution.cdf(1.8))
-	console.log('probability', '>2  :', 1 - distribution.cdf(2))
-	console.log('probability', '>2.5:', 1 - distribution.cdf(2.5))
-	console.log('percentile', '0.001', distribution.ppf(0.001))
-	console.log('percentile', '0.010', distribution.ppf(0.01))
-	console.log('percentile', '0.100', distribution.ppf(0.1))
-	console.log('percentile', '0.250', distribution.ppf(0.25))
-	console.log('percentile', '0.500', distribution.ppf(0.5))
-	console.log('percentile', '0.750', distribution.ppf(0.75))
-	console.log('percentile', '0.900', distribution.ppf(0.9))
-	console.log('percentile', '0.990', distribution.ppf(0.99))
-	console.log('percentile', '0.999', distribution.ppf(0.999))
-	console.log('all negative', distribution.cdf(1) ** TALENTS.length)
+	if (distribution.mean > 0.6) {
+		console.log('all negative', distribution.cdf(1) ** TALENTS.length)
+
+		for (const x of [0, 0.2, 0.5]) {
+			const prob = distribution.cdf(x)
+			if (prob > 0) {
+				console.log('probability', `<${x.toFixed(1)}`, prob)
+			}
+		}
+
+		for (const x of [1, 1.2, 1.4, 1.6, 1.8, 2, 2.5]) {
+			const prob = 1 - distribution.cdf(x)
+			if (prob > 0) {
+				console.log('probability', `>${x.toFixed(1)}`, prob)
+			}
+		}
+	}
+
+	for (const p of [0.001, 0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99, 0.999]) {
+		console.log('percentile', p.toFixed(3), distribution.ppf(p))
+	}
+
 	console.log()
 }
 /**/
