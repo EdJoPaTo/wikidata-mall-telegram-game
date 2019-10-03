@@ -1,3 +1,4 @@
+import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../../lib/types'
@@ -46,20 +47,21 @@ function menuText(ctx: any): string {
 		.filter(o => !shops.includes(o))
 
 	if (shops.length + skillCategories.length > 0) {
-		text += '*'
 		text += ctx.wd.r('skill.level').label()
-		text += '*'
-		text += ' ('
+		text += ': '
 		text += currentLevel(persist.skills, 'collector')
-		text += ')'
-		text += '\n'
+		text += '\n\n'
 
+		text += format.bold(ctx.wd.r('menu.shop').label())
+		text += '\n'
 		text +=	shops
 			.map(o => categorySkillLine(ctx, persist.skills, skill, o))
 			.join('\n')
 		text += '\n\n'
 
 		if (skillCategories.length > 0) {
+			text += format.bold(ctx.wd.r('skill.seenBefore').label())
+			text += '\n'
 			text +=	skillCategories
 				.map(o => categorySkillLine(ctx, persist.skills, skill, o))
 				.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
