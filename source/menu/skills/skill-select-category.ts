@@ -30,6 +30,24 @@ function categorySkillLine(ctx: any, skills: Skills, skill: CategorySkill, categ
 	return text
 }
 
+function categoriesOfLevelLine(ctx: any, level: number, categories: string[], locale: string | undefined): string {
+	let text = ''
+	text += '*'
+	text += ctx.wd.r('skill.level').label()
+	text += ' '
+	text += level
+	text += '*'
+	text += ' ('
+	text += categories.length
+	text += ')'
+	text += ': '
+	text += categories
+		.map(o => ctx.wd.r(o).label() as string)
+		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
+		.join(', ')
+	return text
+}
+
 function menuText(ctx: any): string {
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
@@ -45,6 +63,16 @@ function menuText(ctx: any): string {
 	const shops = persist.shops.map(o => o.id)
 	const categoriesSeenBefore = Object.keys(persist.skills[skill] || {})
 		.filter(o => !shops.includes(o))
+	const seenBeforeGroupedByLevel = categoriesSeenBefore
+		.reduce((coll: Record<number, string[]>, add) => {
+			const level = categorySkillSpecificLevel(persist.skills, skill, add)
+			if (!coll[level]) {
+				coll[level] = []
+			}
+
+			coll[level].push(add)
+			return coll
+		}, {})
 
 	if (shops.length + categoriesSeenBefore.length > 0) {
 		text += ctx.wd.r('skill.level').label()
@@ -62,9 +90,9 @@ function menuText(ctx: any): string {
 		if (categoriesSeenBefore.length > 0) {
 			text += format.bold(ctx.wd.r('skill.seenBefore').label())
 			text += '\n'
-			text +=	categoriesSeenBefore
-				.map(o => categorySkillLine(ctx, persist.skills, skill, o))
-				.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
+			text +=	Object.keys(seenBeforeGroupedByLevel)
+				.map(o => Number(o))
+				.map(o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
 				.join('\n')
 			text += '\n\n'
 		}
