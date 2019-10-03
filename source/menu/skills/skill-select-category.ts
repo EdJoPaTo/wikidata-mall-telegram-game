@@ -6,9 +6,9 @@ import {Skills, CategorySkill} from '../../lib/types/skills'
 
 import {currentLevel, categorySkillSpecificLevel} from '../../lib/game-math/skill'
 
+import {buttonText} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../../lib/interface/menu'
 import {skillQueueString} from '../../lib/interface/skill'
 
 import {createHelpMenu, helpButtonText} from '../help'
@@ -44,7 +44,13 @@ function categoriesOfLevelLine(ctx: any, level: number, categories: string[], lo
 	text += categories
 		.map(o => ctx.wd.r(o).label() as string)
 		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
+		.slice(0, 30) // Prevent Message too long
 		.join(', ')
+
+	if (categories.length > 30) {
+		text += ', …'
+	}
+
 	return text
 }
 
@@ -103,9 +109,7 @@ function menuText(ctx: any): string {
 	return text
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(ctx => `skill.${fromCtx(ctx).skill}`)
-})
+const menu = new TelegrafInlineMenu(menuText)
 
 function shops(ctx: any): string[] {
 	const persist = ctx.persist as Persist
