@@ -4,9 +4,10 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {sortDictKeysByNumericValues} from '../lib/js-helper/dictionary'
 
-import {Session, Persist, LeaderboardView, LEADERBOARD_VIEWS} from '../lib/types'
-import {Skills} from '../lib/types/skills'
+import {LeaderboardView, LEADERBOARD_VIEWS} from '../lib/types/leaderboard'
 import {Mall} from '../lib/types/mall'
+import {Session, Persist} from '../lib/types'
+import {Skills} from '../lib/types/skills'
 
 import {WEEK_IN_SECONDS} from '../lib/math/timestamp-constants'
 
