@@ -3,7 +3,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../../lib/types'
 import {Skills, CategorySkill} from '../../lib/types/skills'
 
-import {categorySkillSpecificLevel} from '../../lib/game-math/skill'
+import {currentLevel, categorySkillSpecificLevel} from '../../lib/game-math/skill'
 
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
@@ -45,15 +45,12 @@ function menuText(ctx: any): string {
 	const skillCategories = Object.keys(persist.skills[skill] || {})
 		.filter(o => !shops.includes(o))
 
-	const levelSum = Object.values(persist.skills[skill] || {})
-		.reduce((a, b) => a + b, 0)
-
 	if (shops.length + skillCategories.length > 0) {
 		text += '*'
 		text += ctx.wd.r('skill.level').label()
 		text += '*'
 		text += ' ('
-		text += levelSum
+		text += currentLevel(persist.skills, 'collector')
 		text += ')'
 		text += '\n'
 
