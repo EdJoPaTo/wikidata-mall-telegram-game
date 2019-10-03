@@ -43,10 +43,10 @@ function menuText(ctx: any): string {
 	text += '\n\n'
 
 	const shops = persist.shops.map(o => o.id)
-	const skillCategories = Object.keys(persist.skills[skill] || {})
+	const categoriesSeenBefore = Object.keys(persist.skills[skill] || {})
 		.filter(o => !shops.includes(o))
 
-	if (shops.length + skillCategories.length > 0) {
+	if (shops.length + categoriesSeenBefore.length > 0) {
 		text += ctx.wd.r('skill.level').label()
 		text += ': '
 		text += currentLevel(persist.skills, 'collector')
@@ -59,10 +59,10 @@ function menuText(ctx: any): string {
 			.join('\n')
 		text += '\n\n'
 
-		if (skillCategories.length > 0) {
+		if (categoriesSeenBefore.length > 0) {
 			text += format.bold(ctx.wd.r('skill.seenBefore').label())
 			text += '\n'
-			text +=	skillCategories
+			text +=	categoriesSeenBefore
 				.map(o => categorySkillLine(ctx, persist.skills, skill, o))
 				.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
 				.join('\n')
