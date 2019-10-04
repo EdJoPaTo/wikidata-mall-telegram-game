@@ -81,7 +81,7 @@
 		"exclude": [
 			"**/*.test.ts"
 		],
-		"all": true,
+		"all": false,
 		"reporter": [
 			"lcov",
 			"text"
