@@ -32,12 +32,12 @@ import {createHelpMenu, helpButtonText} from './help'
 
 const DEFAULT_VIEW: LeaderboardView = 'returnOnInvestment'
 
-interface LeaderboardEntries {
+interface LeaderboardEntries<T> {
 	order: string[];
-	values: Record<string, number>;
+	values: Record<string, T>;
 }
 
-async function getROITable(now: number): Promise<LeaderboardEntries> {
+async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
 	const allUserShops = await userShops.getAllShops()
 	const allUserSkills = await userSkills.getAllSkills()
 	const playerIds = Object.keys(allUserShops)
@@ -61,7 +61,7 @@ async function getROITable(now: number): Promise<LeaderboardEntries> {
 	}
 }
 
-async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries> {
+async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<number>> {
 	const allUserShops = await userShops.getAllShops()
 	const allUserSkills = await userSkills.getAllSkills()
 	const playerIds = Object.keys(allUserShops)
@@ -87,7 +87,7 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries> {
 	}
 }
 
-async function getCollectorTable(): Promise<LeaderboardEntries> {
+async function getCollectorTable(): Promise<LeaderboardEntries<number>> {
 	const allUserSkills = await userSkills.getAllSkills()
 	const values: Record<string, number> = {}
 	for (const playerId of Object.keys(allUserSkills)) {
@@ -101,7 +101,7 @@ async function getCollectorTable(): Promise<LeaderboardEntries> {
 	}
 }
 
-async function getMallProductionTable(): Promise<LeaderboardEntries> {
+async function getMallProductionTable(): Promise<LeaderboardEntries<number>> {
 	const production = await mallProduction.get()
 	const values = production.itemsProducedPerMall
 	return {
@@ -135,7 +135,7 @@ function nameOfId(allPlayerInfos: Record<string, User>, allMallInfos: Record<str
 	return '??'
 }
 
-async function generateTable(entries: LeaderboardEntries, forPlayerId: number | undefined, formatNumberFunc: (num: number) => string): Promise<string> {
+async function generateTable<T>(entries: LeaderboardEntries<T>, forPlayerId: number | undefined, formatNumberFunc: (num: T) => string): Promise<string> {
 	const allPlayerInfos = await userInfo.getAll()
 	const allMallInfos = await userMalls.getAll()
 	const indexOfPlayer = entries.order.indexOf(String(forPlayerId))
