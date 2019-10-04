@@ -1,15 +1,21 @@
-import test, {ExecutionContext} from 'ava'
+import test from 'ava'
 
-import {average} from '../../source/lib/math/number-array'
+import {calcQuickStats, numberArrayOnlyFinite} from '../../source/lib/math/number-array'
 
-function averageMacro(t: ExecutionContext, expected: number, ...inputs: number[]): void {
-	t.is(average(inputs), expected)
-}
+import {createInputOutputDeepEqualMacro} from '../_helper'
 
-test('average 0 inputs', t => {
-	t.true(isNaN(average([])))
-})
+const numberArrayFilterIsFiniteMacro = createInputOutputDeepEqualMacro(numberArrayOnlyFinite)
 
-test('average of 1 input is the input', averageMacro, 42, 42)
-test('average of two inputs', averageMacro, 5, 0, 10)
-test('average of three inputs', averageMacro, 5, 0, 5, 10)
+test('numberArrayFilterIsFinite empty still empty', numberArrayFilterIsFiniteMacro, [], [])
+test('numberArrayFilterIsFinite null gone', numberArrayFilterIsFiniteMacro, [], [null])
+test('numberArrayFilterIsFinite undefined gone', numberArrayFilterIsFiniteMacro, [], [undefined])
+test('numberArrayFilterIsFinite NaN gone', numberArrayFilterIsFiniteMacro, [], [NaN])
+test('numberArrayFilterIsFinite Infinity gone', numberArrayFilterIsFiniteMacro, [], [Infinity])
+test('numberArrayFilterIsFinite 0 still there', numberArrayFilterIsFiniteMacro, [0], [0])
+test('numberArrayFilterIsFinite big example', numberArrayFilterIsFiniteMacro, [0, 2, 4], [0, Infinity, null, 2, NaN, undefined, 4])
+
+const calcQuickStatsMacro = createInputOutputDeepEqualMacro(calcQuickStats)
+
+test('calcQuickStats empty input', calcQuickStatsMacro, {amount: 0, sum: 0, avg: NaN, min: Infinity, max: -Infinity}, [])
+test('calcQuickStats single number', calcQuickStatsMacro, {amount: 1, sum: 5, avg: 5, min: 5, max: 5}, [5])
+test('calcQuickStats two numbers', calcQuickStatsMacro, {amount: 2, sum: 10, avg: 5, min: 2, max: 8}, [2, 8])
