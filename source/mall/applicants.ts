@@ -15,13 +15,13 @@ bot.action('takeAllApplicants', async (ctx: any) => {
 		return ctx.answerCbQuery(emojis.mall)
 	}
 
-	const maxSeats = applicantSeats(skills)
-	const maxSeatsReached = applicants.list.length > maxSeats
-	if (maxSeatsReached) {
-		return ctx.answerCbQuery(emojis.requireAttention + emojis.seat)
-	}
-
 	if (mall.applicants.length > 0) {
+		const maxSeats = applicantSeats(skills)
+		const maxSeatsReached = applicants.list.length > maxSeats
+		if (maxSeatsReached) {
+			return ctx.answerCbQuery(emojis.requireAttention + emojis.seat)
+		}
+
 		applicants.list.push(...mall.applicants)
 		mall.applicants = []
 		await ctx.answerCbQuery(emojis.yes)
