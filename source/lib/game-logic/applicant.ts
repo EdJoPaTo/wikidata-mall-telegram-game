@@ -1,7 +1,7 @@
 import gaussian, {Gaussian} from 'gaussian'
 import randomItem from 'random-item'
 
-import {Person, Talents, TALENTS, PersonType} from '../types/people'
+import {Person, Talents, TALENTS, PersonType, RobotWorker} from '../types/people'
 import {Skills} from '../types/skills'
 
 import * as wdName from '../wikidata/name'
@@ -12,6 +12,7 @@ import {DAY_IN_SECONDS} from '../math/timestamp-constants'
 import {randomBetween} from '../math/probability'
 
 import {daysUntilRetirement} from '../game-math/applicant'
+import {ROBOT_TINKER_CHANGE, ROBOT_TINKER_INCREASE_LUCK} from '../game-math/constants'
 
 export function createApplicant(skills: Skills, now: number, retirementRandom = Math.random()): Person {
 	const name = wdName.randomName()
@@ -73,7 +74,7 @@ const MINIMAL_TALENT = 0.001
 const distribution: Record<string, Gaussian> = {
 	refined: gaussian(1.25, 0.2 ** 2),
 	temporary: gaussian(1.1, 0.15 ** 2),
-	robot: gaussian(1.35, 0.005 ** 2),
+	robot: gaussian(1.28, 0.005 ** 2),
 	alienSell: gaussian(6, 0.5 ** 2),
 	alienOther: gaussian(1.4, 0.1 ** 2)
 }
@@ -118,4 +119,14 @@ function randomTalents(distribution: Gaussian): Talents {
 	}
 
 	return talents
+}
+
+export function tinkerWithRobot(robot: RobotWorker): void {
+	robot.tinkeredAmount = (robot.tinkeredAmount || 0) + 1
+
+	for (const t of TALENTS) {
+		const isImprovement = Math.random() < ROBOT_TINKER_INCREASE_LUCK
+		const change = isImprovement ? ROBOT_TINKER_CHANGE : -ROBOT_TINKER_CHANGE
+		robot.talents[t] += change
+	}
 }

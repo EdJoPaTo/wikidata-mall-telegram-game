@@ -12,7 +12,7 @@ interface BasicPerson {
 }
 
 export interface SimpleWorker extends BasicPerson {
-	type: Exclude<PersonType, 'refined'>;
+	type: Exclude<PersonType, 'refined' | 'robot'>;
 }
 
 export interface RefinedWorker extends BasicPerson {
@@ -20,7 +20,12 @@ export interface RefinedWorker extends BasicPerson {
 	graduation?: UnixTimestamp;
 }
 
-export type Person = SimpleWorker | RefinedWorker
+export interface RobotWorker extends BasicPerson {
+	type: 'robot';
+	tinkeredAmount?: number;
+}
+
+export type Person = SimpleWorker | RefinedWorker | RobotWorker
 
 export interface Name {
 	given: string;
