@@ -5,7 +5,7 @@ import {Persist} from '../lib/types'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader} from '../lib/interface/formatted-strings'
 import {menuPhoto, buttonText} from '../lib/interface/menu'
-import {shopEmployeeOverview} from '../lib/interface/person'
+import {shopEmployeeOverview, employeeStatsPart} from '../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from './help'
 
@@ -15,6 +15,8 @@ function menuText(ctx: any): string {
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.employee'), {titlePrefix: emojis.person})
 	text += '\n\n'
+
+	text += employeeStatsPart(ctx, persist.shops)
 
 	text += persist.shops
 		.map(o => shopEmployeeOverview(ctx, o))
