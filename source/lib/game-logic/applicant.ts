@@ -72,8 +72,8 @@ const MINIMAL_TALENT = 0.001
 // Gaussian takes sigma^2, everyone else takes sigma (standardDeviation)
 // -> use sigma and square it on startup
 const distribution: Record<string, Gaussian> = {
-	refined: gaussian(1.25, 0.2 ** 2),
-	temporary: gaussian(1.1, 0.15 ** 2),
+	refined: gaussian(1.23, 0.18 ** 2),
+	temporary: gaussian(1.08, 0.13 ** 2),
 	robot: gaussian(1.28, 0.005 ** 2),
 	alienSell: gaussian(6, 0.5 ** 2),
 	alienOther: gaussian(1.4, 0.1 ** 2)
