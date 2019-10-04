@@ -24,9 +24,9 @@ test('storageFilledPercentage two product full', storageFilledPercentageMacro, 1
 test('storageFilledPercentage two product empty and full', storageFilledPercentageMacro, 0.5, [0, 200])
 test('storageFilledPercentage two product half full', storageFilledPercentageMacro, 0.5, [100, 100])
 
-const shopProductsPossibleMacro = createInputOutputIsMacro(shopProductsPossible)
+const shopProductsPossibleMacro = createInputOutputIsMacro(shopProductsPossible, level => `shopProductsPossible ${level}`)
 
-test('shopProductsPossible 0', shopProductsPossibleMacro, 2, 0)
-test('shopProductsPossible 1', shopProductsPossibleMacro, 3, 1)
-test('shopProductsPossible 2', shopProductsPossibleMacro, 4, 2)
-test('shopProductsPossible 4', shopProductsPossibleMacro, 6, 4)
+test(shopProductsPossibleMacro, 2, 0)
+test(shopProductsPossibleMacro, 3, 1)
+test(shopProductsPossibleMacro, 4, 2)
+test(shopProductsPossibleMacro, 6, 4)
