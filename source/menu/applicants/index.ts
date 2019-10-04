@@ -3,7 +3,6 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../../lib/types'
 import {Person} from '../../lib/types/people'
 
-import {ROBOT_CRAFT_COST} from '../../lib/game-math/constants'
 import {secondsBetweenApplicants, applicantSeats, canBeEmployed, sortIndexOfPerson} from '../../lib/game-math/applicant'
 
 import {createApplicant} from '../../lib/game-logic/applicant'
@@ -114,15 +113,13 @@ menu.selectSubmenu('a', availableApplicants, applicantMenu, {
 	}
 })
 
-menu.button(buttonText(emojis.production + emojis.personRobot, 'person.type.robot', {suffix: `(${formatFloat(ROBOT_CRAFT_COST)}${emojis.currency})`}), 'craft-robot', {
+menu.button(buttonText(emojis.production + emojis.personRobot, 'person.type.robot'), 'craft-robot', {
 	hide: (ctx: any) => {
-		const session = ctx.session as Session
 		const {applicants, skills} = ctx.persist as Persist
 		const maxSeats = applicantSeats(skills)
-		return applicants.list.length >= maxSeats || session.money < ROBOT_CRAFT_COST
+		return applicants.list.length >= maxSeats
 	},
 	doFunc: (ctx: any) => {
-		const session = ctx.session as Session
 		const {applicants, skills} = ctx.persist as Persist
 
 		const maxSeats = applicantSeats(skills)
@@ -130,13 +127,7 @@ menu.button(buttonText(emojis.production + emojis.personRobot, 'person.type.robo
 			return ctx.answerCbQuery(emojis.requireAttention + emojis.seat)
 		}
 
-		if (session.money < ROBOT_CRAFT_COST) {
-			return ctx.answerCbQuery(emojis.requireAttention + emojis.currency)
-		}
-
 		const now = Date.now() / 1000
-
-		session.money -= ROBOT_CRAFT_COST
 		applicants.list.push(createApplicant(skills, now, 1))
 	}
 })
