@@ -18,6 +18,7 @@ import * as userShops from '../lib/data/shops'
 import * as userSkills from '../lib/data/skills'
 
 import {currentLevel} from '../lib/game-math/skill'
+import {employeesWithFittingHobbyAmount} from '../lib/game-math/personal'
 import {lastTimeActive} from '../lib/game-math/shop-time'
 import {returnOnInvestment, sellPerMinute} from '../lib/game-math/shop-cost'
 
@@ -35,6 +36,24 @@ const DEFAULT_VIEW: LeaderboardView = 'returnOnInvestment'
 interface LeaderboardEntries<T> {
 	order: string[];
 	values: Record<string, T>;
+}
+
+async function getMatchingHobbiesTable(now: number): Promise<LeaderboardEntries<number>> {
+	const allUserShops = await userShops.getAllShops()
+	const playerIds = Object.keys(allUserShops)
+		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
+
+	const values: Record<string, number> = {}
+	for (const playerId of playerIds) {
+		const shops = allUserShops[playerId]
+		const currently = employeesWithFittingHobbyAmount(shops)
+		values[playerId] = currently
+	}
+
+	return {
+		values,
+		order: sortDictKeysByNumericValues(values, true)
+	}
 }
 
 async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
@@ -174,6 +193,10 @@ async function menuText(ctx: any): Promise<string> {
 			text += await generateTable(await getROITable(now), ctx.from.id, percentBonusString)
 			break
 
+		case 'matchingHobbies':
+			text += await generateTable(await getMatchingHobbiesTable(now), ctx.from.id, o => String(o))
+			break
+
 		case 'sellPerMinute':
 			text += await generateTable(await getSellPerMinuteTable(now), ctx.from.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.r('unit.minute').label()}`)
 			break
@@ -203,6 +226,8 @@ function viewResourceKey(view: LeaderboardView): string {
 	switch (view) {
 		case 'returnOnInvestment':
 			return 'other.returnOnInvestment'
+		case 'matchingHobbies':
+			return 'person.hobby'
 		case 'sellPerMinute':
 			return 'other.income'
 		case 'collector':
