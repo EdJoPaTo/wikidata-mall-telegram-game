@@ -3,7 +3,9 @@ import test from 'ava'
 import {Shop} from '../../source/lib/types/shop'
 import {Person} from '../../source/lib/types/people'
 
-import {personalBonus, personalBonusWhenEmployed, allEmployees} from '../../source/lib/game-math/personal'
+import {personalBonus, personalBonusWhenEmployed, allEmployees, possibleEmployeesWithShops, employeesWithFittingHobbyAmount} from '../../source/lib/game-math/personal'
+
+import {createInputOutputIsMacro} from '../_helper'
 
 const examplePerson: Person = {
 	name: {
@@ -62,4 +64,29 @@ test('allEmployees', t => {
 	t.deepEqual(allEmployees(exampleShop.personal), [
 		examplePerson
 	])
+})
+
+const possibleEmployeesWithShopsMacro = createInputOutputIsMacro(possibleEmployeesWithShops, amount => `possibleEmployeesWithShops ${amount}`)
+test(possibleEmployeesWithShopsMacro, 0, 0)
+test(possibleEmployeesWithShopsMacro, 3, 1)
+test(possibleEmployeesWithShopsMacro, 6, 2)
+
+test('employeesWithFittingHobbyAmount no shops', t => {
+	t.is(employeesWithFittingHobbyAmount([]), 0)
+})
+
+test('employeesWithFittingHobbyAmount 1', t => {
+	const shop: Shop = {
+		...exampleShop,
+		personal: {
+			purchasing: undefined,
+			selling: undefined,
+			storage: {
+				...examplePerson,
+				hobby: 'Q5'
+			}
+		}
+	}
+
+	t.is(employeesWithFittingHobbyAmount([shop]), 1)
 })

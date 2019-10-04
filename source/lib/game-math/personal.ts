@@ -1,7 +1,7 @@
 import gaussian, {Gaussian} from 'gaussian'
 
 import {Shop, Personal} from '../types/shop'
-import {Talent, Person, PersonType} from '../types/people'
+import {Talent, Person, PersonType, TALENTS} from '../types/people'
 
 export function personalBonus(shop: Shop, talent: Talent): number {
 	const person = shop.personal[talent]
@@ -32,4 +32,18 @@ export function modifyDistributionOfType(type: PersonType): Gaussian {
 		case 'refined': return gaussian(0.01, 0.01 ** 2)
 		default: return gaussian(0, 0.01 ** 2)
 	}
+}
+
+export function possibleEmployeesWithShops(shopAmount: number): number {
+	return shopAmount * TALENTS.length
+}
+
+export function employeesWithFittingHobbyAmount(shops: readonly Shop[]): number {
+	return shops
+		.flatMap(shop => TALENTS.map(t => {
+			const person = shop.personal[t]
+			return person !== undefined && person.hobby === shop.id
+		}))
+		.filter(o => o)
+		.length
 }
