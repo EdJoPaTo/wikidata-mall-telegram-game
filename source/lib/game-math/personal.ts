@@ -29,8 +29,8 @@ export function allEmployees(personal: Personal): readonly Person[] {
 export function modifyDistributionOfType(type: PersonType): Gaussian {
 	switch (type) {
 		case 'robot': return gaussian(0, 0.001 ** 2)
-		case 'refined': return gaussian(0.01, 0.01 ** 2)
-		default: return gaussian(0, 0.01 ** 2)
+		case 'refined': return gaussian(0.01, 0.02 ** 2)
+		default: return gaussian(0, 0.02 ** 2)
 	}
 }
 
