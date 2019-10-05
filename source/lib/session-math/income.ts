@@ -4,7 +4,7 @@ import {Shop, Product} from '../types/shop'
 import {customerInterval} from '../game-math/shop-time'
 import {sellingCost} from '../game-math/product'
 
-export default function calcIncome(session: Session, persist: Persist, now: number): void {
+export function incomeLoop(session: Session, persist: Persist, now: number): void {
 	for (const shop of persist.shops) {
 		for (const product of shop.products) {
 			incomeProduct(session, persist, shop, product, now)

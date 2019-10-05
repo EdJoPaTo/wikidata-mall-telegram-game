@@ -4,7 +4,7 @@ import {isSimpleSkill} from '../game-math/skill'
 
 import {increaseLevelByOne} from '../game-logic/skills'
 
-export default function applySkills(session: Session, persist: Persist, now: number): void {
+export function startup(session: Session, persist: Persist): void {
 	// TODO: remove migration
 	if ((session as any).skillInTraining) {
 		session.skillQueue = [
@@ -15,6 +15,21 @@ export default function applySkills(session: Session, persist: Persist, now: num
 
 	if (session.skillQueue) {
 		ensureCurrentlyTrainedSkillForShopHasItsShop(session, persist)
+	}
+}
+
+export function incomeUntil(session: Session): number {
+	const {skillQueue} = session
+	const firstSkillInQueue = skillQueue && skillQueue[0]
+	if (!firstSkillInQueue) {
+		return Infinity
+	}
+
+	return firstSkillInQueue.endTimestamp
+}
+
+export function incomeLoop(session: Session, persist: Persist, now: number): void {
+	if (session.skillQueue) {
 		applySkillWhenFinished(session, persist, now)
 	}
 }

@@ -5,7 +5,14 @@ import {TALENTS, Person} from '../types/people'
 import {allEmployees, modifyDistributionOfType} from '../game-math/personal'
 import {EMPLOYMENT_TALENT_MODIFICATION_SECONDS} from '../game-math/constants'
 
-export function before(persist: Persist, now: number): void {
+export function incomeUntil(persist: Persist): number {
+	const retirements = persist.shops
+		.flatMap(o => o.personal.selling as Person).filter(o => o)
+		.flatMap(o => [o.retirementTimestamp, o.nextTalentModification || Infinity])
+	return Math.min(...retirements)
+}
+
+export function incomeLoop(persist: Persist, now: number): void {
 	for (const shop of persist.shops) {
 		retireShopPersonal(shop.personal, now)
 	}
@@ -19,7 +26,7 @@ export function before(persist: Persist, now: number): void {
 function retireShopPersonal(personal: Personal, now: number): void {
 	for (const talent of TALENTS) {
 		const person = personal[talent]
-		const retire = !person || person.retirementTimestamp < now
+		const retire = !person || person.retirementTimestamp <= now
 		if (retire) {
 			delete personal[talent]
 		}
