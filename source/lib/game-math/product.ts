@@ -9,7 +9,7 @@ import {personalBonus} from './personal'
 export function purchasingCost(shop: Shop, product: Product, skills: Skills): number {
 	const personal = personalBonus(shop, 'purchasing')
 	const scissorsLevel = currentLevel(skills, 'metalScissors')
-	const scissorsBonus = sellingCostPackagingBonus(scissorsLevel)
+	const scissorsBonus = purchasingCostScissorsBonus(scissorsLevel)
 	return productBasePrice(product, skills) * (PURCHASING_FACTOR / (personal * scissorsBonus))
 }
 
