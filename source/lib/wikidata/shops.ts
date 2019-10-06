@@ -31,7 +31,7 @@ FILTER(EXISTS { ?shop wdt:P18 ?image. })
 FILTER(EXISTS { ?product wdt:P18 ?image. })
 }
 GROUP BY ?shop
-HAVING ((COUNT(?product)) >= 5 )`
+HAVING ((COUNT(?product)) >= 4 )`
 }
 
 function productsQuery(shopType: string): string {
