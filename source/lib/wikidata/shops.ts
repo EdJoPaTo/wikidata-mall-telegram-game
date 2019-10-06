@@ -5,18 +5,23 @@ import {stagedAsync} from '../js-helper/async'
 
 const toplevelShopCategories: string[] = [
 	'Q11410', // Game
+	'Q11422', // Toy
 	'Q11460', // Clothing
+	'Q1146001', // Light source
 	'Q1357761', // Utensil (everyday use)
 	'Q13629441', // Electric vehicle
+	'Q188460', // Natural Resource
 	'Q2095', // Food
 	'Q210729', // Electrical element
 	'Q2294986', // Smart object
+	'Q31807746', // Furniture
 	'Q34379', // Musical instrument
 	'Q39201', // Pet
 	'Q40218', // Spacecraft
 	'Q5082128', // Mobile device
 	'Q628983', // Working ship
 	'Q768186', // Sports Equipment
+	'Q811909', // Technological component
 	'Q838948', // Work of art
 	'Q848944' // Merchant ship
 ]
