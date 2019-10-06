@@ -26,10 +26,10 @@ function costForAdditionalShopMacro(t: ExecutionContext, existingShops: number, 
 	t.is(costForAdditionalShop(existingShops), expectedCost)
 }
 
-test('costForAdditionalShop 0 shops', costForAdditionalShopMacro, 0, 100)
-test('costForAdditionalShop 1 shops', costForAdditionalShopMacro, 1, 1000)
-test('costForAdditionalShop 2 shops', costForAdditionalShopMacro, 2, 10000)
-test('costForAdditionalShop 3 shops', costForAdditionalShopMacro, 3, 100000)
+test('costForAdditionalShop 0 shops', costForAdditionalShopMacro, 0, 125)
+test('costForAdditionalShop 1 shops', costForAdditionalShopMacro, 1, 625)
+test('costForAdditionalShop 2 shops', costForAdditionalShopMacro, 2, 3125)
+test('costForAdditionalShop 3 shops', costForAdditionalShopMacro, 3, 15625)
 
 function addProductToShopCostMacro(t: ExecutionContext, existingShops: number, existingProducts: number, expectedCost: number): void {
 	t.is(addProductToShopCost(existingShops, existingProducts), expectedCost)
@@ -39,33 +39,37 @@ test('addProductToShopCost first shop 0 products', addProductToShopCostMacro, 0,
 test('addProductToShopCost second shop 0 products', addProductToShopCostMacro, 1, 0, 0)
 test('addProductToShopCost third shop 0 products', addProductToShopCostMacro, 2, 0, 0)
 
-test('addProductToShopCost first shop 1 products', addProductToShopCostMacro, 0, 1, 100)
-test('addProductToShopCost second shop 1 products', addProductToShopCostMacro, 1, 1, 1000)
-test('addProductToShopCost third shop 1 products', addProductToShopCostMacro, 2, 1, 10000)
+test('addProductToShopCost first shop 1 products', addProductToShopCostMacro, 0, 1, 50)
+test('addProductToShopCost second shop 1 products', addProductToShopCostMacro, 1, 1, 250)
+test('addProductToShopCost third shop 1 products', addProductToShopCostMacro, 2, 1, 1250)
 
-test('addProductToShopCost first shop 4 products', addProductToShopCostMacro, 0, 4, 400)
-test('addProductToShopCost second shop 4 products', addProductToShopCostMacro, 1, 4, 4000)
-test('addProductToShopCost third shop 4 products', addProductToShopCostMacro, 2, 4, 40000)
+test('addProductToShopCost first shop 4 products', addProductToShopCostMacro, 0, 4, 200)
+test('addProductToShopCost second shop 4 products', addProductToShopCostMacro, 1, 4, 1000)
+test('addProductToShopCost third shop 4 products', addProductToShopCostMacro, 2, 4, 5000)
+
+test('addProductToShopCost first shop 10 products', addProductToShopCostMacro, 0, 10, 500)
+test('addProductToShopCost second shop 10 products', addProductToShopCostMacro, 1, 10, 2500)
+test('addProductToShopCost third shop 10 products', addProductToShopCostMacro, 2, 10, 12500)
 
 function totalCostOfShopWithProductsMacro(t: ExecutionContext, shopsBefore: number, products: number, expectedCost: number): void {
 	t.is(totalCostOfShopWithProducts(shopsBefore, products), expectedCost)
 }
 
-test('totalCostOfShopWithProducts 0 shops, 0 products', totalCostOfShopWithProductsMacro, 0, 0, 100)
-test('totalCostOfShopWithProducts 1 shops, 0 products', totalCostOfShopWithProductsMacro, 1, 0, 1000)
-test('totalCostOfShopWithProducts 2 shops, 0 products', totalCostOfShopWithProductsMacro, 2, 0, 10000)
+test('totalCostOfShopWithProducts 0 shops, 0 products', totalCostOfShopWithProductsMacro, 0, 0, 125)
+test('totalCostOfShopWithProducts 1 shops, 0 products', totalCostOfShopWithProductsMacro, 1, 0, 625)
+test('totalCostOfShopWithProducts 2 shops, 0 products', totalCostOfShopWithProductsMacro, 2, 0, 3125)
 
-test('totalCostOfShopWithProducts 0 shops, 1 products', totalCostOfShopWithProductsMacro, 0, 1, 100)
-test('totalCostOfShopWithProducts 1 shops, 1 products', totalCostOfShopWithProductsMacro, 1, 1, 1000)
-test('totalCostOfShopWithProducts 2 shops, 1 products', totalCostOfShopWithProductsMacro, 2, 1, 10000)
+test('totalCostOfShopWithProducts 0 shops, 1 products', totalCostOfShopWithProductsMacro, 0, 1, 125)
+test('totalCostOfShopWithProducts 1 shops, 1 products', totalCostOfShopWithProductsMacro, 1, 1, 625)
+test('totalCostOfShopWithProducts 2 shops, 1 products', totalCostOfShopWithProductsMacro, 2, 1, 3125)
 
-test('totalCostOfShopWithProducts 0 shops, 2 products', totalCostOfShopWithProductsMacro, 0, 2, 200)
-test('totalCostOfShopWithProducts 1 shops, 2 products', totalCostOfShopWithProductsMacro, 1, 2, 2000)
-test('totalCostOfShopWithProducts 2 shops, 2 products', totalCostOfShopWithProductsMacro, 2, 2, 20000)
+test('totalCostOfShopWithProducts 0 shops, 2 products', totalCostOfShopWithProductsMacro, 0, 2, 175)
+test('totalCostOfShopWithProducts 1 shops, 2 products', totalCostOfShopWithProductsMacro, 1, 2, 875)
+test('totalCostOfShopWithProducts 2 shops, 2 products', totalCostOfShopWithProductsMacro, 2, 2, 4375)
 
-test('totalCostOfShopWithProducts 0 shops, 3 products', totalCostOfShopWithProductsMacro, 0, 3, 400)
-test('totalCostOfShopWithProducts 1 shops, 3 products', totalCostOfShopWithProductsMacro, 1, 3, 4000)
-test('totalCostOfShopWithProducts 2 shops, 3 products', totalCostOfShopWithProductsMacro, 2, 3, 40000)
+test('totalCostOfShopWithProducts 0 shops, 3 products', totalCostOfShopWithProductsMacro, 0, 3, 275)
+test('totalCostOfShopWithProducts 1 shops, 3 products', totalCostOfShopWithProductsMacro, 1, 3, 1375)
+test('totalCostOfShopWithProducts 2 shops, 3 products', totalCostOfShopWithProductsMacro, 2, 3, 6875)
 
 function buyShopForClosureIsNotProfitableMacro(t: ExecutionContext, shopsAtStart: number, products: number): void {
 	const totalCost = totalCostOfShopWithProducts(shopsAtStart, products)

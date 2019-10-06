@@ -8,11 +8,11 @@ import {customerPerMinute} from './shop-time'
 import {storageCapacity} from './shop-capacity'
 
 export function costForAdditionalShop(existingShops: number): number {
-	return 10 ** (existingShops + 2)
+	return 5 ** (existingShops + 3)
 }
 
 export function addProductToShopCost(indexOfShop: number, existingProducts: number): number {
-	return costForAdditionalShop(indexOfShop) * existingProducts
+	return costForAdditionalShop(indexOfShop) * (existingProducts / 2.5)
 }
 
 export function totalCostOfShopWithProducts(shopsBefore: number, productsToAdd: number): number {
