@@ -6,7 +6,7 @@ import {Skills} from '../../source/lib/types/skills'
 import {PURCHASING_FACTOR} from '../../source/lib/game-math/constants'
 
 import {customerPerMinute} from '../../source/lib/game-math/shop-time'
-import {productBasePrice} from '../../source/lib/game-math/product'
+import {productBasePrice, sellingCostPackagingBonus, purchasingCost, sellingCost} from '../../source/lib/game-math/product'
 import {
 	addProductToShopCost,
 	buyAllCost,
@@ -145,8 +145,12 @@ test('buyAllCost', t => {
 
 	const expectedCostForItemsAlone = basePrice * expectedItemsToPayFor
 	const expectedCost = expectedCostForItemsAlone * costFactor * PURCHASING_FACTOR
+	t.log('expectedCost', expectedCost)
 
-	t.is(Math.round(buyAllCost(shops, skills)), Math.round(expectedCost))
+	const actualCost = buyAllCost(shops, skills)
+	t.log('actualCost', actualCost)
+
+	t.is(Math.round(actualCost), Math.round(expectedCost))
 })
 
 test('returnOnInvestment without skills or personal', t => {
@@ -176,6 +180,59 @@ test('returnOnInvestment without products', t => {
 	const skills: Skills = {}
 	const shop = generateShop([])
 	t.is(returnOnInvestment([shop], skills), NaN)
+})
+
+test('returnOnInvestment with sell skill without personal', t => {
+	const shop = generateShop([0])
+	const skills: Skills = {
+		packaging: 1
+	}
+
+	t.is(sellingCostPackagingBonus(1), 1.05, 'sanity check')
+	t.is(returnOnInvestment([shop], skills), 1.05 / PURCHASING_FACTOR)
+})
+
+test('returnOnInvestment is the same as when calculated manually without magnet', t => {
+	const skills: Skills = {metalScissors: 5, packaging: 5}
+	const shop = generateShop([199], {
+		purchasing: 1.2,
+		selling: 1.2,
+		storage: 1
+	})
+
+	const p = purchasingCost(shop, shop.products[0], skills)
+	const s = sellingCost(shop, shop.products[0], skills)
+
+	const manually = s / p
+	const roi = returnOnInvestment([shop], skills)
+
+	t.is(manually, roi)
+})
+
+test('returnOnInvestment is the same as when calculated manually with magnet', t => {
+	const skills: Skills = {metalScissors: 5, packaging: 5, magnetism: 5}
+	const shop = generateShop([199], {
+		purchasing: 1.2,
+		selling: 1.2,
+		storage: 1
+	})
+
+	const magnetFactor = buyAllCostFactor(skills, 1)
+	t.is(magnetFactor, 1.4, 'sanity check')
+
+	const b = buyAllCost([shop], skills)
+	const p = purchasingCost(shop, shop.products[0], skills) * magnetFactor
+	t.is(b, p, 'sanety check buyAllCost calculates the same')
+
+	const s = sellingCost(shop, shop.products[0], skills)
+
+	const manually = s / p
+	t.log('manually', manually)
+
+	const roi = returnOnInvestment([shop], skills, magnetFactor)
+	t.log('roi', roi)
+
+	t.is(manually, roi)
 })
 
 test('sellPerMinute dont accept any product', t => {
