@@ -2,7 +2,9 @@ import test, {ExecutionContext} from 'ava'
 
 import {Skills, Skill, SkillInTraining} from '../../source/lib/types/skills'
 
-import {currentLevel, skillUpgradeTimeNeeded, skillUpgradeEndTimestamp, categorySkillSpecificLevel, entriesInSkillQueue, levelAfterSkillQueue, canAddToSkillQueue} from '../../source/lib/game-math/skill'
+import {currentLevel, skillUpgradeTimeNeeded, skillUpgradeEndTimestamp, categorySkillSpecificLevel, entriesInSkillQueue, levelAfterSkillQueue, canAddToSkillQueue, skillTimeNeededTillLevel} from '../../source/lib/game-math/skill'
+
+import {createInputOutputIsMacro} from '../_helper'
 
 const emptySkills: Skills = {}
 const exampleSkills: Skills = {
@@ -48,6 +50,19 @@ test('skillUpgradeTimeNeeded examples', t => {
 	t.is(skillUpgradeTimeNeeded(3), 5)
 	t.is(skillUpgradeTimeNeeded(4), 8)
 })
+
+const skillTimeNeededTillLevelMacro = createInputOutputIsMacro(skillTimeNeededTillLevel, o => `skillTimeNeededTillLevel ${o}`)
+test(skillTimeNeededTillLevelMacro, 0, 0)
+test(skillTimeNeededTillLevelMacro, 1, 1)
+test(skillTimeNeededTillLevelMacro, 3, 2)
+test(skillTimeNeededTillLevelMacro, 6, 3)
+test(skillTimeNeededTillLevelMacro, 11, 4)
+
+const categorySkillHoursInvestedMacro = createInputOutputIsMacro((collector: SkillCategorySet) => categorySkillHoursInvested({collector}, 'collector'))
+test('categorySkillHoursInvested without skills', categorySkillHoursInvestedMacro, 0, {})
+test('categorySkillHoursInvested single skill', categorySkillHoursInvestedMacro, 1, {Q2: 1})
+test('categorySkillHoursInvested multiple skills', categorySkillHoursInvestedMacro, 2, {Q2: 1, Q5: 1})
+test('categorySkillHoursInvested single skill multiple levels', categorySkillHoursInvestedMacro, 3, {Q2: 2})
 
 test('skill', t => {
 	t.is(skillUpgradeEndTimestamp(0, 10000000), 10000000 + (60 * 60 * 1))
