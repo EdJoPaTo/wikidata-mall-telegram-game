@@ -10,7 +10,8 @@ export function purchasingCost(shop: Shop, product: Product, skills: Skills): nu
 	const personal = personalBonus(shop, 'purchasing')
 	const scissorsLevel = currentLevel(skills, 'metalScissors')
 	const scissorsBonus = purchasingCostScissorsBonus(scissorsLevel)
-	return productBasePrice(product, skills) * (PURCHASING_FACTOR / (personal * scissorsBonus))
+	const bonus = personal * scissorsBonus
+	return productBasePrice(product, skills) * (PURCHASING_FACTOR / bonus)
 }
 
 export function sellingCost(shop: Shop, product: Product, skills: Skills): number {
