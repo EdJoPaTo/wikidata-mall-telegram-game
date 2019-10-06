@@ -3,7 +3,7 @@ import WikidataEntityReader from 'wikidata-entity-reader'
 
 import {Session, Persist} from '../../../lib/types'
 import {Shop, Product} from '../../../lib/types/shop'
-import {Skills} from '../../../lib/types/skills'
+import {Skills, SimpleSkill} from '../../../lib/types/skills'
 import {Talent} from '../../../lib/types/people'
 
 import {currentLevel} from '../../../lib/game-math/skill'
@@ -37,7 +37,7 @@ function bonusPerson(shop: Shop, talent: Talent): string {
 	return '\n  ' + emojis.person + personInShopLine(shop, talent)
 }
 
-function bonusSkill(ctx: any, skills: Skills, skill: keyof Skills, bonusFunc: (level: number) => number): string {
+function bonusSkill(ctx: any, skills: Skills, skill: SimpleSkill, bonusFunc: (level: number) => number): string {
 	const level = currentLevel(skills, skill)
 	const bonus = bonusFunc(level)
 	if (bonus === 1) {
@@ -90,8 +90,6 @@ function menuText(ctx: any): string {
 	const purchaseCostPerItem = purchasingCost(shop, product, persist.skills)
 	const sellingCostPerItem = sellingCost(shop, product, persist.skills)
 
-	const collectorLevel = currentLevel(persist.skills, 'collector')
-
 	let text = ''
 	text += infoHeader(reader)
 	text += '\n\n'
@@ -114,15 +112,13 @@ function menuText(ctx: any): string {
 	if (!session.hideExplanationMath) {
 		text += labeledFloat(ctx.wd.r('product.listprice'), basePrice, emojis.currency)
 		text += '\n'
-		if (collectorLevel > 0) {
+		const collectorFactor = productBasePriceCollectorFactor(persist.skills)
+		if (collectorFactor > 1) {
 			text += '  '
 			text += emojis.skill
-			text += percentBonusString(productBasePriceCollectorFactor(persist.skills))
+			text += percentBonusString(collectorFactor)
 			text += ' '
 			text += ctx.wd.r('skill.collector').label()
-			text += ' ('
-			text += collectorLevel
-			text += ')'
 			text += '\n'
 		}
 	}

@@ -3,7 +3,7 @@ import {Skills} from '../types/skills'
 
 import {PURCHASING_FACTOR} from './constants'
 
-import {currentLevel} from './skill'
+import {currentLevel, categorySkillHoursInvested} from './skill'
 import {personalBonus} from './personal'
 
 export function purchasingCost(shop: Shop, product: Product, skills: Skills): number {
@@ -28,8 +28,9 @@ export function productBasePrice(product: Product, skills: Skills): number {
 }
 
 export function productBasePriceCollectorFactor(skills: Skills): number {
-	const collectorLevel = currentLevel(skills, 'collector')
-	return 1 + (collectorLevel * 0.1)
+	const totalHours = categorySkillHoursInvested(skills, 'collector')
+	const totalMinutes = totalHours * 60
+	return 1 + (totalMinutes * 0.0001)
 }
 
 export function purchasingCostScissorsBonus(scissorsLevel: number): number {

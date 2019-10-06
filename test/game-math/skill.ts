@@ -1,8 +1,8 @@
 import test, {ExecutionContext} from 'ava'
 
-import {Skills, Skill, SkillInTraining} from '../../source/lib/types/skills'
+import {Skills, Skill, SkillInTraining, SkillCategorySet} from '../../source/lib/types/skills'
 
-import {currentLevel, skillUpgradeTimeNeeded, skillUpgradeEndTimestamp, categorySkillSpecificLevel, entriesInSkillQueue, levelAfterSkillQueue, canAddToSkillQueue, skillTimeNeededTillLevel} from '../../source/lib/game-math/skill'
+import {currentLevel, skillUpgradeTimeNeeded, skillUpgradeEndTimestamp, categorySkillSpecificLevel, entriesInSkillQueue, levelAfterSkillQueue, canAddToSkillQueue, skillTimeNeededTillLevel, categorySkillHoursInvested} from '../../source/lib/game-math/skill'
 
 import {createInputOutputIsMacro} from '../_helper'
 
@@ -15,20 +15,12 @@ const exampleSkills: Skills = {
 	}
 }
 
-test('currentLevel 0 from unset categoryless skill', t => {
+test('currentLevel 0 from unset skill', t => {
 	t.is(currentLevel(emptySkills, 'applicantSpeed'), 0)
 })
 
-test('currentLevel 0 from unset category skill', t => {
-	t.is(currentLevel(emptySkills, 'collector'), 0)
-})
-
-test('currentLevel correct on categoryless skill', t => {
+test('currentLevel correct on skill', t => {
 	t.is(currentLevel(exampleSkills, 'applicantSpeed'), 2)
-})
-
-test('currentLevel correct on category skill', t => {
-	t.is(currentLevel(exampleSkills, 'collector'), 8)
 })
 
 test('categorySkillSpecificLevel 0 from unset skill', t => {

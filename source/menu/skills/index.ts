@@ -5,7 +5,7 @@ import {Skills, CategorySkill, SimpleSkill, SIMPLE_SKILLS, CATEGORY_SKILLS, Skil
 
 import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../lib/js-helper/dictionary'
 
-import {currentLevel} from '../../lib/game-math/skill'
+import {currentLevel, categorySkillHoursInvested} from '../../lib/game-math/skill'
 
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
@@ -17,11 +17,19 @@ import {createHelpMenu, helpButtonText} from '../help'
 import skillMenu from './skill'
 import skillSelectCategory from './skill-select-category'
 
-function skillInfo(ctx: any, skills: Skills, skill: SimpleSkill | CategorySkill): {emoji: string; label: string; level: number} {
+function simpleSkillInfo(ctx: any, skills: Skills, skill: SimpleSkill): {emoji: string; label: string; level: number} {
 	return {
 		emoji: emojis[skill],
 		label: ctx.wd.r(`skill.${skill}`).label(),
 		level: currentLevel(skills, skill)
+	}
+}
+
+function categorySkillInfo(ctx: any, skills: Skills, skill: CategorySkill): {emoji: string; label: string; hours: number} {
+	return {
+		emoji: emojis[skill],
+		label: ctx.wd.r(`skill.${skill}`).label(),
+		hours: categorySkillHoursInvested(skills, skill)
 	}
 }
 
@@ -30,19 +38,21 @@ function menuText(ctx: any): string {
 	const persist = ctx.persist as Persist
 	const {__wikibase_language_code: locale} = session
 
+	const hourLabel = ctx.wd.r('unit.hour').label()
+
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.skill'), {titlePrefix: emojis.skill})
 	text += '\n\n'
 
 	const simpleSkillParts = SIMPLE_SKILLS
-		.map(o => skillInfo(ctx, persist.skills, o))
+		.map(o => simpleSkillInfo(ctx, persist.skills, o))
 		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
 		.map(o => `${o.emoji}${o.label}: ${o.level}`)
 
 	const categorySkillParts = CATEGORY_SKILLS
-		.map(o => skillInfo(ctx, persist.skills, o))
+		.map(o => categorySkillInfo(ctx, persist.skills, o))
 		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
-		.map(o => `${o.emoji}${o.label}: ${o.level}`)
+		.map(o => `${o.emoji}${o.label}: ${o.hours} ${hourLabel}`)
 
 	if (simpleSkillParts.length + categorySkillParts.length > 0) {
 		text += '*'

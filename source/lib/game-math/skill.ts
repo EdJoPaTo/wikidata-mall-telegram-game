@@ -11,18 +11,13 @@ export function isCategorySkill(skill: Skill): skill is CategorySkill {
 	return (CATEGORY_SKILLS as string[]).includes(skill)
 }
 
-export function currentLevel(skills: Skills, skill: SimpleSkill | CategorySkill): number {
+export function currentLevel(skills: Skills, skill: SimpleSkill): number {
 	const content = skills[skill]
 	if (!content) {
 		return 0
 	}
 
-	if (typeof content === 'number') {
-		return content
-	}
-
-	return Object.values(content)
-		.reduce((a, b) => a + b, 0)
+	return content
 }
 
 export function categorySkillCategories(skills: Skills, skill: CategorySkill): readonly string[] {

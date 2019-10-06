@@ -17,9 +17,9 @@ import * as userMalls from '../lib/data/malls'
 import * as userShops from '../lib/data/shops'
 import * as userSkills from '../lib/data/skills'
 
-import {currentLevel} from '../lib/game-math/skill'
 import {employeesWithFittingHobbyAmount} from '../lib/game-math/personal'
 import {lastTimeActive} from '../lib/game-math/shop-time'
+import {productBasePriceCollectorFactor} from '../lib/game-math/product'
 import {returnOnInvestment, sellPerMinute} from '../lib/game-math/shop-cost'
 
 import {emojis} from '../lib/interface/emojis'
@@ -110,8 +110,8 @@ async function getCollectorTable(): Promise<LeaderboardEntries<number>> {
 	const allUserSkills = await userSkills.getAllSkills()
 	const values: Record<string, number> = {}
 	for (const playerId of Object.keys(allUserSkills)) {
-		const level = currentLevel(allUserSkills[playerId], 'collector')
-		values[playerId] = level
+		const bonus = productBasePriceCollectorFactor(allUserSkills[playerId])
+		values[playerId] = bonus
 	}
 
 	return {
@@ -202,7 +202,7 @@ async function menuText(ctx: any): Promise<string> {
 			break
 
 		case 'collector':
-			text += await generateTable(await getCollectorTable(), ctx.from.id, o => String(o))
+			text += await generateTable(await getCollectorTable(), ctx.from.id, percentBonusString)
 			break
 
 		case 'mallProduction':

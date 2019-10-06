@@ -4,7 +4,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../../lib/types'
 import {Skills, CategorySkill} from '../../lib/types/skills'
 
-import {currentLevel, categorySkillSpecificLevel} from '../../lib/game-math/skill'
+import {categorySkillSpecificLevel} from '../../lib/game-math/skill'
 
 import {buttonText} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
@@ -81,11 +81,6 @@ function menuText(ctx: any): string {
 		}, {})
 
 	if (shops.length + categoriesSeenBefore.length > 0) {
-		text += ctx.wd.r('skill.level').label()
-		text += ': '
-		text += currentLevel(persist.skills, 'collector')
-		text += '\n\n'
-
 		text += format.bold(ctx.wd.r('menu.shop').label())
 		text += '\n'
 		text +=	shops
