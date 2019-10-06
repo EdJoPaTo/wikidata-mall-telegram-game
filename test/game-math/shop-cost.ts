@@ -98,16 +98,16 @@ for (let shops = 1; shops <= 10; shops += 3) {
 
 function buyAllCostFactorMacro(t: ExecutionContext, magnetismLevel: number, shops: number, expected: number): void {
 	const skills: Skills = {magnetism: magnetismLevel}
-	t.is(buyAllCostFactor(skills, shops), expected)
+	t.is(buyAllCostFactor(skills, shops).toFixed(4), expected.toFixed(4))
 }
 
-test('buyAllCostFactor 0 in single shop', buyAllCostFactorMacro, 0, 1, 1.5)
-test('buyAllCostFactor 5 in single shop', buyAllCostFactorMacro, 5, 1, 1.4)
-test('buyAllCostFactor 10 in single shop', buyAllCostFactorMacro, 10, 1, 1.3)
+test('buyAllCostFactor 0 in single shop', buyAllCostFactorMacro, 0, 1, 1.68)
+test('buyAllCostFactor 5 in single shop', buyAllCostFactorMacro, 5, 1, 1.48)
+test('buyAllCostFactor 10 in single shop', buyAllCostFactorMacro, 10, 1, 1.28)
 
-test('buyAllCostFactor 0 in multiple shops', buyAllCostFactorMacro, 0, 3, 2.5)
-test('buyAllCostFactor 5 in multiple shops', buyAllCostFactorMacro, 5, 3, 2.4)
-test('buyAllCostFactor 10 in multiple shops', buyAllCostFactorMacro, 10, 3, 2.3)
+test('buyAllCostFactor 0 in multiple shops', buyAllCostFactorMacro, 0, 3, 3)
+test('buyAllCostFactor 5 in multiple shops', buyAllCostFactorMacro, 5, 3, 2.8)
+test('buyAllCostFactor 10 in multiple shops', buyAllCostFactorMacro, 10, 3, 2.6)
 
 function shopTotalPurchaseCostMacro(t: ExecutionContext, amounts: readonly number[], expectedItemsToPayFor: number): void {
 	const skills: Skills = {magnetism: 0}
@@ -141,7 +141,7 @@ test('buyAllCost', t => {
 	t.is(basePrice, 8, 'sanity check')
 
 	const costFactor = buyAllCostFactor(skills, shops.length)
-	t.is(costFactor, 2.5, 'sanity check')
+	t.is(costFactor, 3, 'sanity check')
 
 	const expectedCostForItemsAlone = basePrice * expectedItemsToPayFor
 	const expectedCost = expectedCostForItemsAlone * costFactor * PURCHASING_FACTOR
@@ -210,7 +210,7 @@ test('returnOnInvestment is the same as when calculated manually without magnet'
 })
 
 test('returnOnInvestment is the same as when calculated manually with magnet', t => {
-	const skills: Skills = {metalScissors: 5, packaging: 5, magnetism: 5}
+	const skills: Skills = {metalScissors: 5, packaging: 5, magnetism: 7}
 	const shop = generateShop([199], {
 		purchasing: 1.2,
 		selling: 1.2,

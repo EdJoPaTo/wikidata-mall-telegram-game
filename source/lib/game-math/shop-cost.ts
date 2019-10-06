@@ -34,9 +34,9 @@ export function moneyForShopClosure(existingShops: number, productsInShop: numbe
 
 export function buyAllCostFactor(skills: Skills, shopsToBuyIn: number): number {
 	const magnetismLevel = currentLevel(skills, 'magnetism')
-	// This would require someone to have magnetism level 25 for factor 1 -> Fib 25 alone is 75025 which equals 8.5 Years
-	const reductionByLevel = magnetismLevel * 0.02
-	const base = shopsToBuyIn > 1 ? 2.5 : 1.5
+	// This would require someone to have magnetism level 16 for factor 1 -> Fib 16 alone is 1597 which equals 66 days
+	const reductionByLevel = magnetismLevel * 0.04
+	const base = shopsToBuyIn > 1 ? 3 : 1.68
 	return base - reductionByLevel
 }
 
