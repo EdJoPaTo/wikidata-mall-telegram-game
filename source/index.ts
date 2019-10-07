@@ -68,6 +68,7 @@ const i18n = new TelegrafI18n({
 bot.use(i18n.middleware())
 
 console.time('wdEntityStore')
+console.timeLog('wdEntityStore', 'start')
 const wdEntityStore = new WikidataEntityStore({
 	entityStore: new KeyValueInMemoryFiles<EntityEntry>('wikidata-cache/entity-store'),
 	properties: ['labels', 'descriptions', 'claims']
