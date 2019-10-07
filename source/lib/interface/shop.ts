@@ -1,7 +1,7 @@
 import {Shop} from '../types/shop'
 import {Skills} from '../types/skills'
 
-import {buyAllCostFactor, returnOnInvestment, sellPerMinute} from '../game-math/shop-cost'
+import {buyAllCostFactor, returnOnInvestment, currentSellPerMinute} from '../game-math/shop-cost'
 import {currentLevel} from '../game-math/skill'
 
 import {emojis} from './emojis'
@@ -14,7 +14,7 @@ export function incomePart(ctx: any, shops: readonly Shop[], skills: Skills, sho
 	const income = returnOnInvestment(shops, skills)
 	const magnetIncome = returnOnInvestment(shops, skills, factor)
 	const sell = shops
-		.map(o => sellPerMinute(o, skills, o => o.itemsInStore > 0))
+		.map(o => currentSellPerMinute(o, skills))
 		.reduce((a, b) => a + b, 0)
 
 	if (!isFinite(income)) {

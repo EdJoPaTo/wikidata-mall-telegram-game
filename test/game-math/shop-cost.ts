@@ -12,10 +12,11 @@ import {
 	buyAllCost,
 	buyAllCostFactor,
 	costForAdditionalShop,
+	currentSellPerMinute,
 	magnetEnabled,
+	maxSellPerMinute,
 	moneyForShopClosure,
 	returnOnInvestment,
-	sellPerMinute,
 	shopTotalPurchaseCost,
 	totalCostOfShopWithProducts
 } from '../../source/lib/game-math/shop-cost'
@@ -239,14 +240,7 @@ test('returnOnInvestment is the same as when calculated manually with magnet', t
 	t.is(manually, roi)
 })
 
-test('sellPerMinute dont accept any product', t => {
-	const skills: Skills = {}
-	const shop = generateShop([0, 1])
-
-	t.is(sellPerMinute(shop, skills, () => false), 0)
-})
-
-test('sellPerMinute accept any product', t => {
+test('maxSellPerMinute', t => {
 	const skills: Skills = {}
 	const shop = generateShop([0, 1])
 
@@ -256,10 +250,10 @@ test('sellPerMinute accept any product', t => {
 	const itemsPerMinute = customerPerMinute()
 	t.is(itemsPerMinute, 2, 'sanity check')
 
-	t.is(sellPerMinute(shop, skills, () => true), 8 * 2 * 2)
+	t.is(maxSellPerMinute(shop, skills), 8 * 2 * 2)
 })
 
-function sellPerMinuteInStockMacro(t: ExecutionContext, amounts: readonly number[], expected: number): void {
+function currentSellPerMinuteMacro(t: ExecutionContext, amounts: readonly number[], expected: number): void {
 	const skills: Skills = {}
 	const shop = generateShop(amounts)
 
@@ -269,14 +263,14 @@ function sellPerMinuteInStockMacro(t: ExecutionContext, amounts: readonly number
 	const itemsPerMinute = customerPerMinute()
 	t.is(itemsPerMinute, 2, 'sanity check')
 
-	t.is(sellPerMinute(shop, skills, o => o.itemsInStore > 0), expected)
+	t.is(currentSellPerMinute(shop, skills), expected)
 }
 
-test('sellPerMinute nothing', sellPerMinuteInStockMacro, [], 0)
-test('sellPerMinute 0', sellPerMinuteInStockMacro, [0], 0)
-test('sellPerMinute 0, 0', sellPerMinuteInStockMacro, [0, 0], 0)
-test('sellPerMinute 1', sellPerMinuteInStockMacro, [1], 8 * 2)
-test('sellPerMinute 1, 1', sellPerMinuteInStockMacro, [1, 1], 8 * 2 * 2)
+test('sellPerMinute nothing', currentSellPerMinuteMacro, [], 0)
+test('sellPerMinute 0', currentSellPerMinuteMacro, [0], 0)
+test('sellPerMinute 0, 0', currentSellPerMinuteMacro, [0, 0], 0)
+test('sellPerMinute 1', currentSellPerMinuteMacro, [1], 8 * 2)
+test('sellPerMinute 1, 1', currentSellPerMinuteMacro, [1, 1], 8 * 2 * 2)
 
 test('magnetEnabled is enabled', t => {
 	const skills: Skills = {magnetism: 1}

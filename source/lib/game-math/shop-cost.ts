@@ -1,4 +1,4 @@
-import {Shop, Product} from '../types/shop'
+import {Shop} from '../types/shop'
 import {Skills} from '../types/skills'
 
 import {currentLevel} from './skill'
@@ -75,10 +75,17 @@ export function returnOnInvestment(shops: readonly Shop[], skills: Skills, purch
 	return income / costWithFactor
 }
 
-export function sellPerMinute(shop: Shop, skills: Skills, productFilter: (product: Product) => boolean): number {
+export function maxSellPerMinute(shop: Shop, skills: Skills): number {
 	const itemsPerMinute = customerPerMinute()
 	return shop.products
-		.filter(productFilter)
+		.map(o => sellingCost(shop, o, skills) * itemsPerMinute)
+		.reduce((a, b) => a + b, 0)
+}
+
+export function currentSellPerMinute(shop: Shop, skills: Skills): number {
+	const itemsPerMinute = customerPerMinute()
+	return shop.products
+		.filter(o => o.itemsInStore > 0)
 		.map(o => sellingCost(shop, o, skills) * itemsPerMinute)
 		.reduce((a, b) => a + b, 0)
 }

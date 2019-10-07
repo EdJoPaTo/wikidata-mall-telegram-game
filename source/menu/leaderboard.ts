@@ -20,7 +20,7 @@ import * as userSkills from '../lib/data/skills'
 import {employeesWithFittingHobbyAmount} from '../lib/game-math/personal'
 import {lastTimeActive} from '../lib/game-math/shop-time'
 import {productBasePriceCollectorFactor} from '../lib/game-math/product'
-import {returnOnInvestment, sellPerMinute} from '../lib/game-math/shop-cost'
+import {returnOnInvestment, maxSellPerMinute} from '../lib/game-math/shop-cost'
 
 import {emojis} from '../lib/interface/emojis'
 import {formatFloat, formatInt} from '../lib/interface/format-number'
@@ -91,7 +91,7 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 		const shops = allUserShops[playerId]
 		const skills: Skills = allUserSkills[playerId] || {}
 		const income = shops
-			.map(o => sellPerMinute(o, skills, () => true))
+			.map(o => maxSellPerMinute(o, skills))
 			.reduce((a, b) => a + b, 0)
 		if (!isFinite(income) || income < 0.01) {
 			continue
