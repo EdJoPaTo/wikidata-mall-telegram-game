@@ -11,6 +11,7 @@ export async function removeOld(): Promise<void> {
 	const now = Date.now() / 1000
 	try {
 		await removeOldUsers(now)
+		await shopRemoveSoon(now)
 	} catch (error) {
 		console.error('removeOld Error', error)
 	}
@@ -39,4 +40,20 @@ async function removeOldUsers(now: number): Promise<void> {
 	}
 
 	console.timeEnd('removeOldUsers')
+}
+
+async function shopRemoveSoon(now: number): Promise<void> {
+	console.time('removeOldUsers soon')
+	const allShops = await userShops.getAll()
+	const timestampSoon = now - (DAY_IN_SECONDS * 60)
+
+	const deleteWithin30d = Object.keys(allShops)
+		.map(o => Number(o))
+		.filter(o => {
+			const active = lastTimeActive(allShops[o])
+			return isFinite(active) && active < timestampSoon
+		})
+
+	console.log('removeOldUsers soon', deleteWithin30d.length, deleteWithin30d)
+	console.timeEnd('removeOldUsers soon')
 }
