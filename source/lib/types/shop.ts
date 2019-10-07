@@ -1,9 +1,10 @@
 import {Person, Talent} from './people'
 
 type UnixTimestamp = number
+type QNumber = string
 
 export interface Product {
-	id: string;
+	id: QNumber;
 	itemsInStore: number;
 	itemTimestamp: UnixTimestamp;
 }
@@ -11,13 +12,13 @@ export interface Product {
 export type Personal = Record<Talent, Person | undefined>
 
 export interface Shop {
-	id: string;
+	id: QNumber;
 	opening: UnixTimestamp;
 	personal: Personal;
 	products: Product[];
 }
 
 export interface Construction {
-	possibleShops: string[];
+	possibleShops: QNumber[];
 	timestamp: UnixTimestamp;
 }
