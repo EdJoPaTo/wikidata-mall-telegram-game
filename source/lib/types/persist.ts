@@ -6,7 +6,7 @@ import {Skills} from './skills'
 // Contains things that are stored outside of the session
 export interface Persist {
 	applicants: Applicants;
+	mall?: Mall;
 	shops: Shop[];
 	skills: Skills;
-	mall?: Mall;
 }
