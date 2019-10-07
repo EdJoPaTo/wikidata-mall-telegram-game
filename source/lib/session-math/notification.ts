@@ -18,8 +18,8 @@ export async function initialize(notififyManager: NotificationManager, entitySto
 	wdEntityStore = entityStore
 
 	const allApplicants = await userApplicants.getAll()
-	const allShops = await userShops.getAllShops()
-	const allSkills = await userSkills.getAllSkills()
+	const allShops = await userShops.getAll()
+	const allSkills = await userSkills.getAll()
 
 	for (const {user, data} of userSessions.getRaw()) {
 		const applicants = allApplicants[user] || {

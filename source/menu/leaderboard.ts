@@ -39,8 +39,9 @@ interface LeaderboardEntries<T> {
 }
 
 async function getMatchingHobbiesTable(now: number): Promise<LeaderboardEntries<number>> {
-	const allUserShops = await userShops.getAllShops()
+	const allUserShops = await userShops.getAll()
 	const playerIds = Object.keys(allUserShops)
+		.map(o => Number(o))
 		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
 
 	const values: Record<string, number> = {}
@@ -57,9 +58,10 @@ async function getMatchingHobbiesTable(now: number): Promise<LeaderboardEntries<
 }
 
 async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
-	const allUserShops = await userShops.getAllShops()
-	const allUserSkills = await userSkills.getAllSkills()
+	const allUserShops = await userShops.getAll()
+	const allUserSkills = await userSkills.getAll()
 	const playerIds = Object.keys(allUserShops)
+		.map(o => Number(o))
 		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
 
 	const values: Record<string, number> = {}
@@ -81,9 +83,10 @@ async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
 }
 
 async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<number>> {
-	const allUserShops = await userShops.getAllShops()
-	const allUserSkills = await userSkills.getAllSkills()
+	const allUserShops = await userShops.getAll()
+	const allUserSkills = await userSkills.getAll()
 	const playerIds = Object.keys(allUserShops)
+		.map(o => Number(o))
 		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
 
 	const values: Record<string, number> = {}
@@ -107,9 +110,9 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 }
 
 async function getCollectorTable(): Promise<LeaderboardEntries<number>> {
-	const allUserSkills = await userSkills.getAllSkills()
+	const allUserSkills = await userSkills.getAll()
 	const values: Record<string, number> = {}
-	for (const playerId of Object.keys(allUserSkills)) {
+	for (const playerId of Object.keys(allUserSkills).map(o => Number(o))) {
 		const bonus = productBasePriceCollectorFactor(allUserSkills[playerId])
 		values[playerId] = bonus
 	}

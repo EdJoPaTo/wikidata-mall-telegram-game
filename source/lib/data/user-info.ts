@@ -12,7 +12,7 @@ export async function get(id: number): Promise<User | undefined> {
 	return data.get(String(id))
 }
 
-export async function getAll(): Promise<Record<string, User>> {
+export async function getAll(): Promise<Record<number, User>> {
 	return data.entries()
 }
 

@@ -8,7 +8,7 @@ console.time('load user shops')
 const data: KeyValueStorage<Shop[]> = new KeyValueInMemoryFiles<Shop[]>('persist/shops')
 console.timeEnd('load user shops')
 
-export async function getAllShops(): Promise<Record<string, Shop[]>> {
+export async function getAll(): Promise<Record<number, Shop[]>> {
 	return data.entries()
 }
 

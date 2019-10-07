@@ -8,7 +8,7 @@ console.time('load user applicants')
 const data: KeyValueStorage<Applicants> = new KeyValueInMemoryFiles<Applicants>('tmp/applicants')
 console.timeEnd('load user applicants')
 
-export async function getAll(): Promise<Record<string, Applicants>> {
+export async function getAll(): Promise<Record<number, Applicants>> {
 	return data.entries()
 }
 

@@ -47,7 +47,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += '*'
 	text += '\n'
 
-	const allShopsDict = await userShops.getAllShops()
+	const allShopsDict = await userShops.getAll()
 	const allShops = Object.values(allShopsDict).flat()
 	const allProducts = allShops.flatMap(o => o.products)
 	const allEmployees = allShops.flatMap(o => Object.values(o.personal) as Person[])

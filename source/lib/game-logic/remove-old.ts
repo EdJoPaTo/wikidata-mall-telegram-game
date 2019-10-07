@@ -18,15 +18,15 @@ export async function removeOld(): Promise<void> {
 
 async function removeOldUsers(now: number): Promise<void> {
 	console.time('removeOldUsers')
-	const allShops = await userShops.getAllShops()
+	const allShops = await userShops.getAll()
 	const minTimestamp = now - (DAY_IN_SECONDS * 90)
 
 	const toDelete = Object.keys(allShops)
+		.map(o => Number(o))
 		.filter(o => {
 			const active = lastTimeActive(allShops[o])
 			return isFinite(active) && active < minTimestamp
 		})
-		.map(o => Number(o))
 
 	console.timeLog('removeOldUsers', toDelete.length, toDelete)
 

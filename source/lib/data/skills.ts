@@ -8,7 +8,7 @@ console.time('load user skills')
 const data: KeyValueStorage<Skills> = new KeyValueInMemoryFiles<Skills>('persist/skills')
 console.timeEnd('load user skills')
 
-export async function getAllSkills(): Promise<Record<string, Skills>> {
+export async function getAll(): Promise<Record<number, Skills>> {
 	return data.entries()
 }
 

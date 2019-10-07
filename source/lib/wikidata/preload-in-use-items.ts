@@ -3,12 +3,12 @@ import WikidataEntityStore from 'wikidata-entity-store'
 
 import {CATEGORY_SKILLS} from '../types/skills'
 
-import {getAllShops} from '../data/shops'
-import {getAllSkills} from '../data/skills'
+import * as userShops from '../data/shops'
+import * as userSkills from '../data/skills'
 
 export async function preload(wdItemStore: WikidataEntityStore): Promise<void> {
 	console.time('wikidata-preload-in-use-items')
-	const allPlayerShops = await getAllShops()
+	const allPlayerShops = await userShops.getAll()
 	const shops = Object.values(allPlayerShops).flat()
 
 	const shopIds = shops
@@ -22,7 +22,7 @@ export async function preload(wdItemStore: WikidataEntityStore): Promise<void> {
 		.filter(arrayFilterUnique())
 	console.timeLog('wikidata-preload-in-use-items', 'products', productIds.length)
 
-	const allPlayerSkills = await getAllSkills()
+	const allPlayerSkills = await userSkills.getAll()
 	const skills = Object.values(allPlayerSkills)
 	const categories = skills
 		.flatMap(s =>
