@@ -14,12 +14,12 @@ export function incomeUntil(persist: Persist): number {
 	}
 
 	// TODO: has to handle opening too -> shouldnt calc income before opening
-	return mall.attraction.destruction
+	return mall.attraction.disasterTimestamp
 }
 
 export function incomeLoop(persist: Persist, now: number): void {
 	const {mall} = persist
-	if (!mall || !mall.attraction || now < mall.attraction.destruction) {
+	if (!mall || !mall.attraction || now < mall.attraction.disasterTimestamp) {
 		return
 	}
 

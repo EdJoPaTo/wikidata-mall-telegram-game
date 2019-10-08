@@ -15,7 +15,7 @@ export function createAttraction(qNumber: string, now: number): Attraction {
 	return {
 		item: qNumber,
 		opening: now,
-		destruction: disasterTimestamp
+		disasterTimestamp
 	}
 }
 

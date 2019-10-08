@@ -19,7 +19,7 @@ export interface Mall {
 export interface Attraction {
 	item: QNumber;
 	opening: UnixTimestamp;
-	destruction: UnixTimestamp;
+	disasterTimestamp: UnixTimestamp;
 }
 
 export interface MallProduction {
