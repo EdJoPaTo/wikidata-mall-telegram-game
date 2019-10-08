@@ -36,7 +36,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += infoHeader(ctx.wd.r('menu.mall'), {titlePrefix: emojis.mall + mallMoji(mall)})
 	text += '\n\n'
 
-	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currency)
+	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currencyMall)
 	text += '\n\n'
 
 	text += format.bold(
@@ -95,7 +95,7 @@ menu.submenu(buttonText(emojis.production, 'mall.production', {requireAttention:
 	hide: hideWhenMemberAmountNotCorrect
 })
 
-menu.button(buttonText(emojis.currency, 'mall.donation'), 'donate', {
+menu.button(buttonText(emojis.currencyMall, 'mall.donation'), 'donate', {
 	hide: (ctx: any) => {
 		const {mall} = ctx.persist as Persist
 		if (!mall || !mallMemberAmountWithinLimits(mall)) {
@@ -126,7 +126,7 @@ menu.button(buttonText(emojis.currency, 'mall.donation'), 'donate', {
 		let text = ''
 		text += emojis.person
 		text += ' → '
-		text += formatFloat(DONATION_AMOUNT) + emojis.currency
+		text += formatFloat(DONATION_AMOUNT) + emojis.currencyMall
 		text += ' → '
 		text += emojis.mall
 		return ctx.answerCbQuery(text)

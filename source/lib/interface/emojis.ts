@@ -9,6 +9,7 @@ const basic: Record<string, string> = {
 	construction: '🏗',
 	countdown: '⏲',
 	currency: '📎',
+	currencyMall: '🧷',
 	door: '🚪',
 	employmentTermination: '🔫',
 	github: '🦑',
