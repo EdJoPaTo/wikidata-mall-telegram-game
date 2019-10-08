@@ -37,7 +37,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += '\n\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currencyMall)
-	text += '\n\n'
+	text += '\n'
 
 	text += format.bold(
 		ctx.wd.r('mall.participation').label()

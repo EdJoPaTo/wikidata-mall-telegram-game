@@ -12,7 +12,7 @@ import {storageCapacity} from '../../../lib/game-math/shop-capacity'
 
 import {emojis} from '../../../lib/interface/emojis'
 import {formatInt} from '../../../lib/interface/format-number'
-import {infoHeader, labeledInt, labeledFloat} from '../../../lib/interface/formatted-strings'
+import {infoHeader, labeledFloat, labeledValue} from '../../../lib/interface/formatted-strings'
 import {menuPhoto, buttonText} from '../../../lib/interface/menu'
 import {percentBonusString} from '../../../lib/interface/format-percent'
 import {personInShopLine} from '../../../lib/interface/person'
@@ -34,7 +34,7 @@ function bonusPerson(shop: Shop, talent: Talent): string {
 		return ''
 	}
 
-	return '\n  ' + emojis.person + personInShopLine(shop, talent)
+	return '  ' + emojis.person + personInShopLine(shop, talent) + '\n'
 }
 
 function bonusSkill(ctx: any, skills: Skills, skill: SimpleSkill, bonusFunc: (level: number) => number): string {
@@ -45,7 +45,6 @@ function bonusSkill(ctx: any, skills: Skills, skill: SimpleSkill, bonusFunc: (le
 	}
 
 	let text = ''
-	text += '\n'
 	text += '  '
 	text += emojis.skill
 	text += percentBonusString(bonus)
@@ -54,6 +53,7 @@ function bonusSkill(ctx: any, skills: Skills, skill: SimpleSkill, bonusFunc: (le
 	text += ' ('
 	text += level
 	text += ')'
+	text += '\n'
 
 	return text
 }
@@ -95,13 +95,13 @@ function menuText(ctx: any): string {
 	text += '\n\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
-	text += '\n\n'
+	text += '\n'
 
 	text += emojis.storage
-	text += labeledInt(ctx.wd.r('product.storage'), product.itemsInStore)
-	text += ' / '
-	text += formatInt(capacity)
-	text += '\n'
+	text += labeledValue(
+		ctx.wd.r('product.storage'),
+		`${formatInt(product.itemsInStore)} / ${formatInt(capacity)}`
+	)
 
 	text += '\n'
 	text += '*'
@@ -111,7 +111,6 @@ function menuText(ctx: any): string {
 
 	if (!session.hideExplanationMath) {
 		text += labeledFloat(ctx.wd.r('product.listprice'), basePrice, emojis.currency)
-		text += '\n'
 		const collectorFactor = productBasePriceCollectorFactor(persist.skills)
 		if (collectorFactor > 1) {
 			text += '  '
@@ -130,7 +129,6 @@ function menuText(ctx: any): string {
 		text += bonusSkill(ctx, persist.skills, 'metalScissors', purchasingCostScissorsBonus)
 	}
 
-	text += '\n'
 	text += emojis.selling
 	text += labeledFloat(ctx.wd.r('person.talents.selling'), sellingCostPerItem, emojis.currency)
 	if (!session.hideExplanationMath) {

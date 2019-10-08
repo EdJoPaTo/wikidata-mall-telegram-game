@@ -36,12 +36,12 @@ export function infoHeader(wdr: WikidataEntityReader, options: InfoHeaderOptions
 	return text
 }
 
-export function labeledFloat(wdr: WikidataEntityReader, num: number, unit = ''): string {
-	return `${wdr.label()}: ${formatFloat(num)}${unit}`
+export function labeledFloat(label: string | WikidataEntityReader, num: number, unit = ''): string {
+	return labeledValue(label, `${formatFloat(num)}${unit}`)
 }
 
-export function labeledInt(wdr: WikidataEntityReader, num: number, unit = ''): string {
-	return `${wdr.label()}: ${formatInt(num)}${unit}`
+export function labeledInt(label: string | WikidataEntityReader, num: number, unit = ''): string {
+	return labeledValue(label, `${formatInt(num)}${unit}`)
 }
 
 export function labeledValue(label: string | WikidataEntityReader, value: string): string {
@@ -52,13 +52,13 @@ export function labeledValue(label: string | WikidataEntityReader, value: string
 
 export function moneyCostPart(ctx: any, currentMoney: number, cost: number): string {
 	let text = ''
-	text += labeledValue(ctx.wd.r('other.money'), formatFloat(currentMoney) + emojis.currency)
+	text += labeledFloat(ctx.wd.r('other.money'), currentMoney, emojis.currency)
 
 	if (currentMoney < cost) {
 		text += emojis.requireAttention
 	}
 
-	text += labeledValue(ctx.wd.r('other.cost'), formatFloat(cost) + emojis.currency)
+	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
 	text += '\n'
 	return text
 }

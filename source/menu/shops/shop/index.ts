@@ -68,16 +68,15 @@ function storageCapacityPart(ctx: any, shop: Shop, skills: Skills, showExplanati
 	text += emojis.storage
 	text += labeledInt(ctx.wd.r('product.storageCapacity'), storageCapacity(shop, skills))
 	if (showExplanation && shop.personal.storage) {
-		text += '\n'
 		text += '  '
 		text += emojis.person
 		text += personInShopLine(shop, 'storage')
+		text += '\n'
 	}
 
 	const pressLevel = currentLevel(skills, 'machinePress')
 	const pressBonus = storageCapactiyPressBonus(pressLevel)
 	if (showExplanation && pressBonus !== 1) {
-		text += '\n'
 		text += '  '
 		text += emojis.skill
 		text += percentBonusString(pressBonus)
@@ -86,9 +85,10 @@ function storageCapacityPart(ctx: any, shop: Shop, skills: Skills, showExplanati
 		text += ' ('
 		text += pressLevel
 		text += ')'
+		text += '\n'
 	}
 
-	text += '\n\n'
+	text += '\n'
 	return text
 }
 
@@ -127,7 +127,7 @@ function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boo
 
 	text += shop.products
 		.map(product => productLine(ctx, product))
-		.join('\n')
+		.join('')
 	text += '\n\n'
 	return text
 }

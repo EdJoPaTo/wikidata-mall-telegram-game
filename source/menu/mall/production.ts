@@ -17,7 +17,7 @@ import {preloadWithParts} from '../../lib/game-logic/mall-production'
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {countdownMinuteSecond, humanReadableTimestamp} from '../../lib/interface/formatted-time'
 import {emojis} from '../../lib/interface/emojis'
-import {infoHeader, labeledFloat} from '../../lib/interface/formatted-strings'
+import {infoHeader} from '../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
@@ -41,9 +41,6 @@ async function menuText(ctx: any): Promise<string> {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.production'), {titlePrefix: emojis.production})
-	text += '\n\n'
-
-	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currency)
 	text += '\n\n'
 
 	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
