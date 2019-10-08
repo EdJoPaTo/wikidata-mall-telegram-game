@@ -1,5 +1,7 @@
 import test from 'ava'
 
+import {Shop} from '../../source/lib/types/shop'
+
 import {
 	customerInterval,
 	customerPerMinute,
@@ -32,17 +34,49 @@ test('lastTimeActive empty', t => {
 	t.is(result, -Infinity)
 })
 
-test('lastTimeActive single shop', t => {
+test('lastTimeActive product max', t => {
+	const shop: Shop = {
+		id: 'Q5',
+		opening: 0,
+		personal: {
+			purchasing: undefined,
+			selling: undefined,
+			storage: undefined
+		},
+		products: [
+			{
+				id: 'Q42',
+				itemTimestamp: 300,
+				itemsInStore: 1337
+			},
+			{
+				id: 'Q42',
+				itemTimestamp: 200,
+				itemsInStore: 1337
+			}
+		]
+	}
+
 	const result = lastTimeActive([
-		generateShop([1, 10])
+		shop
 	])
 	t.is(result, 300)
 })
 
-test('lastTimeActive two shops', t => {
+test('lastTimeActive opening', t => {
+	const shop: Shop = {
+		id: 'Q5',
+		opening: 100,
+		personal: {
+			purchasing: undefined,
+			selling: undefined,
+			storage: undefined
+		},
+		products: []
+	}
+
 	const result = lastTimeActive([
-		generateShop([1, 10]),
-		generateShop([5])
+		shop
 	])
-	t.is(result, 300)
+	t.is(result, 100)
 })

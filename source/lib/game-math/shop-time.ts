@@ -22,6 +22,10 @@ export function shopProductsEmptyTimestamps(shop: Shop): readonly number[] {
 }
 
 export function lastTimeActive(shops: readonly Shop[]): number {
-	const timestamps = shops.flatMap(o => shopProductsEmptyTimestamps(o))
-	return Math.max(...timestamps)
+	const itemTimestamps = shops.flatMap(o => o.products.map(o => o.itemTimestamp))
+	const openingTimestamps = shops.map(o => o.opening)
+	return Math.max(
+		...itemTimestamps,
+		...openingTimestamps
+	)
 }
