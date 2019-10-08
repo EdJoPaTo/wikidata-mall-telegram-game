@@ -20,7 +20,7 @@ import {buttonText, menuPhoto} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
 import {formatInt} from '../../../lib/interface/format-number'
 import {incomePart} from '../../../lib/interface/shop'
-import {infoHeader, labeledFloat, labeledInt} from '../../../lib/interface/formatted-strings'
+import {infoHeader, labeledInt, moneyCostPart} from '../../../lib/interface/formatted-strings'
 import {percentBonusString} from '../../../lib/interface/format-percent'
 import {personInShopLine} from '../../../lib/interface/person'
 
@@ -148,14 +148,9 @@ function addProductPart(ctx: any, shop: Shop, money: number): string {
 	text += ctx.wd.r('other.assortment').label()
 	text += '*'
 	text += '\n'
-	text += labeledFloat(ctx.wd.r('other.money'), money, emojis.currency)
-	text += '\n'
-	if (money < cost) {
-		text += emojis.requireAttention
-	}
 
-	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
-	text += '\n\n'
+	text += moneyCostPart(ctx, money, cost)
+
 	return text
 }
 

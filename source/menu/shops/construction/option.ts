@@ -8,7 +8,7 @@ import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 import {buttonText, menuPhoto} from '../../../lib/interface/menu'
 import {collectorSuffix} from '../../../lib/interface/shop-construction'
 import {emojis} from '../../../lib/interface/emojis'
-import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings'
+import {infoHeader, moneyCostPart} from '../../../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from '../../help'
 import {replyMenu} from '..'
@@ -31,14 +31,7 @@ function menuText(ctx: any): string {
 	})
 	text += '\n\n'
 
-	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
-	text += '\n'
-	if (session.money < cost) {
-		text += emojis.requireAttention
-	}
-
-	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
-	text += '\n\n'
+	text += moneyCostPart(ctx, session.money, cost)
 
 	return text
 }
