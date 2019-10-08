@@ -1,6 +1,7 @@
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
+import {Mall} from '../../../lib/types/mall'
 import {Session, Persist} from '../../../lib/types'
 import {Shop, Product} from '../../../lib/types/shop'
 import {Skills} from '../../../lib/types/skills'
@@ -21,7 +22,7 @@ import {getAttractionHeight} from '../../../lib/game-logic/mall-attraction'
 
 import {buttonText, menuPhoto} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
-import {formatInt} from '../../../lib/interface/format-number'
+import {formatFloat} from '../../../lib/interface/format-number'
 import {incomePart} from '../../../lib/interface/shop'
 import {infoHeader, labeledInt, moneyCostPart} from '../../../lib/interface/formatted-strings'
 import {percentBonusString} from '../../../lib/interface/format-percent'
@@ -157,12 +158,11 @@ function addProductPart(ctx: any, shop: Shop, money: number): string {
 	return text
 }
 
-function customerIntervalPart(ctx: any, shop: Shop): string {
+function customerIntervalPart(ctx: any, shop: Shop, mall: Mall | undefined, showExplanation: boolean): string {
 	if (shop.products.length === 0) {
 		return ''
 	}
 
-	const {mall} = ctx.persist as Persist
 	const height = getAttractionHeight(mall && mall.attraction)
 	const bonus = attractionCustomerBonus(height)
 
@@ -170,12 +170,20 @@ function customerIntervalPart(ctx: any, shop: Shop): string {
 	text += '1 '
 	text += ctx.wd.r('other.customer').label()
 	text += ' / '
-	text += formatInt(customerInterval(bonus))
+	text += formatFloat(customerInterval(bonus))
 	text += ' '
 	text += ctx.wd.r('unit.second').label()
 	if (shop.products.length > 1) {
 		text += ' / '
 		text += ctx.wd.r('product.product').label()
+	}
+
+	if (showExplanation && mall && mall.attraction) {
+		text += '\n  '
+		text += emojis.attraction
+		text += percentBonusString(bonus)
+		text += ' '
+		text += ctx.wd.r(mall.attraction.item).label()
 	}
 
 	text += '\n\n'
@@ -193,7 +201,7 @@ function menuText(ctx: any): string {
 	text += infoHeader(reader, {titlePrefix: emojis.shop})
 	text += '\n\n'
 
-	text += customerIntervalPart(ctx, shop)
+	text += customerIntervalPart(ctx, shop, persist.mall, !session.hideExplanationMath)
 	text += incomePart(ctx, [shop], persist, !session.hideExplanationMath)
 	text += storageCapacityPart(ctx, shop, persist.skills, !session.hideExplanationMath)
 	text += productsPart(ctx, shop, persist.skills, !session.hideExplanationMath)
