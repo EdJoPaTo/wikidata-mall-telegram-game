@@ -3,6 +3,8 @@ import {randomBetween} from '../math/probability'
 
 import {Attraction} from '../types/mall'
 
+import * as wdAttraction from '../wikidata/attractions'
+
 import {daysUntilAttractionDisaster} from '../game-math/mall'
 
 export function createAttraction(qNumber: string, now: number): Attraction {
@@ -15,4 +17,9 @@ export function createAttraction(qNumber: string, now: number): Attraction {
 		opening: now,
 		destruction: disasterTimestamp
 	}
+}
+
+export function getAttractionHeight(attraction: Attraction | undefined): number | undefined {
+	const height = attraction && wdAttraction.getHeight(attraction.item)
+	return height
 }

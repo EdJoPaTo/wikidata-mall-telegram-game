@@ -247,10 +247,10 @@ test('maxSellPerMinute', t => {
 	const basePrice = productBasePrice({id: 'Q42', itemTimestamp: 0, itemsInStore: 0}, skills)
 	t.is(basePrice, 8, 'sanity check')
 
-	const itemsPerMinute = customerPerMinute()
+	const itemsPerMinute = customerPerMinute(1)
 	t.is(itemsPerMinute, 2, 'sanity check')
 
-	t.is(maxSellPerMinute(shop, skills), 8 * 2 * 2)
+	t.is(maxSellPerMinute(shop, skills, undefined), 8 * 2 * 2)
 })
 
 function currentSellPerMinuteMacro(t: ExecutionContext, amounts: readonly number[], expected: number): void {
@@ -260,10 +260,10 @@ function currentSellPerMinuteMacro(t: ExecutionContext, amounts: readonly number
 	const basePrice = productBasePrice({id: 'Q42', itemTimestamp: 0, itemsInStore: 0}, skills)
 	t.is(basePrice, 8, 'sanity check')
 
-	const itemsPerMinute = customerPerMinute()
+	const itemsPerMinute = customerPerMinute(1)
 	t.is(itemsPerMinute, 2, 'sanity check')
 
-	t.is(currentSellPerMinute(shop, skills), expected)
+	t.is(currentSellPerMinute(shop, skills, undefined), expected)
 }
 
 test('sellPerMinute nothing', currentSellPerMinuteMacro, [], 0)

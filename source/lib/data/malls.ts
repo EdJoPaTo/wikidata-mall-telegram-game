@@ -12,7 +12,7 @@ export async function getAll(): Promise<Record<number, Mall>> {
 	return data.entries()
 }
 
-async function getMallIdOfUser(userId: number): Promise<number | undefined> {
+export async function getMallIdOfUser(userId: number): Promise<number | undefined> {
 	const dict = await data.entries()
 	for (const key of Object.keys(dict)) {
 		const mall = dict[key]

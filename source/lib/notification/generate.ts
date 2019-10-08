@@ -1,34 +1,40 @@
 import WikidataEntityReader from 'wikidata-entity-reader'
 import WikidataEntityStore from 'wikidata-entity-store'
 
+import {Mall} from '../types/mall'
 import {Notification} from '../types/notification'
 import {Person, RefinedWorker} from '../types/people'
 import {Session, Persist} from '../types'
 import {Shop} from '../types/shop'
 
+import {allEmployees} from '../game-math/personal'
+import {attractionCustomerBonus} from '../game-math/mall'
 import {shopProductsEmptyTimestamps} from '../game-math/shop-time'
+
+import {getAttractionHeight} from '../game-logic/mall-attraction'
 
 import {nameMarkdown} from '../interface/person'
 import {skillFinishedNotificationString} from '../interface/skill'
-import {allEmployees} from '../game-math/personal'
 
 export function generateNotifications(session: Session, persist: Persist, entityStore: WikidataEntityStore): readonly Notification[] {
 	const {__wikibase_language_code: locale} = session
 
 	return [
-		...generateProductsEmpty(persist.shops, entityStore, locale),
+		...generateProductsEmpty(persist.shops, persist.mall, entityStore, locale),
 		...generateShopsPersonalRetirement(session, persist.shops, entityStore),
 		...generateApplicantGraduation(persist.applicants.list),
 		...generateSkill(session, entityStore)
 	]
 }
 
-function generateProductsEmpty(shops: readonly Shop[], entityStore: WikidataEntityStore, locale: string | undefined): readonly Notification[] {
-	return shops.flatMap(s => generateProductsEmptyShop(s, entityStore, locale))
+function generateProductsEmpty(shops: readonly Shop[], mall: Mall | undefined, entityStore: WikidataEntityStore, locale: string | undefined): readonly Notification[] {
+	const attractionHeight = getAttractionHeight(mall && mall.attraction)
+	const bonus = attractionCustomerBonus(attractionHeight)
+	return shops.flatMap(s => generateProductsEmptyShop(s, bonus, entityStore, locale))
 }
 
-function generateProductsEmptyShop(shop: Shop, entityStore: WikidataEntityStore, locale: string | undefined): readonly Notification[] {
-	const emptyTimestamps = shopProductsEmptyTimestamps(shop)
+function generateProductsEmptyShop(shop: Shop, attractionCustomerBonus: number, entityStore: WikidataEntityStore, locale: string | undefined): readonly Notification[] {
+	const emptyTimestamps = shopProductsEmptyTimestamps(shop, attractionCustomerBonus)
 	const max = Math.max(...emptyTimestamps)
 	if (max < 1) {
 		return []

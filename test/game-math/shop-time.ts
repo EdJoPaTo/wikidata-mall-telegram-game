@@ -11,18 +11,26 @@ import {
 
 import {generateShop} from './_shop'
 
-test('customerInterval', t => {
-	t.is(customerInterval(), 30)
+test('customerInterval without bonus', t => {
+	t.is(customerInterval(1), 30)
 })
 
-test('customerPerMinute', t => {
-	t.is(customerPerMinute(), 2)
+test('customerInterval doubled', t => {
+	t.is(customerInterval(2), 15)
 })
 
-test('shopProductsEmptyTimestamps', t => {
+test('customerPerMinute without bonus', t => {
+	t.is(customerPerMinute(1), 2)
+})
+
+test('customerPerMinute doubled', t => {
+	t.is(customerPerMinute(2), 4)
+})
+
+test('shopProductsEmptyTimestamps without bonus', t => {
 	const amounts = [0, 1, 10]
 	const shop = generateShop(amounts)
-	t.deepEqual(shopProductsEmptyTimestamps(shop), [
+	t.deepEqual(shopProductsEmptyTimestamps(shop, 1), [
 		0,
 		30,
 		300

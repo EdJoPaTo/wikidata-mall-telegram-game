@@ -22,6 +22,8 @@ import {lastTimeActive} from '../lib/game-math/shop-time'
 import {productBasePriceCollectorFactor} from '../lib/game-math/product'
 import {returnOnInvestment, maxSellPerMinute} from '../lib/game-math/shop-cost'
 
+import {getAttractionHeight} from '../lib/game-logic/mall-attraction'
+
 import {emojis} from '../lib/interface/emojis'
 import {formatFloat, formatInt} from '../lib/interface/format-number'
 import {infoHeader} from '../lib/interface/formatted-strings'
@@ -91,10 +93,15 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 
 	const values: Record<string, number> = {}
 	for (const playerId of playerIds) {
+		/* eslint no-await-in-loop: warn */
+		const mallId = await userMalls.getMallIdOfUser(playerId)
+		const mall = mallId === undefined ? undefined : await userMalls.get(mallId)
+		const attractionHeight = getAttractionHeight(mall && mall.attraction)
+
 		const shops = allUserShops[playerId]
 		const skills: Skills = allUserSkills[playerId] || {}
 		const income = shops
-			.map(o => maxSellPerMinute(o, skills))
+			.map(o => maxSellPerMinute(o, skills, attractionHeight))
 			.reduce((a, b) => a + b, 0)
 		if (!isFinite(income) || income < 0.01) {
 			continue

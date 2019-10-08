@@ -10,11 +10,14 @@ import {randomUnusedEntry} from '../../../lib/js-helper/array'
 
 import {addProductToShopCost, buyAllCost, buyAllCostFactor, magnetEnabled} from '../../../lib/game-math/shop-cost'
 import {allEmployees} from '../../../lib/game-math/personal'
+import {attractionCustomerBonus} from '../../../lib/game-math/mall'
 import {currentLevel} from '../../../lib/game-math/skill'
 import {customerInterval} from '../../../lib/game-math/shop-time'
 import {storageCapacity, storageCapactiyPressBonus, shopProductsPossible} from '../../../lib/game-math/shop-capacity'
 
 import * as wdShop from '../../../lib/wikidata/shops'
+
+import {getAttractionHeight} from '../../../lib/game-logic/mall-attraction'
 
 import {buttonText, menuPhoto} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
@@ -159,11 +162,15 @@ function customerIntervalPart(ctx: any, shop: Shop): string {
 		return ''
 	}
 
+	const {mall} = ctx.persist as Persist
+	const height = getAttractionHeight(mall && mall.attraction)
+	const bonus = attractionCustomerBonus(height)
+
 	let text = ''
 	text += '1 '
 	text += ctx.wd.r('other.customer').label()
 	text += ' / '
-	text += formatInt(customerInterval())
+	text += formatInt(customerInterval(bonus))
 	text += ' '
 	text += ctx.wd.r('unit.second').label()
 	if (shop.products.length > 1) {
@@ -187,7 +194,7 @@ function menuText(ctx: any): string {
 	text += '\n\n'
 
 	text += customerIntervalPart(ctx, shop)
-	text += incomePart(ctx, [shop], persist.skills, !session.hideExplanationMath)
+	text += incomePart(ctx, [shop], persist, !session.hideExplanationMath)
 	text += storageCapacityPart(ctx, shop, persist.skills, !session.hideExplanationMath)
 	text += productsPart(ctx, shop, persist.skills, !session.hideExplanationMath)
 	text += addProductPart(ctx, shop, session.money)

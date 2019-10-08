@@ -3,16 +3,16 @@ import {Shop} from '../types/shop'
 /**
  * Returns the interval in seconds between two customers in a given shop
  */
-export function customerInterval(): number {
-	return 30
+export function customerInterval(attractionBonus: number): number {
+	return 30 / attractionBonus
 }
 
-export function customerPerMinute(): number {
-	return 60 / customerInterval()
+export function customerPerMinute(attractionBonus: number): number {
+	return 60 / customerInterval(attractionBonus)
 }
 
-export function shopProductsEmptyTimestamps(shop: Shop): readonly number[] {
-	const interval = customerInterval()
+export function shopProductsEmptyTimestamps(shop: Shop, attractionCustomerBonus: number): readonly number[] {
+	const interval = customerInterval(attractionCustomerBonus)
 
 	const emptyTimestamps = shop.products.map(p =>
 		p.itemTimestamp + (interval * p.itemsInStore)
