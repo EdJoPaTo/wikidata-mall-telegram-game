@@ -1,4 +1,3 @@
-import {DAY_IN_SECONDS} from '../math/timestamp-constants'
 import {randomBetween} from '../math/probability'
 
 import {Attraction} from '../types/mall'
@@ -6,12 +5,12 @@ import {Attraction} from '../types/mall'
 import * as wdAttraction from '../wikidata/attractions'
 import * as wdSets from '../wikidata/sets'
 
-import {daysUntilAttractionDisaster} from '../game-math/mall'
+import {secondsUntilAttractionDisaster} from '../game-math/mall'
 
 export function createAttraction(qNumber: string, now: number): Attraction {
-	const disaster = daysUntilAttractionDisaster()
-	const disasterDays = randomBetween(disaster.min, disaster.max)
-	const disasterTimestamp = Math.floor(now + (DAY_IN_SECONDS * disasterDays))
+	const disaster = secondsUntilAttractionDisaster()
+	const disasterSeconds = randomBetween(disaster.min, disaster.max)
+	const disasterTimestamp = Math.floor(now + disasterSeconds)
 
 	return {
 		item: qNumber,
