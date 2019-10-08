@@ -8,13 +8,17 @@ type UserId = number
 
 export interface Mall {
 	applicants: Person[];
-	// TODO: add attraction
-	// attraction?: string;
+	attraction?: Attraction;
 	chat: Chat;
 	member: UserId[];
 	money: number;
 	partsProducedBy?: Record<QNumber, UserId>;
 	productionFinishes?: UnixTimestamp;
+}
+
+export interface Attraction {
+	item: QNumber;
+	destruction: UnixTimestamp;
 }
 
 export interface MallProduction {

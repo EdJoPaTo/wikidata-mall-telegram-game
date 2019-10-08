@@ -17,6 +17,7 @@ import {mallMoji, hintIncorrectPeopleAmount} from '../../lib/interface/mall'
 import {helpButtonText, createHelpMenu} from '../help'
 
 import applicantsMenu from './applicants'
+import attractionMenu from './attraction'
 import productionMenu from './production'
 
 const DONATION_AMOUNT = 10
@@ -80,6 +81,10 @@ function applicantEmoji(ctx: any): string {
 }
 
 menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicantsMenu, {
+	hide: hideWhenMemberAmountNotCorrect
+})
+
+menu.submenu(buttonText(emojis.attraction, 'mall.attraction'), 'attraction', attractionMenu, {
 	hide: hideWhenMemberAmountNotCorrect
 })
 

@@ -52,6 +52,7 @@ product:
   storage: Q9158768
   storageCapacity: Q21551014
 mall:
+  attraction: Q570116
   donation: Q1124860
   participation: Q1773152
   production: Q739302
@@ -80,6 +81,7 @@ other:
   door: Q36794
   end: Q12769393
   github: Q364
+  height: P2048
   income: Q1527264
   math: Q395
   money: Q1368
@@ -89,6 +91,7 @@ other:
 unit:
   day: Q573
   hour: Q25235
+  meter: Q11573
   minute: Q7727
   second: Q11574
 stat:

@@ -62,3 +62,16 @@ export function moneyCostPart(ctx: any, currentMoney: number, cost: number): str
 	text += '\n'
 	return text
 }
+
+export function mallMoneyCostPart(ctx: any, currentMoney: number, cost: number): string {
+	let text = ''
+	text += labeledFloat(ctx.wd.r('other.money'), currentMoney, emojis.currencyMall)
+
+	if (currentMoney < cost) {
+		text += emojis.requireAttention
+	}
+
+	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currencyMall)
+	text += '\n'
+	return text
+}

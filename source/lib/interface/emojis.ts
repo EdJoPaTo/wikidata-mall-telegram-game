@@ -2,6 +2,7 @@ const basic: Record<string, string> = {
 	add: '➕',
 	applicantsAvailable: '📬',
 	applicantsEmpty: '📭',
+	attraction: '🎡',
 	chat: '💭',
 	clearSkillQueue: '❌',
 	close: '🛑',
