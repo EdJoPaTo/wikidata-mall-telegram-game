@@ -11,6 +11,7 @@ const basic: Record<string, string> = {
 	countdown: '⏲',
 	currency: '📎',
 	currencyMall: '🧷',
+	disaster: '😭',
 	door: '🚪',
 	employmentTermination: '🔫',
 	github: '🦑',

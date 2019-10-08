@@ -13,6 +13,7 @@ import {shopProductsEmptyTimestamps} from '../game-math/shop-time'
 
 import {getAttractionHeight} from '../game-logic/mall-attraction'
 
+import {attractionDisasterNotificationString} from '../interface/mall'
 import {nameMarkdown} from '../interface/person'
 import {skillFinishedNotificationString} from '../interface/skill'
 
@@ -23,6 +24,7 @@ export function generateNotifications(session: Session, persist: Persist, entity
 		...generateProductsEmpty(persist.shops, persist.mall, entityStore, locale),
 		...generateShopsPersonalRetirement(session, persist.shops, entityStore),
 		...generateApplicantGraduation(persist.applicants.list),
+		...generateMallAttractionDestruction(session, persist.mall, entityStore),
 		...generateSkill(session, entityStore)
 	]
 }
@@ -82,6 +84,19 @@ function generateApplicantGraduation(applicants: readonly Person[]): readonly No
 		}))
 
 	return result
+}
+
+function generateMallAttractionDestruction(session: Session, mall: Mall | undefined, entityStore: WikidataEntityStore): readonly Notification[] {
+	const {__wikibase_language_code: locale} = session
+	if (!mall || !mall.attraction) {
+		return []
+	}
+
+	return [{
+		type: 'mallAttractionDisaster',
+		date: new Date(mall.attraction.disasterTimestamp * 1000),
+		text: attractionDisasterNotificationString(mall.attraction, entityStore, locale)
+	}]
 }
 
 function generateSkill(session: Session, entityStore: WikidataEntityStore): readonly Notification[] {

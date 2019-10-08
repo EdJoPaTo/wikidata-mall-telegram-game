@@ -1,7 +1,9 @@
+import {markdown as format} from 'telegram-format'
 import emojiRegex from 'emoji-regex'
 import WikidataEntityReader from 'wikidata-entity-reader'
+import WikidataEntityStore from 'wikidata-entity-store'
 
-import {Mall} from '../types/mall'
+import {Mall, Attraction} from '../types/mall'
 
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../game-math/constants'
 import {mallMemberAmountWithinLimits, attractionCustomerBonus} from '../game-math/mall'
@@ -63,5 +65,19 @@ export function mallAttractionPart(ctx: any, attraction: string): string {
 	)
 
 	text += '\n'
+	return text
+}
+
+export function attractionDisasterNotificationString(attraction: Attraction, entityStore: WikidataEntityStore, locale: string | undefined): string {
+	const attractionReader = new WikidataEntityReader(entityStore.entity(attraction.item), locale)
+	const disasterReader = new WikidataEntityReader(entityStore.entity(attraction.disasterKind), locale)
+
+	let text = ''
+	text += format.bold(
+		disasterReader.label()
+	)
+	text += '\n'
+	text += attractionReader.label()
+
 	return text
 }
