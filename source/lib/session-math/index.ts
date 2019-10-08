@@ -2,7 +2,7 @@ import {Session, Persist} from '../types'
 
 import * as applicants from './applicants'
 import * as income from './income'
-import mall from './mall'
+import * as mall from './mall'
 import notification from './notification'
 import * as personal from './personal'
 import * as skills from './skills'
@@ -33,18 +33,20 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		do {
 			nextCalculationUntilTimestamp = Math.min(
 				now,
-				skills.incomeUntil(session),
-				personal.incomeUntil(persist)
+				mall.incomeUntil(persist),
+				personal.incomeUntil(persist),
+				skills.incomeUntil(session)
 			)
 
 			income.incomeLoop(session, persist, nextCalculationUntilTimestamp)
 
-			skills.incomeLoop(session, persist, nextCalculationUntilTimestamp)
+			mall.incomeLoop(persist, nextCalculationUntilTimestamp)
 			personal.incomeLoop(persist, nextCalculationUntilTimestamp)
+			skills.incomeLoop(session, persist, nextCalculationUntilTimestamp)
 		} while (nextCalculationUntilTimestamp < now)
 
 		applicants.before(session, persist, now)
-		await mall(persist, now)
+		await mall.before(persist, now)
 
 		await next()
 

@@ -7,7 +7,26 @@ import * as mallProduction from '../data/mall-production'
 
 const PRODUCTION_TIMESPAN_IN_SECONDS = DAY_IN_SECONDS
 
-export default async function manageMall(persist: Persist, now: number): Promise<void> {
+export function incomeUntil(persist: Persist): number {
+	const {mall} = persist
+	if (!mall || !mall.attraction) {
+		return Infinity
+	}
+
+	// TODO: has to handle opening too -> shouldnt calc income before opening
+	return mall.attraction.destruction
+}
+
+export function incomeLoop(persist: Persist, now: number): void {
+	const {mall} = persist
+	if (!mall || !mall.attraction || now < mall.attraction.destruction) {
+		return
+	}
+
+	delete mall.attraction
+}
+
+export async function before(persist: Persist, now: number): Promise<void> {
 	if (!persist.mall) {
 		return
 	}
