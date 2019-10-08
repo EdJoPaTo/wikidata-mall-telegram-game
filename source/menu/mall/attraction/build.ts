@@ -46,7 +46,7 @@ menu.button(buttonText(emojis.construction, 'action.construction'), 'construct',
 		const cost = attractionCost(wdAttractions.getHeight(attraction))
 		return Boolean(!mall || mall.money < cost)
 	},
-	doFunc: async (ctx: any) => {
+	doFunc: (ctx: any) => {
 		const now = Date.now() / 1000
 		const {mall} = ctx.persist as Persist
 		const attraction = fromCtx(ctx)
@@ -55,7 +55,7 @@ menu.button(buttonText(emojis.construction, 'action.construction'), 'construct',
 			return
 		}
 
-		mall.attraction = await createAttraction(attraction, now)
+		mall.attraction = createAttraction(attraction, now)
 		mall.money -= cost
 	}
 })

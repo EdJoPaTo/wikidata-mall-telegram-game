@@ -5,7 +5,7 @@ import {Attraction} from '../types/mall'
 
 import {daysUntilAttractionDisaster} from '../game-math/mall'
 
-export async function createAttraction(qNumber: string, now: number): Promise<Attraction> {
+export function createAttraction(qNumber: string, now: number): Attraction {
 	const disaster = daysUntilAttractionDisaster()
 	const disasterDays = randomBetween(disaster.min, disaster.max)
 	const disasterTimestamp = Math.floor(now + (DAY_IN_SECONDS * disasterDays))
