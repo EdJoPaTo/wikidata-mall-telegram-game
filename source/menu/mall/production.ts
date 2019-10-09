@@ -116,7 +116,9 @@ async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
 		throw new Error('You are not part of a mall')
 	}
 
-	if (mall.productionFinishes || mall.money < MALL_PRODUCTION_START_COST) {
+	const productionOngoing = Boolean(mall.productionFinishes)
+	const alreadyPreparingOrHavingEnoughMoneyToStart = mall.partsProducedBy || mall.money > MALL_PRODUCTION_START_COST
+	if (productionOngoing || !alreadyPreparingOrHavingEnoughMoneyToStart) {
 		return []
 	}
 
