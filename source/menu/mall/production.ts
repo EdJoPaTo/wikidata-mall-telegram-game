@@ -6,6 +6,7 @@ import {MallProduction} from '../../lib/types/mall'
 import {Persist, Session} from '../../lib/types'
 
 import {MALL_MIN_PEOPLE, MALL_PRODUCTION_TIME_IN_SECONDS, MALL_PRODUCTION_START_COST} from '../../lib/game-math/constants'
+import {productionReward} from '../../lib/game-math/mall'
 
 import * as mallProduction from '../../lib/data/mall-production'
 import * as userInfo from '../../lib/data/user-info'
@@ -17,7 +18,8 @@ import {preloadWithParts} from '../../lib/game-logic/mall-production'
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {countdownMinuteSecond, humanReadableTimestamp} from '../../lib/interface/formatted-time'
 import {emojis} from '../../lib/interface/emojis'
-import {infoHeader, mallMoneyCostPart} from '../../lib/interface/formatted-strings'
+import {formatFloat} from '../../lib/interface/format-number'
+import {infoHeader, mallMoneyCostPart, labeledValue} from '../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
@@ -52,6 +54,18 @@ async function menuText(ctx: any): Promise<string> {
 	text += humanReadableTimestamp(competitionUntil, locale, timeZone)
 	text += '\n\n'
 
+	if (mall.partsProducedBy) {
+		const productionParticipants = Object.keys(mall.partsProducedBy).length
+		text += labeledValue(
+			ctx.wd.r('mall.productionReward'),
+			formatFloat(productionReward(productionParticipants)) + emojis.currencyMall
+		)
+
+		if (!mall.productionFinishes) {
+			text += '\n'
+		}
+	}
+
 	if (mall.productionFinishes) {
 		text += emojis.countdown
 		text += countdownMinuteSecond(mall.productionFinishes - now)
@@ -85,9 +99,6 @@ async function menuText(ctx: any): Promise<string> {
 	if (!mall.partsProducedBy) {
 		text += mallMoneyCostPart(ctx, mall.money, MALL_PRODUCTION_START_COST)
 	}
-
-	text += emojis.warning + emojis.underConstruction
-	text += 'Experimental!\nThe production feature is currently under testing and not fully functional. Feel free to test it and provide feedback and ideas! 🤩'
 
 	return text
 }

@@ -3,6 +3,8 @@ import {Mall} from '../types/mall'
 
 import {DAY_IN_SECONDS} from '../math/timestamp-constants'
 
+import {productionReward} from '../game-math/mall'
+
 import * as mallProduction from '../data/mall-production'
 
 const PRODUCTION_TIMESPAN_IN_SECONDS = DAY_IN_SECONDS
@@ -68,7 +70,7 @@ async function updateProductionProcessOfMall(mall: Mall, now: number): Promise<v
 		}
 
 		const participants = Object.keys(mall.partsProducedBy).length
-		mall.money += participants * 1000
+		mall.money += productionReward(participants)
 
 		delete mall.productionFinishes
 		delete mall.partsProducedBy
