@@ -22,5 +22,5 @@ export function attractionCustomerBonus(height: number | undefined): number {
 }
 
 export function attractionCost(height: number): number {
-	return 100 * height
+	return 2000 * height
 }
