@@ -86,6 +86,25 @@ async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
 	}
 }
 
+async function getAssortmentTable(now: number): Promise<LeaderboardEntries<number>> {
+	const allUserShops = await userShops.getAll()
+	const playerIds = Object.keys(allUserShops)
+		.map(o => Number(o))
+		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
+
+	const values: Record<string, number> = {}
+	for (const playerId of playerIds) {
+		const shops = allUserShops[playerId]
+		const products = shops.flatMap(o => o.products).length
+		values[playerId] = products
+	}
+
+	return {
+		values,
+		order: sortDictKeysByNumericValues(values, true)
+	}
+}
+
 async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<number>> {
 	const allUserShops = await userShops.getAll()
 	const allUserSkills = await userSkills.getAll()
@@ -226,6 +245,10 @@ async function menuText(ctx: any): Promise<string> {
 			text += await generateTable(await getMatchingHobbiesTable(now), ctx.from.id, o => String(o))
 			break
 
+		case 'assortment':
+			text += await generateTable(await getAssortmentTable(now), ctx.from.id, o => formatInt(o))
+			break
+
 		case 'sellPerMinute':
 			text += await generateTable(await getSellPerMinuteTable(now), ctx.from.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.r('unit.minute').label()}`)
 			break
@@ -261,6 +284,8 @@ function viewResourceKey(view: LeaderboardView): string {
 			return 'other.returnOnInvestment'
 		case 'matchingHobbies':
 			return 'person.hobby'
+		case 'assortment':
+			return 'other.assortment'
 		case 'sellPerMinute':
 			return 'other.income'
 		case 'collector':

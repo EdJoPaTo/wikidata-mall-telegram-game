@@ -1,4 +1,5 @@
 export type LeaderboardView =
+	'assortment' |
 	'collector' |
 	'mallAttraction' |
 	'mallProduction' |
@@ -9,6 +10,7 @@ export type LeaderboardView =
 export const LEADERBOARD_VIEWS: LeaderboardView[] = [
 	'returnOnInvestment',
 	'matchingHobbies',
+	'assortment',
 	'sellPerMinute',
 	'collector',
 	'mallProduction',
