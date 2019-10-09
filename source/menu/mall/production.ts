@@ -45,13 +45,13 @@ async function menuText(ctx: any): Promise<string> {
 	text += infoHeader(ctx.wd.r('mall.production'), {titlePrefix: emojis.production})
 	text += '\n\n'
 
-	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
-	text += '\n\n'
-
 	text += emojis.countdown
 	text += format.bold(ctx.wd.r('other.end').label())
 	text += ':\n  '
 	text += humanReadableTimestamp(competitionUntil, locale, timeZone)
+	text += '\n\n'
+
+	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
 	text += '\n\n'
 
 	if (mall.partsProducedBy) {
