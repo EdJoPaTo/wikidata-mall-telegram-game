@@ -55,7 +55,7 @@ async function updateCurrentProduction(now: number): Promise<void> {
 }
 
 async function updateProductionProcessOfMall(mall: Mall, now: number): Promise<void> {
-	if (mall.productionFinishes && mall.productionFinishes <= now) {
+	if (mall.partsProducedBy && mall.productionFinishes && mall.productionFinishes <= now) {
 		const content = await mallProduction.get()
 		if (content.competitionSince < now) {
 			const mallId = mall.chat.id
@@ -65,8 +65,10 @@ async function updateProductionProcessOfMall(mall: Mall, now: number): Promise<v
 
 			content.itemsProducedPerMall[mallId]++
 			await mallProduction.set(content)
-			mall.money += Math.PI
 		}
+
+		const participants = Object.keys(mall.partsProducedBy).length
+		mall.money += participants * 1000
 
 		delete mall.productionFinishes
 		delete mall.partsProducedBy
