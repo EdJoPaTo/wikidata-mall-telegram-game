@@ -22,7 +22,7 @@ export function notificationText(notification: Notification, fireDate: Date): st
 			text += emojis.retirement
 			break
 		case 'applicantGraduated':
-			text += emojis.graduation
+			text += emojis.personStudent + emojis.graduation
 			break
 		case 'mallAttractionDisaster':
 			text += emojis.attraction + emojis.disaster
