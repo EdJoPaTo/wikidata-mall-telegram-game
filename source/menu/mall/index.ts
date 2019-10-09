@@ -20,7 +20,8 @@ import applicantsMenu from './applicants'
 import attractionMenu from './attraction'
 import productionMenu from './production'
 
-const DONATION_AMOUNT = 10
+const DONATION_AMOUNT = 100
+const DONATION_PERSONAL_FACTOR = 5
 
 async function menuText(ctx: any): Promise<string> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
@@ -108,7 +109,7 @@ menu.button(buttonText(emojis.currencyMall, 'mall.donation'), 'donate', {
 		}
 
 		const session = ctx.session as Session
-		if (session.money < DONATION_AMOUNT * 2) {
+		if (session.money < DONATION_AMOUNT * DONATION_PERSONAL_FACTOR * 2) {
 			return true
 		}
 
@@ -125,11 +126,13 @@ menu.button(buttonText(emojis.currencyMall, 'mall.donation'), 'donate', {
 			throw new Error('user not part of a mall')
 		}
 
+		session.money -= DONATION_AMOUNT * DONATION_PERSONAL_FACTOR
 		mall.money += DONATION_AMOUNT
-		session.money -= DONATION_AMOUNT
 
 		let text = ''
 		text += emojis.person
+		text += ' → '
+		text += formatFloat(DONATION_AMOUNT * DONATION_PERSONAL_FACTOR) + emojis.currency
 		text += ' → '
 		text += formatFloat(DONATION_AMOUNT) + emojis.currencyMall
 		text += ' → '
