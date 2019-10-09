@@ -17,6 +17,8 @@ import * as userMalls from '../lib/data/malls'
 import * as userShops from '../lib/data/shops'
 import * as userSkills from '../lib/data/skills'
 
+import * as wdAttraction from '../lib/wikidata/attractions'
+
 import {employeesWithFittingHobbyAmount} from '../lib/game-math/personal'
 import {lastTimeActive} from '../lib/game-math/shop-time'
 import {productBasePriceCollectorFactor} from '../lib/game-math/product'
@@ -139,6 +141,23 @@ async function getMallProductionTable(): Promise<LeaderboardEntries<number>> {
 	}
 }
 
+async function getMallAttractionTable(now: number): Promise<LeaderboardEntries<number>> {
+	const allMalls = await userMalls.getAll()
+	const values: Record<string, number> = {}
+	for (const mallId of Object.keys(allMalls).map(o => Number(o))) {
+		const mall = allMalls[mallId]
+
+		if (mall.attraction && mall.attraction.disasterTimestamp > now) {
+			values[mallId] = wdAttraction.getHeight(mall.attraction.item)
+		}
+	}
+
+	return {
+		values,
+		order: sortDictKeysByNumericValues(values, true)
+	}
+}
+
 function entryLine(index: number, name: string, formattedValue: string, highlighted: boolean): string {
 	const rank = index + 1
 
@@ -221,6 +240,10 @@ async function menuText(ctx: any): Promise<string> {
 			text += await generateTable(await getMallProductionTable(), mall && mall.chat.id, o => formatInt(o))
 			break
 
+		case 'mallAttraction':
+			text += await generateTable(await getMallAttractionTable(now), mall && mall.chat.id, o => `${formatFloat(o)} ${ctx.wd.r('unit.meter').label()}`)
+			break
+
 		default:
 			throw new Error(`unknown leaderboard view: ${view}`)
 	}
@@ -244,6 +267,8 @@ function viewResourceKey(view: LeaderboardView): string {
 			return 'skill.collector'
 		case 'mallProduction':
 			return 'mall.production'
+		case 'mallAttraction':
+			return 'mall.attraction'
 		default:
 			throw new Error(`unknown leaderboard view: ${view}`)
 	}
