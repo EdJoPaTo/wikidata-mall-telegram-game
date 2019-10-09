@@ -55,24 +55,21 @@ async function updateCurrentProduction(now: number): Promise<void> {
 }
 
 async function updateProductionProcessOfMall(mall: Mall, now: number): Promise<void> {
-	if (mall.productionFinishes) {
-		if (mall.productionFinishes > now) {
-			delete mall.partsProducedBy
-		} else {
-			const content = await mallProduction.get()
-			if (content.competitionSince < now) {
-				const mallId = mall.chat.id
-				if (!content.itemsProducedPerMall[mallId]) {
-					content.itemsProducedPerMall[mallId] = 0
-				}
-
-				content.itemsProducedPerMall[mallId]++
-				await mallProduction.set(content)
-				mall.money += Math.PI
+	if (mall.productionFinishes && mall.productionFinishes <= now) {
+		const content = await mallProduction.get()
+		if (content.competitionSince < now) {
+			const mallId = mall.chat.id
+			if (!content.itemsProducedPerMall[mallId]) {
+				content.itemsProducedPerMall[mallId] = 0
 			}
 
-			delete mall.productionFinishes
+			content.itemsProducedPerMall[mallId]++
+			await mallProduction.set(content)
+			mall.money += Math.PI
 		}
+
+		delete mall.productionFinishes
+		delete mall.partsProducedBy
 	}
 }
 

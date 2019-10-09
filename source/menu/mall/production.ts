@@ -145,7 +145,6 @@ menu.select('take', currentlyNotTakenParts, {
 
 		if (mall.member.length >= MALL_MIN_PEOPLE && mall.member.length <= Object.keys(mall.partsProducedBy).length) {
 			mall.productionFinishes = Math.ceil(now + MALL_PRODUCTION_TIME_IN_SECONDS)
-			delete mall.partsProducedBy
 		}
 	}
 })
