@@ -46,6 +46,11 @@ help:
 
     If you are part of a mall you can send an applicant to it.
     Your friends can hire the applicant then if they like.
+  attraction: >
+    Attraction replicas can be build at your mall.
+
+
+    Attractions will attract more customers to the shops of the mall participants.
   bot-stats: >
     Here you can see statistics about this bot.
 
