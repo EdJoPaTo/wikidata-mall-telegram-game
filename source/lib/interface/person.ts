@@ -6,8 +6,8 @@ import {Person, Talent, Name, TALENTS, Talents} from '../types/people'
 import {Session} from '../types'
 import {Shop} from '../types/shop'
 
-import {personalBonus, allEmployees, possibleEmployeesWithShops, employeesWithFittingHobbyAmount} from '../game-math/personal'
 import {getRefinedState, canBeEmployed} from '../game-math/applicant'
+import {personalBonus, employeesWithFittingHobbyAmount} from '../game-math/personal'
 
 import {emojis} from './emojis'
 import {humanReadableTimestamp} from './formatted-time'
@@ -122,8 +122,8 @@ export function personInShopLine(shop: Shop, talent: Talent): string {
 	return `${percentBonusString(bonus)} ${isHobby ? emojis.hobbyMatch + ' ' : ''}${namePart}`
 }
 
-export function shopEmployeeOverview(ctx: any, shop: Shop): string {
-	const employeeEntries = TALENTS
+export function shopEmployeeOverview(ctx: any, shop: Shop, talents: readonly Talent[] = TALENTS): string {
+	const employeeEntries = talents
 		.map(t => shopEmployeeEntry(ctx, shop, t))
 
 	let text = ''
@@ -169,12 +169,25 @@ function shopEmployeeEntry(ctx: any, shop: Shop, talent: Talent): string {
 	return text
 }
 
-export function employeeStatsPart(ctx: any, shops: readonly Shop[]): string {
+export function employeeStatsPart(ctx: any, shops: readonly Shop[], talents: readonly Talent[]): string {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
+	const employeesInTalents = shops
+		.flatMap(o => {
+			const employees: Person[] = []
+			for (const t of talents) {
+				const employee = o.personal[t]
+				if (employee) {
+					employees.push(employee)
+				}
+			}
+
+			return employees
+		})
+
 	const entries: string[] = [
-		hobbiesStatsLine(ctx, shops),
-		...retirementLines(shops.flatMap(s => allEmployees(s.personal)), locale, timeZone),
-		...TALENTS.map(t => talentStatsLine(shops, t))
+		hobbiesStatsLine(ctx, shops, talents),
+		...retirementLines(employeesInTalents, locale, timeZone),
+		...talents.map(t => talentStatsLine(shops, t))
 	].filter(o => Boolean(o))
 
 	if (entries.length === 0) {
@@ -211,9 +224,9 @@ function retirementLines(people: readonly Person[], locale: string | undefined, 
 	]
 }
 
-function hobbiesStatsLine(ctx: any, shops: readonly Shop[]): string {
-	const currently = employeesWithFittingHobbyAmount(shops)
-	const possible = possibleEmployeesWithShops(shops.length)
+function hobbiesStatsLine(ctx: any, shops: readonly Shop[], talents: readonly Talent[]): string {
+	const currently = employeesWithFittingHobbyAmount(shops, talents)
+	const possible = shops.length * talents.length
 	if (currently === 0 || possible === 0) {
 		return ''
 	}

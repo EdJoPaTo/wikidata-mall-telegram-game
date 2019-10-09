@@ -38,9 +38,9 @@ export function possibleEmployeesWithShops(shopAmount: number): number {
 	return shopAmount * TALENTS.length
 }
 
-export function employeesWithFittingHobbyAmount(shops: readonly Shop[]): number {
+export function employeesWithFittingHobbyAmount(shops: readonly Shop[], talents: readonly Talent[] = TALENTS): number {
 	return shops
-		.flatMap(shop => TALENTS.map(t => {
+		.flatMap(shop => talents.map(t => {
 			const person = shop.personal[t]
 			return person !== undefined && person.hobby === shop.id
 		}))
