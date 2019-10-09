@@ -51,6 +51,10 @@ help:
 
 
     Attractions will attract more customers to the shops of the mall participants.
+
+
+    After some time disaster happen which will result in a free spot for a new attraction.
+    (The disaster destroys the current attraction)
   bot-stats: >
     Here you can see statistics about this bot.
 
