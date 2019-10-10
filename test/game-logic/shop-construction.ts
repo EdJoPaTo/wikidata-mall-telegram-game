@@ -2,7 +2,7 @@ import test from 'ava'
 
 import {Construction} from '../../source/lib/types/shop'
 
-import {CHANGE_INTERVAL_IN_SECONDS, removeOldEntries, fillMissingConstructions, removeNonexistingShops} from '../../source/lib/game-logic/shop-construction'
+import {CHANGE_INTERVAL_IN_SECONDS, removeOldEntries, fillMissingConstructions, removeNonexistingShops, nextConstructionChange} from '../../source/lib/game-logic/shop-construction'
 
 const allShops: readonly string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 const timeOffset = 10 * CHANGE_INTERVAL_IN_SECONDS
@@ -70,4 +70,8 @@ test('fillMissingConstructions with partial input', t => {
 
 	t.is(data.possibleShops.length, 5)
 	t.deepEqual(data.possibleShops.slice(0, 3), ['A', 'B', 'C'])
+})
+
+test('nextConstructionChange', t => {
+	t.is(nextConstructionChange(timeOffset + 10), timeOffset + CHANGE_INTERVAL_IN_SECONDS)
 })
