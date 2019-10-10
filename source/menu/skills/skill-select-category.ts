@@ -8,7 +8,7 @@ import {categorySkillSpecificLevel} from '../../lib/game-math/skill'
 
 import {buttonText} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
-import {infoHeader} from '../../lib/interface/formatted-strings'
+import {infoHeader, labeledInt} from '../../lib/interface/formatted-strings'
 import {skillQueueString} from '../../lib/interface/skill'
 
 import {createHelpMenu, helpButtonText} from '../help'
@@ -23,11 +23,8 @@ function fromCtx(ctx: any): {skill: CategorySkill} {
 }
 
 function categorySkillLine(ctx: any, skills: Skills, skill: CategorySkill, category: string): string {
-	let text = ''
-	text += ctx.wd.r(category).label()
-	text += ': '
-	text += categorySkillSpecificLevel(skills, skill, category)
-	return text
+	return labeledInt(ctx.wd.r(category), categorySkillSpecificLevel(skills, skill, category))
+		.trim()
 }
 
 function categoriesOfLevelLine(ctx: any, level: number, categories: string[], locale: string | undefined): string {

@@ -6,6 +6,7 @@ import {currentLevel} from '../game-math/skill'
 
 import {emojis} from './emojis'
 import {formatInt} from './format-number'
+import {labeledValue, labeledInt} from './formatted-strings'
 
 export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: number, showExplanation: boolean): string {
 	const applicantSeatsLevel = currentLevel(skills, 'applicantSeats')
@@ -19,20 +20,11 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 
 	let text = ''
 	text += emojis.seat
-	text += ctx.wd.r('other.seat').label()
-	text += ': '
-	text += applicants
-	text += ' / '
-	text += maxSeats
-	text += emojis.seat
-	text += '\n'
+	text += labeledValue(ctx.wd.r('other.seat'), `${applicants} / ${maxSeats}${emojis.seat}`)
 	if (showExplanation && applicantSeatsLevel > 0) {
 		text += '  '
 		text += emojis.skill
-		text += ctx.wd.r('skill.applicantSeats').label()
-		text += ': '
-		text += applicantSeatsLevel
-		text += '\n'
+		text += labeledInt(ctx.wd.r('skill.applicantSeats'), applicantSeatsLevel)
 	}
 
 	text += '+1'
@@ -45,27 +37,18 @@ export function applicantInfluencesPart(ctx: any, skills: Skills, applicants: nu
 	if (showExplanation && applicantSpeedLevel > 0) {
 		text += '  '
 		text += emojis.skill
-		text += ctx.wd.r('skill.applicantSpeed').label()
-		text += ': '
-		text += applicantSpeedLevel
-		text += '\n'
+		text += labeledInt(ctx.wd.r('skill.applicantSpeed'), applicantSpeedLevel)
 	}
 
 	text += emojis.retirement
-	text += ctx.wd.r('person.retirement').label()
-	text += ': '
-	text += '≤'
-	text += formatInt(retirementDays)
-	text += ' '
-	text += ctx.wd.r('unit.day').label()
-	text += '\n'
+	text += labeledValue(
+		ctx.wd.r('person.retirement'),
+		`≤${formatInt(retirementDays)} ${ctx.wd.r('unit.day').label()}`
+	)
 	if (showExplanation && healthCareLevel > 0) {
 		text += '  '
 		text += emojis.skill
-		text += ctx.wd.r('skill.healthCare').label()
-		text += ': '
-		text += healthCareLevel
-		text += '\n'
+		text += labeledInt(ctx.wd.r('skill.healthCare'), healthCareLevel)
 	}
 
 	return text

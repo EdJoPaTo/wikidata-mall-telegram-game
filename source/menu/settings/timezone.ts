@@ -7,7 +7,7 @@ import {Session} from '../../lib/types'
 
 import {emojis} from '../../lib/interface/emojis'
 import {humanReadableTimestamp} from '../../lib/interface/formatted-time'
-import {infoHeader} from '../../lib/interface/formatted-strings'
+import {infoHeader, labeledValue} from '../../lib/interface/formatted-strings'
 import {menuPhoto} from '../../lib/interface/menu'
 
 const tzNormal = listTimeZones()
@@ -42,10 +42,11 @@ function menuText(ctx: any): string {
 	text += infoHeader(ctx.wd.r('menu.timezone'), {titlePrefix: emojis.timezone})
 	text += '\n\n'
 
-	text += format.escape(current)
-	text += ':\n  '
-	text += humanReadableTimestamp(Date.now() / 1000, locale, session.timeZone)
-	text += '\n\n'
+	text += labeledValue(
+		format.escape(current),
+		humanReadableTimestamp(Date.now() / 1000, locale, session.timeZone)
+	)
+	text += '\n'
 
 	if (ctx.match instanceof Object && ctx.match[1]) {
 		text += format.bold(ctx.match[1])

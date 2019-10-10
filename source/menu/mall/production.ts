@@ -46,10 +46,8 @@ async function menuText(ctx: any): Promise<string> {
 	text += '\n\n'
 
 	text += emojis.countdown
-	text += format.bold(ctx.wd.r('other.end').label())
-	text += ':\n  '
-	text += humanReadableTimestamp(competitionUntil, locale, timeZone)
-	text += '\n\n'
+	text += labeledValue(ctx.wd.r('other.end'), humanReadableTimestamp(competitionUntil, locale, timeZone))
+	text += '\n'
 
 	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
 	text += '\n\n'

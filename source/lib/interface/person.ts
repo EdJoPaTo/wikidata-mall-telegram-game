@@ -11,6 +11,7 @@ import {personalBonus, employeesWithFittingHobbyAmount} from '../game-math/perso
 
 import {emojis} from './emojis'
 import {humanReadableTimestamp} from './formatted-time'
+import {labeledValue} from './formatted-strings'
 import {percentBonusString, percentString} from './format-percent'
 import * as formatQuickStats from './quick-stats'
 
@@ -53,32 +54,17 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += '\n'
 
 	text += isFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-	text += '*'
-	text += ctx.wd.r('person.hobby').label()
-	text += '*'
-	text += ': '
-	text += ctx.wd.r(hobby).label()
-	text += '\n'
+	text += labeledValue(ctx.wd.r('person.hobby'), ctx.wd.r(hobby))
 
 	if (seatProtectionUntil && seatProtectionUntil > now) {
 		text += emojis.seatProtection
-		text += '*'
-		text += ctx.wd.r('person.seatProtection').label()
-		text += '*'
-		text += ':\n  '
-		text += humanReadableTimestamp(seatProtectionUntil, locale, timeZone)
-		text += '\n'
+		text += labeledValue(ctx.wd.r('person.seatProtection'), humanReadableTimestamp(seatProtectionUntil, locale, timeZone))
 	}
 
 	text += emojis.retirement
-	text += '*'
-	text += ctx.wd.r('person.retirement').label()
-	text += '*'
-	text += ':\n  '
-	text += humanReadableTimestamp(retirementTimestamp, locale, timeZone)
+	text += labeledValue(ctx.wd.r('person.retirement'), humanReadableTimestamp(retirementTimestamp, locale, timeZone))
 
 	if (canBeEmployed(person, now)) {
-		text += '\n'
 		text += '*'
 		text += ctx.wd.r('person.talent').label()
 		text += '*'
@@ -89,7 +75,7 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 			.join('\n')
 	}
 
-	return text
+	return text.trim()
 }
 
 export function nameMarkdown(name: Name): string {
@@ -233,11 +219,9 @@ function hobbiesStatsLine(ctx: any, shops: readonly Shop[], talents: readonly Ta
 
 	let text = ''
 	text += emojis.hobbyMatch
-	text += ctx.wd.r('person.hobby').label()
-	text += ': '
-	text += `${currently} / ${possible}`
-	text += ' ('
-	text += percentString(currently / possible)
-	text += ')'
-	return text
+	text += labeledValue(
+		ctx.wd.r('person.hobby'),
+		`${currently} / ${possible} (${percentString(currently / possible)})`
+	)
+	return text.trim()
 }

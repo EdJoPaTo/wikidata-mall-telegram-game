@@ -10,21 +10,10 @@ import * as wdShops from '../lib/wikidata/shops'
 
 import {buttonText, menuPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
-import {formatInt} from '../lib/interface/format-number'
 import {humanReadableTimestamp} from '../lib/interface/formatted-time'
-import {infoHeader} from '../lib/interface/formatted-strings'
+import {infoHeader, labeledValue, labeledInt} from '../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from './help'
-
-function entryLine(ctx: any, resourceKey: string, value: string): string {
-	let text = ''
-	text += ctx.wd.r(resourceKey).label()
-	text += ': '
-	text += value
-	text += '\n'
-
-	return text
-}
 
 async function menuText(ctx: any): Promise<string> {
 	let text = ''
@@ -36,10 +25,10 @@ async function menuText(ctx: any): Promise<string> {
 	text += '*'
 	text += '\n'
 
-	text += entryLine(ctx, 'menu.shop', formatInt(wdShops.allShops().length))
-	text += entryLine(ctx, 'product.product', formatInt(wdShops.allProductsAmount()))
-	text += entryLine(ctx, 'stat.name.given', formatInt(wdNames.getGivenNames().length))
-	text += entryLine(ctx, 'stat.name.family', formatInt(wdNames.getFamilyNames().length))
+	text += labeledInt(ctx.wd.r('menu.shop'), wdShops.allShops().length)
+	text += labeledInt(ctx.wd.r('product.product'), wdShops.allProductsAmount())
+	text += labeledInt(ctx.wd.r('stat.name.given'), wdNames.getGivenNames().length)
+	text += labeledInt(ctx.wd.r('stat.name.family'), wdNames.getFamilyNames().length)
 
 	text += '\n'
 	text += '*'
@@ -52,10 +41,10 @@ async function menuText(ctx: any): Promise<string> {
 	const allProducts = allShops.flatMap(o => o.products)
 	const allEmployees = allShops.flatMap(o => Object.values(o.personal) as Person[])
 
-	text += entryLine(ctx, 'stat.player', formatInt(userSessions.getRaw().length))
-	text += entryLine(ctx, 'menu.shop', formatInt(allShops.length))
-	text += entryLine(ctx, 'menu.employee', formatInt(allEmployees.length))
-	text += entryLine(ctx, 'product.product', formatInt(allProducts.length))
+	text += labeledInt(ctx.wd.r('stat.player'), userSessions.getRaw().length)
+	text += labeledInt(ctx.wd.r('menu.shop'), allShops.length)
+	text += labeledInt(ctx.wd.r('menu.employee'), allEmployees.length)
+	text += labeledInt(ctx.wd.r('product.product'), allProducts.length)
 
 	const {gameStarted, stats, timeZone, __wikibase_language_code: locale} = ctx.session as Session
 
@@ -65,8 +54,8 @@ async function menuText(ctx: any): Promise<string> {
 	text += '*'
 	text += '\n'
 
-	text += entryLine(ctx, 'achievement.gameStarted', humanReadableTimestamp(gameStarted, locale, timeZone))
-	text += entryLine(ctx, 'person.talents.purchasing', formatInt(stats.productsBought))
+	text += labeledValue(ctx.wd.r('achievement.gameStarted'), humanReadableTimestamp(gameStarted, locale, timeZone))
+	text += labeledInt(ctx.wd.r('person.talents.purchasing'), stats.productsBought)
 
 	return text
 }
