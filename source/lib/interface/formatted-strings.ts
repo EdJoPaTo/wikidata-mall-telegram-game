@@ -46,8 +46,9 @@ export function labeledInt(label: string | WikidataEntityReader, num: number, un
 
 export function labeledValue(label: string | WikidataEntityReader, value: string): string {
 	const labelString = label instanceof WikidataEntityReader ? label.label() : label
-
-	return `${labelString}: ${value}\n`
+	const multiline = labelString.length > 4 && value.length > 4 && labelString.length + value.length > 30
+	const seperator = multiline ? ':\n  ' : ': '
+	return labelString + seperator + value + '\n'
 }
 
 export function moneyCostPart(ctx: any, currentMoney: number, cost: number): string {
