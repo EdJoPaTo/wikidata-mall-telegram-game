@@ -28,6 +28,11 @@ async function checkEveryMemberAndRemoveIfNeeded(ctx: ContextMessageUpdate, mall
 		mallData.member.map(async memberId => {
 			try {
 				const entry = await ctx.getChatMember(memberId)
+				console.log('entry status', memberId, entry.status)
+				if (entry.status === 'left' || entry.status === 'kicked') {
+					return false
+				}
+
 				return entry.user.id
 			} catch (error) {
 				console.log('error while testing members', memberId, error.message)
