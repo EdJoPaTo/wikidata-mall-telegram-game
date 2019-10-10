@@ -44,11 +44,12 @@ export function labeledInt(label: string | WikidataEntityReader, num: number, un
 	return labeledValue(label, `${formatInt(num)}${unit}`)
 }
 
-export function labeledValue(label: string | WikidataEntityReader, value: string): string {
+export function labeledValue(label: string | WikidataEntityReader, value: string | WikidataEntityReader): string {
 	const labelString = label instanceof WikidataEntityReader ? label.label() : label
-	const multiline = labelString.length > 4 && value.length > 4 && labelString.length + value.length > 30
+	const valueString = value instanceof WikidataEntityReader ? value.label() : value
+	const multiline = labelString.length > 4 && valueString.length > 4 && labelString.length + valueString.length > 30
 	const seperator = multiline ? ':\n  ' : ': '
-	return labelString + seperator + value + '\n'
+	return labelString + seperator + valueString + '\n'
 }
 
 export function moneyCostPart(ctx: any, currentMoney: number, cost: number): string {
