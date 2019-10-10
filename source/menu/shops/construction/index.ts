@@ -2,8 +2,6 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../../../lib/types'
 
-import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../../lib/js-helper/dictionary'
-
 import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 
 import {getCurrentConstructions, nextConstructionChange} from '../../../lib/game-logic/shop-construction'
@@ -25,6 +23,7 @@ async function menuText(ctx: any): Promise<string> {
 	const persist = ctx.persist as Persist
 	const now = Date.now() / 1000
 	const cost = costForAdditionalShop(persist.shops.length)
+	const options = await constructionOptions()
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('action.construction'), {
@@ -34,7 +33,7 @@ async function menuText(ctx: any): Promise<string> {
 
 	text += moneyCostPart(ctx, session.money, cost)
 
-	text += Object.keys(await constructionOptions(ctx))
+	text += options
 		.map(o => infoHeader(ctx.wd.r(o), {
 			titlePrefix: emojis.shop,
 			titleSuffix: collectorSuffix(persist.skills, o)
@@ -57,23 +56,18 @@ const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('action.construction')
 })
 
-async function constructionOptions(ctx: any): Promise<Record<QNumber, string>> {
-	const {__wikibase_language_code: locale} = ctx.session as Session
+async function constructionOptions(): Promise<QNumber[]> {
 	const now = Date.now() / 1000
 	const construction = await getCurrentConstructions(now)
-
-	const labels: Record<QNumber, string> = {}
-	for (const shopId of construction.possibleShops) {
-		labels[shopId] = ctx.wd.r(shopId).label()
-	}
-
-	const orderedKeys = sortDictKeysByStringValues(labels, locale === 'wikidatanish' ? 'en' : locale)
-	return recreateDictWithGivenKeyOrder(labels, orderedKeys)
+	return construction.possibleShops
 }
 
 menu.selectSubmenu('s', constructionOptions, constructionOptionMenu, {
 	columns: 1,
-	prefixFunc: () => emojis.construction
+	prefixFunc: () => emojis.construction,
+	textFunc: (ctx: any, key) => {
+		return ctx.wd.r(key).label()
+	}
 })
 
 menu.urlButton(
