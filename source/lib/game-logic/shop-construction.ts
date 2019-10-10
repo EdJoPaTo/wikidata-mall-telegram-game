@@ -25,6 +25,7 @@ export async function getCurrentConstructions(now: number): Promise<Construction
 
 	removeOldEntries(data, now)
 	const allShops = wdShops.allShops()
+	removeNonexistingShops(data, allShops)
 	fillMissingConstructions(data, allShops)
 
 	const after = stringify(data)
@@ -39,6 +40,11 @@ export function removeOldEntries(data: Construction, now: number): void {
 	const removeAmount = Math.floor((now - data.timestamp) / CHANGE_INTERVAL_IN_SECONDS)
 	data.possibleShops = data.possibleShops.slice(removeAmount)
 	data.timestamp = lastConstructionChange(now)
+}
+
+export function removeNonexistingShops(data: Construction, allPossibleShops: readonly string[]): void {
+	data.possibleShops = data.possibleShops
+		.filter(o => allPossibleShops.includes(o))
 }
 
 export function fillMissingConstructions(data: Construction, allPossibleShops: readonly string[]): void {
