@@ -60,13 +60,6 @@ function canAddProductTechnically(shop: Shop, skills: Skills): boolean {
 	return true
 }
 
-function productLine(ctx: any, product: Product): string {
-	let text = ''
-	text += labeledInt(ctx.wd.r(product.id), product.itemsInStore, emojis.storage)
-
-	return text
-}
-
 function storageCapacityPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boolean): string {
 	let text = ''
 	text += emojis.storage
@@ -130,8 +123,9 @@ function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boo
 	}
 
 	text += shop.products
-		.map(product => productLine(ctx, product))
-		.join('')
+		.map(product => labeledInt(ctx.wd.r(product.id), product.itemsInStore, emojis.storage))
+		.map(o => o.trim())
+		.join('\n')
 	text += '\n\n'
 	return text
 }
