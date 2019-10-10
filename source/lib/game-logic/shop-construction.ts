@@ -9,19 +9,23 @@ import {HOUR_IN_SECONDS} from '../math/timestamp-constants'
 import * as dataShopConstruction from '../data/shop-construction'
 import * as wdShops from '../wikidata/shops'
 
-const CHANGE_INTERVAL_IN_SECONDS = HOUR_IN_SECONDS * 3
+export const CHANGE_INTERVAL_IN_SECONDS = HOUR_IN_SECONDS
+export const ENTRY_AMOUNT = 5
 
 export async function getCurrentConstructions(now: number): Promise<Construction> {
 	let data = await dataShopConstruction.get()
 	const before = stringify(data)
 
-	const lastChange = lastConstructionChange(now)
-	if (!data || data.timestamp < lastChange) {
+	if (!data) {
 		data = {
-			timestamp: lastChange,
-			possibleShops: generatePossibleShops(3)
+			timestamp: 0,
+			possibleShops: []
 		}
 	}
+
+	removeOldEntries(data, now)
+	const allShops = wdShops.allShops()
+	fillMissingConstructions(data, allShops)
 
 	const after = stringify(data)
 	if (before !== after) {
@@ -31,9 +35,17 @@ export async function getCurrentConstructions(now: number): Promise<Construction
 	return data
 }
 
-function generatePossibleShops(amount: number): string[] {
-	const allShops = wdShops.allShops()
-	return randomUniqueEntries(allShops, amount)
+export function removeOldEntries(data: Construction, now: number): void {
+	const removeAmount = Math.floor((now - data.timestamp) / CHANGE_INTERVAL_IN_SECONDS)
+	data.possibleShops = data.possibleShops.slice(removeAmount)
+	data.timestamp = lastConstructionChange(now)
+}
+
+export function fillMissingConstructions(data: Construction, allPossibleShops: readonly string[]): void {
+	const missing = ENTRY_AMOUNT - data.possibleShops.length
+	data.possibleShops.push(
+		...randomUniqueEntries(allPossibleShops, missing, data.possibleShops)
+	)
 }
 
 export function lastConstructionChange(now: number): number {
