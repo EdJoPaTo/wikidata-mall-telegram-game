@@ -22,14 +22,16 @@ export function notificationText(notification: Notification, fireDate: Date): st
 			text += emojis.retirement
 			break
 		case 'applicantGraduated':
-			text += emojis.personStudent + emojis.graduation
+			text += emojis.graduation
+			text += emojis.personStudent
 			break
 		case 'mallProductionPartFinished':
 			text += emojis.productionFinished
 			text += emojis.production
 			break
 		case 'mallAttractionDisaster':
-			text += emojis.attraction + emojis.disaster
+			text += emojis.disaster
+			text += emojis.attraction
 			break
 		default:
 			throw new Error(`notification message not implemented for type: ${notification.type}`)
