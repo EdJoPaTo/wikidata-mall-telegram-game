@@ -2,6 +2,7 @@ import {Chat} from 'telegram-typings'
 
 import {Person} from './people'
 
+type MallId = number
 type QNumber = string
 type UnixTimestamp = number
 type UserId = number
@@ -26,6 +27,6 @@ export interface Attraction {
 export interface MallProduction {
 	competitionSince: UnixTimestamp;
 	competitionUntil: UnixTimestamp;
-	itemsProducedPerMall: Record<string, number>;
+	itemsProducedPerMall: Record<MallId, number>;
 	itemToProduce: QNumber;
 }
