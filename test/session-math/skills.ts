@@ -15,7 +15,7 @@ test('does not crash when there is no queue', t => {
 		skills: {}
 	}
 
-	const session: any = {}
+	const session: any = {skillQueue: []}
 	t.notThrows(() => handler.startup(session, persist))
 	t.notThrows(() => handler.incomeUntil(session))
 	t.notThrows(() => handler.incomeLoop(session, persist, 0))
@@ -200,7 +200,7 @@ test('skills category skill when time is up', t => {
 })
 
 test('incomeUntil without queue', t => {
-	const session: any = {}
+	const session: any = {skillQueue: []}
 	t.is(handler.incomeUntil(session), Infinity)
 })
 

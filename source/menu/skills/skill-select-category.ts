@@ -96,7 +96,7 @@ function menuText(ctx: any): string {
 		}
 	}
 
-	text += skillQueueString(ctx, session.skillQueue || [])
+	text += skillQueueString(ctx, session.skillQueue)
 
 	return text
 }

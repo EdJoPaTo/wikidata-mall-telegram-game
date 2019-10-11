@@ -109,7 +109,7 @@ menu.submenu(buttonText(emojis.person, 'menu.employee'), 'employees', employees,
 function skillRequireAttention(ctx: any): boolean {
 	const {skillQueue} = ctx.session as Session
 	const now = Date.now() / 1000
-	return !skillQueue || canAddToSkillQueue(skillQueue, now)
+	return canAddToSkillQueue(skillQueue, now)
 }
 
 menu.submenu(buttonText(emojis.skill, 'menu.skill', {requireAttention: skillRequireAttention}), 'skill', skills, {

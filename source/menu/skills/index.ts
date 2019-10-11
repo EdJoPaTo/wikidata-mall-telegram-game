@@ -67,7 +67,7 @@ function menuText(ctx: any): string {
 		text += '\n\n'
 	}
 
-	text += skillQueueString(ctx, session.skillQueue || [])
+	text += skillQueueString(ctx, session.skillQueue)
 
 	return text
 }
@@ -79,14 +79,10 @@ const menu = new TelegrafInlineMenu(menuText, {
 menu.button(buttonText(emojis.clearSkillQueue, 'skill.queue'), 'clearQueue', {
 	hide: (ctx: any) => {
 		const {skillQueue} = ctx.session as Session
-		return !skillQueue || skillQueue.length <= 1
+		return skillQueue.length <= 1
 	},
 	doFunc: (ctx: any) => {
 		const session = ctx.session as Session
-		if (!session.skillQueue || session.skillQueue.length <= 1) {
-			return
-		}
-
 		session.skillQueue = session.skillQueue
 			.filter((_, i) => i === 0)
 	}

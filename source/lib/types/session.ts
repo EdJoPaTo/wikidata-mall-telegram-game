@@ -17,7 +17,7 @@ export interface Session {
 	money: number;
 	page?: number;
 	showAllLanguages?: true;
-	skillQueue?: SkillInTraining[];
+	skillQueue: SkillInTraining[];
 	stats: Stats;
 	timeZone?: string;
 }

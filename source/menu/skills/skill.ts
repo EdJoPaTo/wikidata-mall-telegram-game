@@ -31,8 +31,8 @@ function menuText(ctx: any): string {
 	const {skill, category} = fromCtx(ctx)
 
 	const level = isSimpleSkill(skill) ? currentLevel(persist.skills, skill) : categorySkillSpecificLevel(persist.skills, skill, category!)
-	const inQueue = entriesInSkillQueue(session.skillQueue || [], skill, category)
-	const afterQueueLevel = levelAfterSkillQueue(persist.skills, session.skillQueue || [], skill, category)
+	const inQueue = entriesInSkillQueue(session.skillQueue, skill, category)
+	const afterQueueLevel = levelAfterSkillQueue(persist.skills, session.skillQueue, skill, category)
 
 	let text = ''
 	text += infoHeader(ctx.wd.r(`skill.${skill}`), {
@@ -62,7 +62,7 @@ function menuText(ctx: any): string {
 	text += '\n'
 
 	text += '\n'
-	text += skillQueueString(ctx, session.skillQueue || [])
+	text += skillQueueString(ctx, session.skillQueue)
 
 	return text
 }
@@ -75,7 +75,7 @@ menu.button(buttonText(emojis.skill, 'action.research'), 'research', {
 	hide: (ctx: any) => {
 		const {skillQueue} = ctx.session as Session
 		const now = Date.now() / 1000
-		return !canAddToSkillQueue(skillQueue || [], now)
+		return !canAddToSkillQueue(skillQueue, now)
 	},
 	doFunc: (ctx: any) => {
 		const session = ctx.session as Session

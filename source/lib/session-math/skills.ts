@@ -13,40 +13,39 @@ export function startup(session: Session, persist: Persist): void {
 		delete (session as any).skillInTraining
 	}
 
-	if (session.skillQueue) {
-		ensureCurrentlyTrainedSkillForShopHasItsShop(session, persist)
+	if (!session.skillQueue) {
+		session.skillQueue = []
 	}
+
+	ensureCurrentlyTrainedSkillForShopHasItsShop(session, persist)
 }
 
 export function incomeUntil(session: Session): number {
 	const {skillQueue} = session
-	const firstSkillInQueue = skillQueue && skillQueue[0]
-	if (!firstSkillInQueue) {
+	if (skillQueue.length === 0) {
 		return Infinity
 	}
 
-	return firstSkillInQueue.endTimestamp
+	return skillQueue[0].endTimestamp
 }
 
 export function incomeLoop(session: Session, persist: Persist, now: number): void {
-	if (session.skillQueue) {
-		applySkillWhenFinished(session, persist, now)
-	}
+	applySkillWhenFinished(session, persist, now)
 }
 
 function ensureCurrentlyTrainedSkillForShopHasItsShop(session: Session, persist: Persist): void {
 	const existingShops = persist.shops.map(o => o.id)
 
-	const endTimestampsWhichAreBad = session.skillQueue!
+	const endTimestampsWhichAreBad = session.skillQueue
 		.filter(o => o.category && !existingShops.includes(o.category))
 		.map(o => o.endTimestamp)
 	const allowedEndTimestamp = Math.min(...endTimestampsWhichAreBad)
-	session.skillQueue = session.skillQueue!
+	session.skillQueue = session.skillQueue
 		.filter(o => o.endTimestamp < allowedEndTimestamp)
 }
 
 function applySkillWhenFinished(session: Session, persist: Persist, now: number): void {
-	for (const skillInTraining of session.skillQueue!) {
+	for (const skillInTraining of session.skillQueue) {
 		const {skill, category, endTimestamp} = skillInTraining
 		if (endTimestamp > now) {
 			break
@@ -59,6 +58,6 @@ function applySkillWhenFinished(session: Session, persist: Persist, now: number)
 		}
 	}
 
-	session.skillQueue = session.skillQueue!
+	session.skillQueue = session.skillQueue
 		.filter(o => o.endTimestamp > now)
 }
