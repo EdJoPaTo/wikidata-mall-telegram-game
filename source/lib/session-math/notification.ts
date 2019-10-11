@@ -36,7 +36,7 @@ export async function initialize(notififyManager: NotificationManager, entitySto
 export default function updateNotification(user: number, session: Session, persist: Persist): void {
 	notificationManager!.clear(user)
 
-	const notifications = generateNotifications(session, persist, wdEntityStore!)
+	const notifications = generateNotifications(user, session, persist, wdEntityStore!)
 	for (const n of notifications) {
 		notificationManager!.add(user, n)
 	}

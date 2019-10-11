@@ -3,7 +3,7 @@ import emojiRegex from 'emoji-regex'
 import WikidataEntityReader from 'wikidata-entity-reader'
 import WikidataEntityStore from 'wikidata-entity-store'
 
-import {Mall, Attraction} from '../types/mall'
+import {Mall, Attraction, ProductionPart} from '../types/mall'
 
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../game-math/constants'
 import {mallMemberAmountWithinLimits, attractionCustomerBonus} from '../game-math/mall'
@@ -66,6 +66,11 @@ export function mallAttractionPart(ctx: any, attraction: string): string {
 
 	text += '\n'
 	return text
+}
+
+export function productionPartNotificationString(productionPart: ProductionPart, entityStore: WikidataEntityStore, locale: string | undefined): string {
+	const reader = new WikidataEntityReader(entityStore.entity(productionPart.part), locale)
+	return reader.label()
 }
 
 export function attractionDisasterNotificationString(attraction: Attraction, entityStore: WikidataEntityStore, locale: string | undefined): string {

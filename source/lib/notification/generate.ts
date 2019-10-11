@@ -13,17 +13,18 @@ import {shopProductsEmptyTimestamps} from '../game-math/shop-time'
 
 import {getAttractionHeight} from '../game-logic/mall-attraction'
 
-import {attractionDisasterNotificationString} from '../interface/mall'
+import {attractionDisasterNotificationString, productionPartNotificationString} from '../interface/mall'
 import {nameMarkdown} from '../interface/person'
 import {skillFinishedNotificationString} from '../interface/skill'
 
-export function generateNotifications(session: Session, persist: Persist, entityStore: WikidataEntityStore): readonly Notification[] {
+export function generateNotifications(userId: number, session: Session, persist: Persist, entityStore: WikidataEntityStore): readonly Notification[] {
 	const {__wikibase_language_code: locale} = session
 
 	return [
 		...generateProductsEmpty(persist.shops, persist.mall, entityStore, locale),
 		...generateShopsPersonalRetirement(session, persist.shops, entityStore),
 		...generateApplicantGraduation(persist.applicants.list),
+		...generateMallProductionPartFinished(userId, session, persist.mall, entityStore),
 		...generateMallAttractionDestruction(session, persist.mall, entityStore),
 		...generateSkill(session, entityStore)
 	]
@@ -97,6 +98,21 @@ function generateMallAttractionDestruction(session: Session, mall: Mall | undefi
 		date: new Date(mall.attraction.disasterTimestamp * 1000),
 		text: attractionDisasterNotificationString(mall.attraction, entityStore, locale)
 	}]
+}
+
+function generateMallProductionPartFinished(userId: number, session: Session, mall: Mall | undefined, entityStore: WikidataEntityStore): readonly Notification[] {
+	const {__wikibase_language_code: locale} = session
+	if (!mall) {
+		return []
+	}
+
+	return mall.production
+		.filter(o => o.user === userId)
+		.map((o): Notification => ({
+			type: 'mallProductionPartFinished',
+			date: new Date(o.finishTimestamp * 1000),
+			text: productionPartNotificationString(o, entityStore, locale)
+		}))
 }
 
 function generateSkill(session: Session, entityStore: WikidataEntityStore): readonly Notification[] {
