@@ -14,9 +14,9 @@ export function productionReward(parts: number): number {
 }
 
 export function productionSeconds(currentlyBeeingProduced: number): number {
-	const baseMinutes = 10
-	const reduction = currentlyBeeingProduced * 2
-	const minutes = Math.max(1, baseMinutes - reduction)
+	const baseMinutes = 15
+	const reduction = currentlyBeeingProduced * 4
+	const minutes = Math.max(2, baseMinutes - reduction)
 	return minutes * MINUTE_IN_SECONDS
 }
 
