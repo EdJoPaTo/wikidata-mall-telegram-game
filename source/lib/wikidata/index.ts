@@ -3,10 +3,11 @@ import {readFileSync} from 'fs'
 import WikidataEntityStore from 'wikidata-entity-store'
 
 import * as attractions from './attractions'
+import * as inUseItems from './preload-in-use-items'
 import * as name from './name'
+import * as production from './production'
 import * as sets from './sets'
 import * as shops from './shops'
-import * as inUseItems from './preload-in-use-items'
 
 export async function preload(store: WikidataEntityStore): Promise<void> {
 	console.time('wikidata preload')
@@ -17,6 +18,7 @@ export async function preload(store: WikidataEntityStore): Promise<void> {
 	))
 	await preloadSpecific('name', async () => name.preload())
 	qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
+	qNumbers.push(...await preloadSpecific('production', async () => production.preload(store)))
 	qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))
 	qNumbers.push(...await preloadSpecific('shops', async () => shops.preload()))
 
@@ -41,6 +43,7 @@ export async function update(store: WikidataEntityStore): Promise<void> {
 		qNumbers.push(...resourceKeyQItems)
 
 		qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
+		qNumbers.push(...await preloadSpecific('production', async () => production.preload(store)))
 		qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))
 		qNumbers.push(...await preloadSpecific('shops', async () => shops.preload()))
 
