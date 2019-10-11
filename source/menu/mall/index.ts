@@ -78,7 +78,12 @@ menu.submenu(buttonText(emojis.production, 'mall.production', {requireAttention:
 	hide: hideWhenMemberAmountNotCorrect
 })
 
-menu.submenu(buttonText(emojis.attraction, 'mall.attraction'), 'attraction', attractionMenu, {
+function attractionLabelResourceKey(ctx: any): string {
+	const {mall} = ctx.persist as Persist
+	return mall && mall.attraction ? mall.attraction.item : 'mall.attraction'
+}
+
+menu.submenu(buttonText(emojis.attraction, attractionLabelResourceKey), 'attraction', attractionMenu, {
 	hide: hideWhenMemberAmountNotCorrect
 })
 
