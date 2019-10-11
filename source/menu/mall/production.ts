@@ -2,10 +2,10 @@ import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityStore from 'wikidata-entity-store'
 
-import {MallProduction} from '../../lib/types/mall'
+import {MallProduction, ProductionPart} from '../../lib/types/mall'
 import {Persist, Session} from '../../lib/types'
 
-import {MALL_MIN_PEOPLE, MALL_PRODUCTION_TIME_IN_SECONDS, MALL_PRODUCTION_START_COST} from '../../lib/game-math/constants'
+import {MALL_PRODUCTION_TIME_IN_SECONDS} from '../../lib/game-math/constants'
 import {productionReward} from '../../lib/game-math/mall'
 
 import * as mallProduction from '../../lib/data/mall-production'
@@ -19,7 +19,7 @@ import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {countdownMinuteSecond, humanReadableTimestamp} from '../../lib/interface/formatted-time'
 import {emojis} from '../../lib/interface/emojis'
 import {formatFloat} from '../../lib/interface/format-number'
-import {infoHeader, mallMoneyCostPart, labeledValue} from '../../lib/interface/formatted-strings'
+import {infoHeader, labeledValue} from '../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
@@ -31,6 +31,28 @@ async function getProduction(ctx: any): Promise<MallProduction> {
 	return production
 }
 
+async function partLine(ctx: any, part: ProductionPart, now: number): Promise<string> {
+	const finished = part.finishTimestamp < now
+	const user = await userInfo.get(part.user)
+	const name = user ? user.first_name : '??'
+	const isMe = ctx.from.id === part.user
+
+	let text = ''
+	text += format.bold(ctx.wd.r(part.part).label())
+	text += '\n  '
+	text += finished ? emojis.productionFinished : emojis.countdown
+	text += isMe ? format.italic(name) : format.escape(name)
+
+	if (!finished) {
+		text += ' '
+		text += countdownMinuteSecond(part.finishTimestamp - now)
+		text += ' '
+		text += ctx.wd.r('unit.minute').label()
+	}
+
+	return text
+}
+
 async function menuText(ctx: any): Promise<string> {
 	const now = Date.now() / 1000
 	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
@@ -40,6 +62,9 @@ async function menuText(ctx: any): Promise<string> {
 	}
 
 	const {itemToProduce, competitionUntil} = await getProduction(ctx)
+	const parts = getParts(ctx.wd.r(itemToProduce))
+	const inProduction = mall.production.map(o => o.part)
+	const missing = parts.filter(o => !inProduction.includes(o))
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.production'), {titlePrefix: emojis.production})
@@ -52,51 +77,27 @@ async function menuText(ctx: any): Promise<string> {
 	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
 	text += '\n\n'
 
-	if (mall.partsProducedBy) {
-		const productionParticipants = Object.keys(mall.partsProducedBy).length
-		text += labeledValue(
-			ctx.wd.r('mall.productionReward'),
-			formatFloat(productionReward(productionParticipants)) + emojis.currencyMall
-		)
+	text += labeledValue(
+		ctx.wd.r('mall.productionReward'),
+		formatFloat(productionReward(parts.length)) + emojis.currencyMall
+	)
+	text += '\n'
 
-		if (!mall.productionFinishes) {
-			text += '\n'
-		}
+	const partLines = await Promise.all(
+		mall.production
+			.map(async o => partLine(ctx, o, now))
+	)
+	text += partLines
+		.join('\n')
+
+	if (partLines.length > 0 && missing.length > 0) {
+		text += '\n'
 	}
 
-	if (mall.productionFinishes) {
-		text += emojis.countdown
-		text += countdownMinuteSecond(mall.productionFinishes - now)
-		text += ' '
-		text += ctx.wd.r('unit.minute').label()
-		text += '\n\n'
-	} else {
-		const parts = getParts(ctx.wd.r(itemToProduce))
-
-		const lines = await Promise.all(parts
-			.map(async o => {
-				let line = ''
-				line += format.bold(ctx.wd.r(o).label())
-				line += ':\n  '
-				if (mall.partsProducedBy && mall.partsProducedBy[o]) {
-					const userId = mall.partsProducedBy[o]
-					const user = await userInfo.get(userId)
-					line += format.escape(user ? user.first_name : '??')
-				} else {
-					line += emojis.noPerson
-				}
-
-				return line
-			})
-		)
-
-		text += lines.join('\n')
-		text += '\n\n'
-	}
-
-	if (!mall.partsProducedBy) {
-		text += mallMoneyCostPart(ctx, mall.money, MALL_PRODUCTION_START_COST)
-	}
+	text += missing
+		.map(o => ctx.wd.r(o).label())
+		.map(o => `${format.bold(o)}\n  ${emojis.noPerson}`)
+		.join('\n')
 
 	return text
 }
@@ -109,20 +110,20 @@ const menu = new TelegrafInlineMenu(menuText, {
 })
 
 async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
+	const now = Date.now() / 1000
 	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
 
-	const productionOngoing = Boolean(mall.productionFinishes)
-	const alreadyPreparingOrHavingEnoughMoneyToStart = mall.partsProducedBy || mall.money > MALL_PRODUCTION_START_COST
-	if (productionOngoing || !alreadyPreparingOrHavingEnoughMoneyToStart) {
+	if (mall.production.some(o => o.user === ctx.from.id && o.finishTimestamp > now)) {
+		// Currently producing something
 		return []
 	}
 
 	const {itemToProduce} = await getProduction(ctx)
 	const parts = getParts(ctx.wd.r(itemToProduce))
-	const takenParts = Object.keys(mall.partsProducedBy || {})
+	const takenParts = mall.production.map(o => o.part)
 	const notTakenParts = parts
 		.filter(o => !takenParts.includes(o))
 	return notTakenParts
@@ -138,30 +139,23 @@ menu.select('take', currentlyNotTakenParts, {
 			throw new Error('You are not part of a mall')
 		}
 
-		if (mall.productionFinishes || mall.money < MALL_PRODUCTION_START_COST) {
+		if (mall.production.some(o => o.user === ctx.from.id && o.finishTimestamp > now)) {
+			// Currently producing something
 			return
 		}
 
-		if (!mall.partsProducedBy) {
-			mall.partsProducedBy = {}
-			mall.money -= MALL_PRODUCTION_START_COST
-		}
-
-		if (mall.partsProducedBy[key]) {
+		if (mall.production.some(o => o.part === key)) {
+			// Someone already took this part
 			return
 		}
 
-		const keysTakenByUser = Object.keys(mall.partsProducedBy)
-			.filter(o => mall.partsProducedBy![o] === ctx.from.id)
-		for (const k of keysTakenByUser) {
-			delete mall.partsProducedBy[k]
-		}
+		const finishTimestamp = now + MALL_PRODUCTION_TIME_IN_SECONDS
 
-		mall.partsProducedBy[key] = ctx.from.id
-
-		if (mall.member.length >= MALL_MIN_PEOPLE && mall.member.length <= Object.keys(mall.partsProducedBy).length) {
-			mall.productionFinishes = Math.ceil(now + MALL_PRODUCTION_TIME_IN_SECONDS)
-		}
+		mall.production.push({
+			part: key,
+			user: ctx.from.id,
+			finishTimestamp
+		})
 	}
 })
 

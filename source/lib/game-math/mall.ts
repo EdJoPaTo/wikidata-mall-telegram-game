@@ -9,8 +9,8 @@ export function mallMemberAmountWithinLimits(mall: Mall): boolean {
 	return memberAmount >= MALL_MIN_PEOPLE && memberAmount <= MALL_MAX_PEOPLE
 }
 
-export function productionReward(productionParticipants: number): number {
-	return productionParticipants * 1000
+export function productionReward(parts: number): number {
+	return parts * 1000
 }
 
 export function secondsUntilAttractionDisaster(): {min: number; max: number} {

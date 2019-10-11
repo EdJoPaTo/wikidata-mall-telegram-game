@@ -55,9 +55,6 @@ bot.use(new ErrorMiddleware({
 
 removeOld()
 
-bot.use((data as any).middleware())
-bot.use(sessionMathMiddleware())
-
 const i18n = new TelegrafI18n({
 	directory: 'locales',
 	defaultLanguage: 'en',
@@ -94,6 +91,9 @@ const notificationManager = new NotificationManager(
 bot.use(new TelegrafWikibase(wdEntityStore, {
 	contextKey: 'wd'
 }).middleware())
+
+bot.use((data as any).middleware())
+bot.use(sessionMathMiddleware())
 
 bot.use((Telegraf as any).privateChat(menu.init({
 	backButtonText: (ctx: any) => `🔙 ${ctx.i18n.t('menu.back')}`,

@@ -157,6 +157,7 @@ bot.action('join', async ctx => {
 			applicants: [],
 			member: [],
 			money: 0,
+			production: [],
 			chat: ctx.chat!
 		}
 	}

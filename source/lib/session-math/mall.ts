@@ -1,13 +1,34 @@
+import stringify from 'json-stable-stringify'
+import WikidataEntityReader from 'wikidata-entity-reader'
+import WikidataEntityStore from 'wikidata-entity-store'
+
+import {Mall, MallProduction} from '../types/mall'
 import {Persist} from '../types'
-import {Mall} from '../types/mall'
 
 import {DAY_IN_SECONDS} from '../math/timestamp-constants'
 
 import {productionReward} from '../game-math/mall'
 
+import {getParts} from '../wikidata/production'
+
 import * as mallProduction from '../data/mall-production'
 
 const PRODUCTION_TIMESPAN_IN_SECONDS = DAY_IN_SECONDS
+
+export function startup(persist: Persist): void {
+	const {mall} = persist
+	if (!mall) {
+		return
+	}
+
+	// TODO: remove migration
+	if (!mall.production) {
+		mall.production = []
+	}
+
+	delete (mall as any).productionFinishes
+	delete (mall as any).partsProducedBy
+}
 
 export function incomeUntil(persist: Persist): number {
 	const {mall} = persist
@@ -28,14 +49,26 @@ export function incomeLoop(persist: Persist, now: number): void {
 	delete mall.attraction
 }
 
-export async function before(persist: Persist, now: number): Promise<void> {
+export async function before(persist: Persist, store: WikidataEntityStore, now: number): Promise<void> {
 	if (!persist.mall) {
 		return
 	}
 
+	const production = await mallProduction.get()
+	const productionBefore = stringify(production)
+
+	await store.preloadQNumbers(production.itemToProduce)
+	const parts = getParts(new WikidataEntityReader(store.entity(production.itemToProduce)))
+
 	await updateCurrentProduction(now)
-	await updateProductionProcessOfMall(persist.mall, now)
+	removePartsNotInCurrentProduction(persist.mall, parts)
 	removePartsByLeftMembers(persist.mall)
+	updateProductionProcessOfMall(persist.mall, production, parts, now)
+
+	const productionAfter = stringify(production)
+	if (productionBefore !== productionAfter) {
+		await mallProduction.set(production)
+	}
 }
 
 async function updateCurrentProduction(now: number): Promise<void> {
@@ -56,34 +89,29 @@ async function updateCurrentProduction(now: number): Promise<void> {
 	}
 }
 
-async function updateProductionProcessOfMall(mall: Mall, now: number): Promise<void> {
-	if (mall.partsProducedBy && mall.productionFinishes && mall.productionFinishes <= now) {
-		const content = await mallProduction.get()
-		if (content.competitionSince < now) {
-			const mallId = mall.chat.id
-			if (!content.itemsProducedPerMall[mallId]) {
-				content.itemsProducedPerMall[mallId] = 0
-			}
+function updateProductionProcessOfMall(mall: Mall, currentProduction: MallProduction, parts: readonly string[], now: number): void {
+	const finishedParts = mall.production
+		.filter(o => o.finishTimestamp < now)
 
-			content.itemsProducedPerMall[mallId]++
-			await mallProduction.set(content)
+	if (finishedParts.length === parts.length) {
+		const mallId = mall.chat.id
+		if (!currentProduction.itemsProducedPerMall[mallId]) {
+			currentProduction.itemsProducedPerMall[mallId] = 0
 		}
 
-		const participants = Object.keys(mall.partsProducedBy).length
-		mall.money += productionReward(participants)
+		currentProduction.itemsProducedPerMall[mallId]++
 
-		delete mall.productionFinishes
-		delete mall.partsProducedBy
+		mall.money += productionReward(parts.length)
+		mall.production = []
 	}
 }
 
-function removePartsByLeftMembers(mall: Mall): void {
-	if (mall.partsProducedBy) {
-		const removeKeys = Object.keys(mall.partsProducedBy)
-			.filter(o => !mall.member.includes(mall.partsProducedBy![o]))
+function removePartsNotInCurrentProduction(mall: Mall, parts: readonly string[]): void {
+	mall.production = mall.production
+		.filter(o => parts.includes(o.part))
+}
 
-		for (const key of removeKeys) {
-			delete mall.partsProducedBy[key]
-		}
-	}
+function removePartsByLeftMembers(mall: Mall): void {
+	mall.production = mall.production
+		.filter(o => mall.member.includes(o.user))
 }

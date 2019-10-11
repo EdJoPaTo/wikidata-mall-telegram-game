@@ -34,6 +34,7 @@ const basic: Record<string, string> = {
 	personTemporary: '🤠',
 	personToddler: '👶',
 	production: '🛠',
+	productionFinished: '✅',
 	purchasing: '🛒',
 	recruitment: '👏',
 	requireAttention: '🥺',

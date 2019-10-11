@@ -1,3 +1,5 @@
+import WikidataEntityStore from 'wikidata-entity-store'
+
 import {Session, Persist} from '../types'
 
 import * as applicants from './applicants'
@@ -11,6 +13,7 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 	return async (ctx, next) => {
 		const session = ctx.session as Session
 		const persist = ctx.persist as Persist
+		const store = ctx.wd.store as WikidataEntityStore
 		const now = Math.floor(Date.now() / 1000)
 
 		// TODO: remove migration
@@ -27,6 +30,7 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 			delete (session as any).construction
 		}
 
+		mall.startup(persist)
 		skills.startup(session, persist)
 
 		let nextCalculationUntilTimestamp
@@ -46,7 +50,7 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		} while (nextCalculationUntilTimestamp < now)
 
 		applicants.before(session, persist, now)
-		await mall.before(persist, now)
+		await mall.before(persist, store, now)
 
 		await next()
 

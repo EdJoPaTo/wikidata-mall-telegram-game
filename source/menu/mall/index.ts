@@ -90,11 +90,10 @@ menu.submenu(buttonText(emojis.attraction, 'mall.attraction'), 'attraction', att
 })
 
 function mallProductionRequiresAttention(ctx: any): boolean {
+	const now = Date.now() / 1000
 	const mall = (ctx.persist as Persist).mall!
-	const currentlyProducing = Boolean(mall.productionFinishes)
-	const userHasSelectedAPart = mall.partsProducedBy && Object.values(mall.partsProducedBy).includes(ctx.from.id)
-	const noAttentionNeeded = currentlyProducing || userHasSelectedAPart
-	return !noAttentionNeeded
+	const currentlyProducing = mall.production.some(o => o.user === ctx.from.id && o.finishTimestamp > now)
+	return !currentlyProducing
 }
 
 menu.submenu(buttonText(emojis.production, 'mall.production', {requireAttention: mallProductionRequiresAttention}), 'production', productionMenu, {

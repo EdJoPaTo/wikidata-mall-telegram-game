@@ -13,8 +13,13 @@ export interface Mall {
 	chat: Chat;
 	member: UserId[];
 	money: number;
-	partsProducedBy?: Record<QNumber, UserId>;
-	productionFinishes?: UnixTimestamp;
+	production: ProductionPart[];
+}
+
+export interface ProductionPart {
+	user: UserId;
+	part: QNumber;
+	finishTimestamp: UnixTimestamp;
 }
 
 export interface Attraction {
