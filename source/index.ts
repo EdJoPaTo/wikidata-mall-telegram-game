@@ -23,6 +23,7 @@ import {notificationText} from './lib/interface/notification'
 import {ErrorMiddleware} from './lib/error-middleware'
 import {NotificationManager} from './lib/notification/manager'
 
+import fallback from './fallback'
 import mall from './mall'
 import menu from './menu'
 
@@ -101,6 +102,8 @@ bot.use((Telegraf as any).privateChat(menu.init({
 })))
 
 bot.use((Telegraf as any).groupChat((mall as any).middleware()))
+
+bot.use((fallback as any).middleware())
 
 bot.catch((error: any) => {
 	console.error('telegraf error occured', error)

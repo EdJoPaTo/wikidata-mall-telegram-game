@@ -1,3 +1,4 @@
+import arrayFilterUnique from 'array-filter-unique/dist'
 import stringify from 'json-stable-stringify'
 import WikidataEntityReader from 'wikidata-entity-reader'
 import WikidataEntityStore from 'wikidata-entity-store'
@@ -12,6 +13,8 @@ import {productionReward} from '../game-math/mall'
 import {getParts} from '../wikidata/production'
 
 import * as mallProduction from '../data/mall-production'
+
+import {decideVoteWinner} from '../game-logic/mall-production'
 
 const PRODUCTION_TIMESPAN_IN_SECONDS = DAY_IN_SECONDS
 
@@ -58,9 +61,10 @@ export async function before(persist: Persist, store: WikidataEntityStore, now: 
 	const productionBefore = stringify(production)
 
 	await store.preloadQNumbers(production.itemToProduce)
+
+	updateCurrentProduction(production, now)
 	const parts = getParts(new WikidataEntityReader(store.entity(production.itemToProduce)))
 
-	await updateCurrentProduction(now)
 	removePartsNotInCurrentProduction(persist.mall, parts)
 	removePartsByLeftMembers(persist.mall)
 	updateProductionProcessOfMall(persist.mall, production, parts, now)
@@ -71,21 +75,27 @@ export async function before(persist: Persist, store: WikidataEntityStore, now: 
 	}
 }
 
-async function updateCurrentProduction(now: number): Promise<void> {
-	const content = await mallProduction.get()
+function updateCurrentProduction(production: MallProduction, now: number): void {
 	const expectedFinish = (Math.ceil(now / PRODUCTION_TIMESPAN_IN_SECONDS) * PRODUCTION_TIMESPAN_IN_SECONDS) - 1
+	if (production.competitionUntil === expectedFinish) {
+		return
+	}
 
-	if (content.competitionUntil !== expectedFinish) {
-		const expectedStart = Math.floor(now / PRODUCTION_TIMESPAN_IN_SECONDS) * PRODUCTION_TIMESPAN_IN_SECONDS
-		content.competitionSince = expectedStart
-		content.competitionUntil = expectedFinish
+	const expectedStart = Math.floor(now / PRODUCTION_TIMESPAN_IN_SECONDS) * PRODUCTION_TIMESPAN_IN_SECONDS
+	production.competitionSince = expectedStart
+	production.competitionUntil = expectedFinish
 
-		// TODO: handle winner in some way
-		content.itemsProducedPerMall = {}
+	production.lastProducedItems.splice(0, 0, production.itemToProduce)
+	production.lastProducedItems = production.lastProducedItems
+		.filter(arrayFilterUnique())
+		.slice(0, 3) // The last 3 items are remembered for the votes
 
-		// TODO: define new item to produce from the vote
+	production.itemsProducedPerMall = {}
 
-		await mallProduction.set(content)
+	production.itemToProduce = decideVoteWinner(production.nextItemVote)
+	delete production.nextItemVote[production.itemToProduce]
+	for (const o of Object.keys(production.nextItemVote)) {
+		production.nextItemVote[o] = []
 	}
 }
 

@@ -6,11 +6,25 @@ const data: RawObjectStorage<MallProduction> = new RawObjectInMemoryFile<MallPro
 
 export async function get(): Promise<MallProduction> {
 	const current = await data.get()
+
+	// TODO: remove migration
+	if (current) {
+		if (!current.lastProducedItems) {
+			current.lastProducedItems = []
+		}
+
+		if (!current.nextItemVote) {
+			current.nextItemVote = {}
+		}
+	}
+
 	return current || {
 		competitionSince: 0,
 		competitionUntil: Number.MAX_SAFE_INTEGER,
+		itemsProducedPerMall: {},
 		itemToProduce: 'Q20873979',
-		itemsProducedPerMall: {}
+		lastProducedItems: [],
+		nextItemVote: {}
 	}
 }
 

@@ -17,8 +17,14 @@ export function getParts(item: WikidataEntityReader): string[] {
 
 export async function preload(store: WikidataEntityStore): Promise<string[]> {
 	const current = await mallProduction.get()
-	await store.forceloadQNumbers(current.itemToProduce)
-	const reader = new WikidataEntityReader(store.entity(current.itemToProduce))
-	const parts = getParts(reader)
+	const productsToPreload = [
+		current.itemToProduce,
+		...Object.keys(current.nextItemVote)
+	]
+	await store.updateQNumbers(productsToPreload, 1)
+	const parts = productsToPreload
+		.map(o => new WikidataEntityReader(store.entity(o)))
+		.flatMap(o => getParts(o))
+
 	return parts
 }

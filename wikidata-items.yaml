@@ -57,6 +57,8 @@ mall:
   production: Q739302
   productionReward: Q3245975
   productionTeamwork: Q1145523
+  vote: Q42904171
+  voting: Q189760
 achievement:
   gameStarted: Q529711
 skill:

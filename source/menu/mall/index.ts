@@ -3,9 +3,10 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../../lib/types'
 
-import * as userInfo from '../../lib/data/user-info'
-
 import {mallMemberAmountWithinLimits} from '../../lib/game-math/mall'
+
+import * as mallProduction from '../../lib/data/mall-production'
+import * as userInfo from '../../lib/data/user-info'
 
 import {applicantButtonEmoji} from '../../lib/interface/applicants'
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
@@ -18,6 +19,7 @@ import {helpButtonText, createHelpMenu} from '../help'
 import applicantsMenu from './applicants'
 import attractionMenu from './attraction'
 import productionMenu from './production'
+import voteMenu from './vote'
 
 async function menuText(ctx: any): Promise<string> {
 	const {__wikibase_language_code: locale} = ctx.session as Session
@@ -75,6 +77,17 @@ function mallProductionRequiresAttention(ctx: any): boolean {
 }
 
 menu.submenu(buttonText(emojis.production, 'mall.production', {requireAttention: mallProductionRequiresAttention}), 'production', productionMenu, {
+	hide: hideWhenMemberAmountNotCorrect
+})
+
+async function mallVoteRequiresAttention(ctx: any): Promise<boolean> {
+	const currentProduction = await mallProduction.get()
+	const playersVoted = Object.values(currentProduction.nextItemVote).flat()
+	return !playersVoted.includes(ctx.from.id)
+}
+
+menu.submenu(buttonText(emojis.production + emojis.vote, 'mall.voting', {requireAttention: mallVoteRequiresAttention}), 'vote', voteMenu, {
+	joinLastRow: true,
 	hide: hideWhenMemberAmountNotCorrect
 })
 
