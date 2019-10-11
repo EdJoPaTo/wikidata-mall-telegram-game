@@ -2,11 +2,12 @@ import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityStore from 'wikidata-entity-store'
 
+import {MINUTE_IN_SECONDS} from '../../lib/math/timestamp-constants'
+
 import {MallProduction, ProductionPart} from '../../lib/types/mall'
 import {Persist, Session} from '../../lib/types'
 
-import {MALL_PRODUCTION_TIME_IN_SECONDS} from '../../lib/game-math/constants'
-import {productionReward} from '../../lib/game-math/mall'
+import {productionReward, productionSeconds} from '../../lib/game-math/mall'
 
 import * as mallProduction from '../../lib/data/mall-production'
 import * as userInfo from '../../lib/data/user-info'
@@ -18,8 +19,8 @@ import {preloadWithParts} from '../../lib/game-logic/mall-production'
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {countdownMinuteSecond, humanReadableTimestamp} from '../../lib/interface/formatted-time'
 import {emojis} from '../../lib/interface/emojis'
-import {formatFloat} from '../../lib/interface/format-number'
-import {infoHeader, labeledValue} from '../../lib/interface/formatted-strings'
+import {formatFloat, formatInt} from '../../lib/interface/format-number'
+import {infoHeader, labeledValue, labeledInt} from '../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
@@ -55,7 +56,7 @@ async function partLine(ctx: any, part: ProductionPart, now: number): Promise<st
 
 async function menuText(ctx: any): Promise<string> {
 	const now = Date.now() / 1000
-	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
+	const {hideExplanationMath, timeZone, __wikibase_language_code: locale} = ctx.session as Session
 	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
@@ -65,6 +66,9 @@ async function menuText(ctx: any): Promise<string> {
 	const parts = getParts(ctx.wd.r(itemToProduce))
 	const inProduction = mall.production.map(o => o.part)
 	const missing = parts.filter(o => !inProduction.includes(o))
+
+	const currentlyBeeingProduced = mall.production.filter(o => o.finishTimestamp > now)
+	const productionMinutes = productionSeconds(currentlyBeeingProduced.length) / MINUTE_IN_SECONDS
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.production'), {titlePrefix: emojis.production})
@@ -81,6 +85,22 @@ async function menuText(ctx: any): Promise<string> {
 		ctx.wd.r('mall.productionReward'),
 		formatFloat(productionReward(parts.length)) + emojis.currencyMall
 	)
+	if (missing.length > 0) {
+		text += labeledInt(
+			ctx.wd.r('mall.production'),
+			productionMinutes,
+			` ${ctx.wd.r('unit.minute').label()}`
+		)
+		if (!hideExplanationMath && currentlyBeeingProduced.length > 0) {
+			text += '  '
+			text += emojis.group
+			text += formatInt(currentlyBeeingProduced.length)
+			text += ' '
+			text += ctx.wd.r('mall.productionTeamwork').label()
+			text += '\n'
+		}
+	}
+
 	text += '\n'
 
 	const partLines = await Promise.all(
@@ -149,7 +169,8 @@ menu.select('take', currentlyNotTakenParts, {
 			return
 		}
 
-		const finishTimestamp = now + MALL_PRODUCTION_TIME_IN_SECONDS
+		const currentlyBeeingProduced = mall.production.filter(o => o.finishTimestamp > now)
+		const finishTimestamp = now + productionSeconds(currentlyBeeingProduced.length)
 
 		mall.production.push({
 			part: key,

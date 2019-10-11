@@ -1,4 +1,4 @@
-import {HOUR_IN_SECONDS, DAY_IN_SECONDS} from '../math/timestamp-constants'
+import {HOUR_IN_SECONDS, DAY_IN_SECONDS, MINUTE_IN_SECONDS} from '../math/timestamp-constants'
 
 import {Mall} from '../types/mall'
 
@@ -11,6 +11,13 @@ export function mallMemberAmountWithinLimits(mall: Mall): boolean {
 
 export function productionReward(parts: number): number {
 	return parts * 1000
+}
+
+export function productionSeconds(currentlyBeeingProduced: number): number {
+	const baseMinutes = 10
+	const reduction = currentlyBeeingProduced * 2
+	const minutes = Math.max(1, baseMinutes - reduction)
+	return minutes * MINUTE_IN_SECONDS
 }
 
 export function secondsUntilAttractionDisaster(): {min: number; max: number} {
