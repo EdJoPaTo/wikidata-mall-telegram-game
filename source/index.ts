@@ -54,6 +54,8 @@ bot.use(new ErrorMiddleware({
 	], {columns: 1})
 }).middleware())
 
+bot.use((data as any).middleware())
+
 removeOld()
 
 const i18n = new TelegrafI18n({
@@ -93,7 +95,6 @@ bot.use(new TelegrafWikibase(wdEntityStore, {
 	contextKey: 'wd'
 }).middleware())
 
-bot.use((data as any).middleware())
 bot.use(sessionMathMiddleware())
 
 bot.use((Telegraf as any).privateChat(menu.init({
