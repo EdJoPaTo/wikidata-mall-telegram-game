@@ -77,7 +77,14 @@ function mallProductionRequiresAttention(ctx: any): boolean {
 }
 
 menu.submenu(buttonText(emojis.production, 'mall.production', {requireAttention: mallProductionRequiresAttention}), 'production', productionMenu, {
-	hide: hideWhenMemberAmountNotCorrect
+	hide: async (ctx: any) => {
+		if (hideWhenMemberAmountNotCorrect(ctx)) {
+			return true
+		}
+
+		const production = await mallProduction.get()
+		return !production.itemToProduce
+	}
 })
 
 async function mallVoteRequiresAttention(ctx: any): Promise<boolean> {

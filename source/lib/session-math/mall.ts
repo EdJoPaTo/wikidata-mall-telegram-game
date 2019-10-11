@@ -60,11 +60,13 @@ export async function before(persist: Persist, store: WikidataEntityStore, now: 
 	const production = await mallProduction.get()
 	const productionBefore = stringify(production)
 
-	await store.preloadQNumbers(production.itemToProduce)
-
 	updateCurrentProduction(production, now)
-	const parts = getParts(new WikidataEntityReader(store.entity(production.itemToProduce)))
 
+	if (production.itemToProduce) {
+		await store.preloadQNumbers(production.itemToProduce)
+	}
+
+	const parts = production.itemToProduce ? getParts(new WikidataEntityReader(store.entity(production.itemToProduce))) : []
 	removePartsNotInCurrentProduction(persist.mall, parts)
 	removePartsByLeftMembers(persist.mall)
 	updateProductionProcessOfMall(persist.mall, production, parts, now)
@@ -85,7 +87,10 @@ function updateCurrentProduction(production: MallProduction, now: number): void 
 	production.competitionSince = expectedStart
 	production.competitionUntil = expectedFinish
 
-	production.lastProducedItems.splice(0, 0, production.itemToProduce)
+	if (production.itemToProduce) {
+		production.lastProducedItems.splice(0, 0, production.itemToProduce)
+	}
+
 	production.lastProducedItems = production.lastProducedItems
 		.filter(arrayFilterUnique())
 		.slice(0, 3) // The last 3 items are remembered for the votes
@@ -93,7 +98,11 @@ function updateCurrentProduction(production: MallProduction, now: number): void 
 	production.itemsProducedPerMall = {}
 
 	production.itemToProduce = decideVoteWinner(production.nextItemVote)
-	delete production.nextItemVote[production.itemToProduce]
+
+	if (production.itemToProduce) {
+		delete production.nextItemVote[production.itemToProduce]
+	}
+
 	for (const o of Object.keys(production.nextItemVote)) {
 		production.nextItemVote[o] = []
 	}
@@ -103,7 +112,7 @@ function updateProductionProcessOfMall(mall: Mall, currentProduction: MallProduc
 	const finishedParts = mall.production
 		.filter(o => o.finishTimestamp < now)
 
-	if (finishedParts.length === parts.length) {
+	if (finishedParts.length === parts.length && parts.length > 0) {
 		const mallId = mall.chat.id
 		if (!currentProduction.itemsProducedPerMall[mallId]) {
 			currentProduction.itemsProducedPerMall[mallId] = 0

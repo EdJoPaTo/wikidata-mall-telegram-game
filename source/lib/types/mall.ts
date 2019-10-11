@@ -33,7 +33,7 @@ export interface MallProduction {
 	competitionSince: UnixTimestamp;
 	competitionUntil: UnixTimestamp;
 	itemsProducedPerMall: Record<MallId, number>;
-	itemToProduce: QNumber;
+	itemToProduce?: QNumber;
 	lastProducedItems: QNumber[];
 	nextItemVote: Record<QNumber, UserId[]>;
 }

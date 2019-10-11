@@ -24,7 +24,7 @@ export function canProduce(item: WikidataEntityReader): boolean {
 	return parts.length >= 3
 }
 
-export function decideVoteWinner(vote: Record<QNumber, unknown[]>): QNumber {
+export function decideVoteWinner(vote: Record<QNumber, unknown[]>): QNumber | undefined {
 	const entries = Object.keys(vote)
 	if (entries.length === 0) {
 		return 'Q20873979'

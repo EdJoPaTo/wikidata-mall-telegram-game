@@ -28,7 +28,10 @@ async function getProduction(ctx: any): Promise<MallProduction> {
 	const now = Date.now() / 1000
 	const store = ctx.wd.store as WikidataEntityStore
 	const production = await mallProduction.get()
-	await preloadWithParts(store, production.itemToProduce, now)
+	if (production.itemToProduce) {
+		await preloadWithParts(store, production.itemToProduce, now)
+	}
+
 	return production
 }
 
@@ -63,6 +66,10 @@ async function menuText(ctx: any): Promise<string> {
 	}
 
 	const {itemToProduce, competitionUntil} = await getProduction(ctx)
+	if (!itemToProduce) {
+		throw new Error('There is nothing to produce')
+	}
+
 	const parts = getParts(ctx.wd.r(itemToProduce))
 	const inProduction = mall.production.map(o => o.part)
 	const missing = parts.filter(o => !inProduction.includes(o))
@@ -186,7 +193,7 @@ menu.urlButton(
 )
 
 menu.urlButton(
-	buttonText(emojis.wikidataItem, async ctx => (await getProduction(ctx)).itemToProduce),
+	buttonText(emojis.wikidataItem, async ctx => (await getProduction(ctx)).itemToProduce || ''),
 	async (ctx: any) => ctx.wd.r((await getProduction(ctx)).itemToProduce).url(),
 	{
 		joinLastRow: true
