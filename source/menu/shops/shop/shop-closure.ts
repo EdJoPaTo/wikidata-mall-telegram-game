@@ -63,6 +63,11 @@ function menuText(ctx: any): string {
 		warnings.push(`${formatInt(itemsInStore)}${emojis.storage}`)
 	}
 
+	const matchingSkillsInQueue = session.skillQueue.filter(o => o.category === shop.id).length
+	if (matchingSkillsInQueue > 0) {
+		warnings.push(`${formatInt(matchingSkillsInQueue)}${emojis.skill}`)
+	}
+
 	if (warnings.length > 0) {
 		text += warnings
 			.map(o => `${emojis.warning}${o}`)
