@@ -15,9 +15,11 @@ bot.command('production', async ctx => {
 	}
 
 	let text = ''
-	text += '🤩'
+	text += (ctx as any).wd.r('menu.wikidataItem').label()
+	text += '?'
 
 	if (ctx.chat && ctx.from && ctx.chat.id !== persist.mall.chat.id) {
+		text += ' '
 		if (ctx.from.username) {
 			text += `@${ctx.from.username}`
 		} else {
