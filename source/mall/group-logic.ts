@@ -1,4 +1,5 @@
 import {Composer, Extra, Markup, ContextMessageUpdate} from 'telegraf'
+import {markdown} from 'telegram-format'
 import stringify from 'json-stable-stringify'
 
 import {Mall} from '../lib/types/mall'
@@ -159,6 +160,8 @@ bot.action('join', async ctx => {
 })
 
 bot.command('fix', async ctx => {
+	await ctx.reply('If you have to use this command, something is fishy. Tell @EdJoPaTo about it.')
+
 	const mallId = ctx.chat!.id
 	const mallData = await userMalls.get(mallId)
 	if (!mallData) {
@@ -166,11 +169,16 @@ bot.command('fix', async ctx => {
 	}
 
 	console.log('fix..', mallId, mallData)
+	await ctx.replyWithMarkdown('fix…\n' + mallData.member.map(o => markdown.url(String(o), `tg://user?id=${o}`)).join(', '))
+
 	await checkEveryMemberAndRemoveIfNeeded(ctx, mallData)
 	console.log('fixed', mallId, mallData)
 
 	await userMalls.set(mallId, mallData)
-	return ctx.reply('everything should be in sync now.')
+	return ctx.reply(
+		'everything should be in sync now.\n' +
+		mallData.member.map(o => markdown.url(String(o), `tg://user?id=${o}`)).join(', ')
+	)
 })
 
 bot.command(['language', 'settings'], async ctx => {
