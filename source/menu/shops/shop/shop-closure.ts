@@ -39,7 +39,7 @@ function menuText(ctx: any): string {
 	text += '\n\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
-	text += '\n\n'
+	text += '\n'
 
 	text += emojis.close
 	text += '*'
