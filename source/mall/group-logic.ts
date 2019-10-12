@@ -90,30 +90,6 @@ bot.on('left_chat_member', async ctx => {
 	}
 })
 
-bot.use(async (ctx, next) => {
-	try {
-		if ((ctx as any).updateSubTypes.includes('migrate_to_chat_id')) {
-			return next && next()
-		}
-
-		const members = await ctx.getChatMembersCount()
-		if (members > 9) {
-			try {
-				await ctx.reply('You should start a new group for the mall.')
-			} catch (error) {
-				console.error('error while messaging big group', error)
-			}
-
-			await ctx.leaveChat()
-			return
-		}
-	} catch (error) {
-		console.error('error while detecting big group', ctx.updateType, (ctx as any).updateSubTypes, error)
-	}
-
-	return next && next()
-})
-
 bot.on('migrate_from_chat_id', async ctx => {
 	await ctx.reply('Chat is now a supergroup 😎')
 	return replyJoinMessage(ctx)
@@ -129,6 +105,21 @@ bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.username), async (
 }))
 
 bot.on(['group_chat_created', 'new_chat_members'], async ctx => {
+	const mallId = ctx.chat!.id
+	const mallData = await userMalls.get(mallId)
+	try {
+		const members = await ctx.getChatMembersCount()
+		if (members > 9) {
+			await ctx.reply('You should start a new group for the mall.')
+			if (!mallData) {
+				await ctx.leaveChat()
+				return
+			}
+		}
+	} catch (error) {
+		console.error('error while detecting big group', ctx.updateType, (ctx as any).updateSubTypes, error)
+	}
+
 	return replyJoinMessage(ctx)
 })
 
