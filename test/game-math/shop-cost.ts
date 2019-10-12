@@ -106,13 +106,13 @@ function buyAllCostFactorMacro(t: ExecutionContext, magnetismLevel: number, shop
 	t.is(buyAllCostFactor(skills, shops).toFixed(4), expected.toFixed(4))
 }
 
-test('buyAllCostFactor 0 in single shop', buyAllCostFactorMacro, 0, 1, 1.68)
-test('buyAllCostFactor 5 in single shop', buyAllCostFactorMacro, 5, 1, 1.48)
-test('buyAllCostFactor 10 in single shop', buyAllCostFactorMacro, 10, 1, 1.28)
+test('buyAllCostFactor 0 in single shop', buyAllCostFactorMacro, 0, 1, 1.8)
+test('buyAllCostFactor 5 in single shop', buyAllCostFactorMacro, 5, 1, 1.55)
+test('buyAllCostFactor 10 in single shop', buyAllCostFactorMacro, 10, 1, 1.3)
 
 test('buyAllCostFactor 0 in multiple shops', buyAllCostFactorMacro, 0, 3, 3)
-test('buyAllCostFactor 5 in multiple shops', buyAllCostFactorMacro, 5, 3, 2.8)
-test('buyAllCostFactor 10 in multiple shops', buyAllCostFactorMacro, 10, 3, 2.6)
+test('buyAllCostFactor 5 in multiple shops', buyAllCostFactorMacro, 5, 3, 2.75)
+test('buyAllCostFactor 10 in multiple shops', buyAllCostFactorMacro, 10, 3, 2.5)
 
 function shopTotalPurchaseCostMacro(t: ExecutionContext, amounts: readonly number[], expectedItemsToPayFor: number): void {
 	const skills: Skills = {magnetism: 0}
@@ -215,7 +215,7 @@ test('returnOnInvestment is the same as when calculated manually without magnet'
 })
 
 test('returnOnInvestment is the same as when calculated manually with magnet', t => {
-	const skills: Skills = {metalScissors: 5, packaging: 5, magnetism: 7}
+	const skills: Skills = {metalScissors: 5, packaging: 5, magnetism: 8}
 	const shop = generateShop([199], {
 		purchasing: 1.2,
 		selling: 1.2,
