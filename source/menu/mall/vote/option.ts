@@ -24,7 +24,6 @@ async function menuText(ctx: any): Promise<string> {
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.vote})
-	text += '\n\n'
 
 	await preloadWithParts(ctx.wd.store, qNumber, now)
 	const parts = getParts(reader)

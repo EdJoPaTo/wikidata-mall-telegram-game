@@ -22,7 +22,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.applicant'))
-	text += '\n\n'
 
 	const applicantEntries = mall.applicants
 		.map(applicant => {

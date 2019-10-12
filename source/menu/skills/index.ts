@@ -42,7 +42,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.skill'), {titlePrefix: emojis.skill})
-	text += '\n\n'
 
 	const simpleSkillParts = SIMPLE_SKILLS
 		.map(o => simpleSkillInfo(ctx, persist.skills, o))

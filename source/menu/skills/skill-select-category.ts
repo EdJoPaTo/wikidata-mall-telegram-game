@@ -61,7 +61,6 @@ function menuText(ctx: any): string {
 	text += infoHeader(ctx.wd.r(`skill.${skill}`), {
 		titlePrefix: emojis.skill + (emojis[skill] || '')
 	})
-	text += '\n\n'
 
 	const shops = persist.shops.map(o => o.id)
 	const categoriesSeenBefore = Object.keys(persist.skills[skill] || {})

@@ -33,6 +33,7 @@ export function infoHeader(wdr: WikidataEntityReader, options: InfoHeaderOptions
 		text += format.escape(description)
 	}
 
+	text += '\n\n'
 	return text
 }
 

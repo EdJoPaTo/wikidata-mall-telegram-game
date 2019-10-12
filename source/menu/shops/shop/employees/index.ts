@@ -43,7 +43,6 @@ function menuText(ctx: any): string {
 	const {shop} = fromCtx(ctx)
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.employee'))
-	text += '\n\n'
 
 	text +=	TALENTS
 		.map(o => talentLine(ctx, shop, o))

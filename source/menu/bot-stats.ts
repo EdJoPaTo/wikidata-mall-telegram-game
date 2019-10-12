@@ -18,7 +18,6 @@ import {createHelpMenu, helpButtonText} from './help'
 async function menuText(ctx: any): Promise<string> {
 	let text = ''
 	text += infoHeader(ctx.wd.r('stat.stats'), {titlePrefix: emojis.stats})
-	text += '\n\n'
 
 	text += '*'
 	text += ctx.wd.r('menu.wikidata').label()

@@ -18,7 +18,6 @@ import optionMenu from './option'
 function menuText(ctx: any): string {
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.voting'), {titlePrefix: emojis.production + emojis.vote})
-	text += '\n\n'
 
 	return text
 }

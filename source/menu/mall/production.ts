@@ -79,14 +79,12 @@ async function menuText(ctx: any): Promise<string> {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.production'), {titlePrefix: emojis.production})
-	text += '\n\n'
 
 	text += emojis.countdown
 	text += labeledValue(ctx.wd.r('other.end'), humanReadableTimestamp(competitionUntil, locale, timeZone))
 	text += '\n'
 
 	text += infoHeader(ctx.wd.r(itemToProduce), {titlePrefix: emojis.production})
-	text += '\n\n'
 
 	text += labeledValue(
 		ctx.wd.r('mall.productionReward'),

@@ -29,7 +29,6 @@ function menuText(ctx: any): string {
 		titlePrefix: emojis.construction + emojis.shop,
 		titleSuffix: collectorSuffix(persist.skills, construction)
 	})
-	text += '\n\n'
 
 	text += moneyCostPart(ctx, session.money, cost)
 

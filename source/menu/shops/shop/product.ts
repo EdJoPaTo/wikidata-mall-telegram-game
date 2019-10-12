@@ -92,7 +92,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(reader)
-	text += '\n\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
 	text += '\n'

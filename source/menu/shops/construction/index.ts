@@ -29,7 +29,6 @@ async function menuText(ctx: any): Promise<string> {
 	text += infoHeader(ctx.wd.r('action.construction'), {
 		titlePrefix: emojis.construction
 	})
-	text += '\n\n'
 
 	text += moneyCostPart(ctx, session.money, cost)
 
@@ -38,8 +37,7 @@ async function menuText(ctx: any): Promise<string> {
 			titlePrefix: emojis.shop,
 			titleSuffix: collectorSuffix(persist.skills, o)
 		}))
-		.join('\n\n')
-	text += '\n\n'
+		.join('')
 
 	text += emojis.countdown
 	text += ctx.wd.r('action.change').label()

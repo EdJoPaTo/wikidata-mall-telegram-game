@@ -15,7 +15,6 @@ function menuText(ctx: any): string {
 	const flag = flagString(ctx.wd.locale(), true)
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.language'), {titlePrefix: flag})
-	text += '\n\n'
 
 	if (ctx.wd.locale() !== 'wikidatanish') {
 		text += ctx.wd.r('other.translation').label()

@@ -230,11 +230,9 @@ async function menuText(ctx: any): Promise<string> {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.leaderboard'), {titlePrefix: emojis.leaderboard})
-	text += '\n\n'
 
 	const view = session.leaderboardView || DEFAULT_VIEW
 	text += infoHeader(ctx.wd.r(viewResourceKey(view)))
-	text += '\n\n'
 
 	switch (view) {
 		case 'returnOnInvestment':
@@ -259,7 +257,6 @@ async function menuText(ctx: any): Promise<string> {
 
 		case 'mallProduction':
 			text += infoHeader(ctx.wd.r(production.itemToProduce))
-			text += '\n\n'
 			text += await generateTable(await getMallProductionTable(), mall && mall.chat.id, o => formatInt(o))
 			break
 

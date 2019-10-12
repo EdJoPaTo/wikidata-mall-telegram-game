@@ -53,7 +53,6 @@ export function mallAttractionPart(ctx: any, attraction: string): string {
 	text += infoHeader(attractionReader, {
 		titlePrefix: emojis.attraction
 	})
-	text += '\n\n'
 
 	text += labeledValue(
 		ctx.wd.r('other.height').label(),

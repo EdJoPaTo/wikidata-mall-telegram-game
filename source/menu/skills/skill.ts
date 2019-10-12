@@ -38,11 +38,9 @@ function menuText(ctx: any): string {
 	text += infoHeader(ctx.wd.r(`skill.${skill}`), {
 		titlePrefix: emojis.skill + (emojis[skill] || '')
 	})
-	text += '\n\n'
 
 	if (category) {
 		text += infoHeader(ctx.wd.r(category))
-		text += '\n\n'
 	}
 
 	text += ctx.wd.r('skill.level').label()

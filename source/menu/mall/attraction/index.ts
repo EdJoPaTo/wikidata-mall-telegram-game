@@ -23,7 +23,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.attraction'), {titlePrefix: emojis.attraction})
-	text += '\n\n'
 
 	const {attraction} = mall
 	if (attraction) {

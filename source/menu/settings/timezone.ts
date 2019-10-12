@@ -40,7 +40,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.timezone'), {titlePrefix: emojis.timezone})
-	text += '\n\n'
 
 	text += labeledValue(
 		format.escape(current),

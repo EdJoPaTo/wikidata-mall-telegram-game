@@ -193,7 +193,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.shop})
-	text += '\n\n'
 
 	text += customerIntervalPart(ctx, shop, persist.mall, !session.hideExplanationMath)
 	text += incomePart(ctx, [shop], persist, !session.hideExplanationMath)

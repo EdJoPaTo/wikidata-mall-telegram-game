@@ -19,7 +19,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.employee'), {titlePrefix: emojis.person})
-	text += '\n\n'
 
 	text += persist.shops
 		.map(o => shopEmployeeOverview(ctx, o, talents))

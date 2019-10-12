@@ -29,7 +29,6 @@ function menuText(i18nKey: string): (ctx: any) => string {
 	return ctx => {
 		let text = ''
 		text += infoHeader(ctx.wd.r('menu.help'), {titlePrefix: emojis.help})
-		text += '\n\n'
 
 		text += ctx.i18n.t(i18nKey).trim()
 

@@ -34,7 +34,6 @@ function menuText(ctx: any): string {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
-	text += '\n\n'
 
 	if (employee) {
 		text += personMarkdown(ctx, employee, shop.id === employee.hobby, now)

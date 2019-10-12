@@ -34,7 +34,6 @@ async function menuText(ctx: any): Promise<string> {
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.mall'), {titlePrefix: emojis.mall + mallMoji(mall)})
-	text += '\n\n'
 
 	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currencyMall)
 	text += '\n'
