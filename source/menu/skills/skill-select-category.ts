@@ -76,24 +76,20 @@ function menuText(ctx: any): string {
 			return coll
 		}, {})
 
-	if (shops.length + categoriesSeenBefore.length > 0) {
-		text += format.bold(ctx.wd.r('menu.shop').label())
-		text += '\n'
-		text +=	shops
-			.map(o => categorySkillLine(ctx, persist.skills, skill, o))
+	if (categoriesSeenBefore.length > 0) {
+		text +=	Object.keys(seenBeforeGroupedByLevel)
+			.map(o => Number(o))
+			.map(o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
 			.join('\n')
 		text += '\n\n'
-
-		if (categoriesSeenBefore.length > 0) {
-			text += format.bold(ctx.wd.r('skill.seenBefore').label())
-			text += '\n'
-			text +=	Object.keys(seenBeforeGroupedByLevel)
-				.map(o => Number(o))
-				.map(o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
-				.join('\n')
-			text += '\n\n'
-		}
 	}
+
+	text += format.bold(ctx.wd.r('menu.shop').label())
+	text += '\n'
+	text +=	shops
+		.map(o => categorySkillLine(ctx, persist.skills, skill, o))
+		.join('\n')
+	text += '\n\n'
 
 	text += skillQueueString(ctx, session.skillQueue)
 
