@@ -9,15 +9,20 @@ import * as mallProduction from '../../../lib/data/mall-production'
 
 import {buttonText, menuPhoto} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
-import {infoHeader} from '../../../lib/interface/formatted-strings'
+import {infoHeader, labeledInt} from '../../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../../help'
 
 import optionMenu from './option'
 
-function menuText(ctx: any): string {
+async function menuText(ctx: any): Promise<string> {
+	const currentProduction = await mallProduction.get()
+	const votes = Object.values(currentProduction.nextItemVote).flat().length
+
 	let text = ''
 	text += infoHeader(ctx.wd.r('mall.voting'), {titlePrefix: emojis.production + emojis.vote})
+
+	text += labeledInt(ctx.wd.r('mall.vote'), votes)
 
 	return text
 }
