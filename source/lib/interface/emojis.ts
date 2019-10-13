@@ -55,7 +55,7 @@ const basic: Record<string, string> = {
 	storage: '📦',
 	timezone: '🕑',
 	underConstruction: '🚧',
-	vote: '📊',
+	vote: '🗳️',
 	warning: '⚠️',
 	wikidataItem: 'ℹ️',
 	yes: '👍'
