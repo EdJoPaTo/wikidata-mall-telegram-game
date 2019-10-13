@@ -1,4 +1,4 @@
-import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
+import {sparqlQuerySimplifiedMinified, sparqlQuerySimplified} from 'wikidata-sdk-got'
 import arrayFilterUnique from 'array-filter-unique'
 
 import {stagedAsync} from '../js-helper/async'
@@ -28,6 +28,7 @@ const toplevelShopCategories: string[] = [
 ]
 
 const shopsWithProducts: Record<string, string[]> = {}
+const shopPotentialProducts: Record<string, number> = {}
 
 function shopTypesQuery(topmost: string): string {
 	return `SELECT ?shop WHERE {
@@ -41,9 +42,9 @@ HAVING ((COUNT(?product)) >= 4 )`
 }
 
 function productsQuery(shopType: string): string {
-	return `SELECT ?product WHERE {
+	return `SELECT ?product ?image WHERE {
 ?product wdt:P279 wd:${shopType}.
-FILTER(EXISTS { ?product wdt:P18 ?image. })
+OPTIONAL { ?product wdt:P18 ?image. }
 }`
 }
 
@@ -88,8 +89,20 @@ function removeNotAnymoreExistingShops(shops: string[]): number {
 }
 
 async function loadProducts(shopType: string): Promise<string[]> {
-	const products = await sparqlQuerySimplifiedMinified(productsQuery(shopType)) as string[]
+	const result = await sparqlQuerySimplified(productsQuery(shopType)) as {product: string; image: string | undefined}[]
+
+	const products = result
+		.filter(o => o.image)
+		.map(o => o.product)
+		.filter(arrayFilterUnique())
+
+	const potential = result
+		.map(o => o.product)
+		.filter(arrayFilterUnique())
+		.length
+
 	shopsWithProducts[shopType] = products
+	shopPotentialProducts[shopType] = potential
 	return products
 }
 
@@ -103,4 +116,8 @@ export function allProductsAmount(): number {
 
 export function products(shop: string): readonly string[] | undefined {
 	return shopsWithProducts[shop]
+}
+
+export function productPotential(shop: string): number {
+	return shopPotentialProducts[shop] || 0
 }

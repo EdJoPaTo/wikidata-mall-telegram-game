@@ -7,7 +7,7 @@ import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 import {getCurrentConstructions, nextConstructionChange} from '../../../lib/game-logic/shop-construction'
 
 import {buttonText, menuPhoto} from '../../../lib/interface/menu'
-import {collectorSuffix} from '../../../lib/interface/shop-construction'
+import {constructionSuffix} from '../../../lib/interface/shop-construction'
 import {countdownHourMinute} from '../../../lib/interface/formatted-time'
 import {emojis} from '../../../lib/interface/emojis'
 import {infoHeader, moneyCostPart} from '../../../lib/interface/formatted-strings'
@@ -35,7 +35,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += options
 		.map(o => infoHeader(ctx.wd.r(o), {
 			titlePrefix: emojis.shop,
-			titleSuffix: collectorSuffix(persist.skills, o)
+			titleSuffix: constructionSuffix(persist.skills, o)
 		}))
 		.join('')
 
