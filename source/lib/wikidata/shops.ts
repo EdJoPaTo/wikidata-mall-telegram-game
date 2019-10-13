@@ -66,11 +66,25 @@ export async function preload(): Promise<string[]> {
 	)
 
 	console.timeLog('wikidata-shops', 'products', products.length)
+
+	const amountRemoved = removeNotAnymoreExistingShops(shopTypes)
+	console.timeLog('wikidata-shops', 'old shops removed', amountRemoved)
+
 	console.timeEnd('wikidata-shops')
 	return [
 		...shopTypes,
 		...products
 	]
+}
+
+function removeNotAnymoreExistingShops(shops: string[]): number {
+	const remove = Object.keys(shopsWithProducts)
+		.filter(o => !shops.includes(o))
+	for (const shop of remove) {
+		delete shopsWithProducts[shop]
+	}
+
+	return remove.length
 }
 
 async function loadProducts(shopType: string): Promise<string[]> {
