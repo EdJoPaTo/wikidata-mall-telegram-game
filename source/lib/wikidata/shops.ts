@@ -70,6 +70,7 @@ export async function preload(): Promise<string[]> {
 	const amountRemoved = removeNotAnymoreExistingShops(shopTypes)
 	console.timeLog('wikidata-shops', 'old shops removed', amountRemoved)
 
+	console.timeLog('wikidata-shops', 'shops with products', Object.keys(shopsWithProducts).length)
 	console.timeEnd('wikidata-shops')
 	return [
 		...Object.keys(shopsWithProducts),
