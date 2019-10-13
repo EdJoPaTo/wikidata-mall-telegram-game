@@ -35,10 +35,9 @@ function shopTypesQuery(topmost: string): string {
 ?shop wdt:P279+ wd:${topmost}.
 ?product wdt:P279 ?shop.
 FILTER(EXISTS { ?shop wdt:P18 ?image. })
-FILTER(EXISTS { ?product wdt:P18 ?image. })
 }
 GROUP BY ?shop
-HAVING ((COUNT(?product)) >= 4 )`
+HAVING ((COUNT(?product)) >= 8 )`
 }
 
 function productsQuery(shopType: string): string {
@@ -73,7 +72,7 @@ export async function preload(): Promise<string[]> {
 
 	console.timeEnd('wikidata-shops')
 	return [
-		...shopTypes,
+		...Object.keys(shopsWithProducts),
 		...products
 	]
 }
@@ -100,6 +99,11 @@ async function loadProducts(shopType: string): Promise<string[]> {
 		.map(o => o.product)
 		.filter(arrayFilterUnique())
 		.length
+
+	if (products.length < 2) {
+		delete shopsWithProducts[shopType]
+		return []
+	}
 
 	shopsWithProducts[shopType] = products
 	shopPotentialProducts[shopType] = potential
