@@ -26,11 +26,11 @@ export function canProduce(item: WikidataEntityReader): boolean {
 
 export function decideVoteWinner(vote: Record<QNumber, unknown[]>): QNumber | undefined {
 	const entries = Object.keys(vote)
-	if (entries.length === 0) {
-		return 'Q20873979'
+	const mostVotes = Math.max(...entries.map(o => vote[o].length))
+	if (mostVotes < 2) {
+		return
 	}
 
-	const mostVotes = Math.max(...entries.map(o => vote[o].length))
 	const possible = entries.filter(o => vote[o].length >= mostVotes)
 	return randomItem(possible)
 }
