@@ -53,6 +53,18 @@ if (process.env.NODE_ENV !== 'production') {
 	})
 }
 
+bot.use((Composer as any).groupType('group', async (ctx: ContextMessageUpdate) => {
+	if ((ctx as any).updateSubTypes.includes('migrate_to_chat_id')) {
+		return
+	}
+
+	try {
+		await ctx.reply((ctx as any).i18n.t('mall.supergroupMigration'))
+	} catch (error) {
+		console.log('supergroup migration hint error', error.message, ctx.updateType, (ctx as any).updateSubTypes, ctx.update)
+	}
+}))
+
 bot.use(async (ctx, next) => {
 	// Update title
 	const mallId = ctx.chat!.id
@@ -95,10 +107,6 @@ bot.on('migrate_from_chat_id', async ctx => {
 	await ctx.reply('Chat is now a supergroup 😎')
 	return replyJoinMessage(ctx)
 })
-
-bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async ctx => {
-	return ctx.reply((ctx as any).i18n.t('mall.supergroupMigration'))
-}))
 
 bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.username), async (ctx, next) => {
 	await ctx.reply((ctx as any).i18n.t('mall.groupPrivate'))
