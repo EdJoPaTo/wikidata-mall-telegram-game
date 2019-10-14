@@ -53,7 +53,7 @@ if (process.env.NODE_ENV !== 'production') {
 	})
 }
 
-bot.use((Composer as any).groupType('group', async (ctx: ContextMessageUpdate) => {
+bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async (ctx: ContextMessageUpdate) => {
 	if ((ctx as any).updateSubTypes.includes('migrate_to_chat_id')) {
 		return
 	}
