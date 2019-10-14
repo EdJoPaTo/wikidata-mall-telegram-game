@@ -1,3 +1,4 @@
+import {ContextMessageUpdate, Middleware} from 'telegraf'
 import WikidataEntityStore from 'wikidata-entity-store'
 
 import {Session, Persist} from '../types'
@@ -9,8 +10,8 @@ import notification from './notification'
 import * as personal from './personal'
 import * as skills from './skills'
 
-export default function middleware(): (ctx: any, next: any) => Promise<void> {
-	return async (ctx, next) => {
+export default function middleware(): Middleware<ContextMessageUpdate> {
+	return async (ctx: any, next) => {
 		const session = ctx.session as Session
 		const persist = ctx.persist as Persist
 		const store = ctx.wd.store as WikidataEntityStore
@@ -52,7 +53,9 @@ export default function middleware(): (ctx: any, next: any) => Promise<void> {
 		applicants.before(session, persist, now)
 		await mall.before(persist, store, now)
 
-		await next()
+		if (next) {
+			await next()
+		}
 
 		applicants.after(persist)
 
