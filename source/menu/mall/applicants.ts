@@ -19,6 +19,8 @@ function menuText(ctx: any): string {
 	}
 
 	const shopIds = shops.map(o => o.id)
+	const personalMaxSeats = applicantSeats(skills)
+	const personalMaxSeatsReached = applicants.list.length > personalMaxSeats
 
 	let text = ''
 	text += infoHeader(ctx.wd.r('menu.applicant'))
@@ -31,18 +33,15 @@ function menuText(ctx: any): string {
 
 	if (applicantEntries.length > 0) {
 		text += applicantEntries.join('\n\n')
+		if (personalMaxSeatsReached) {
+			text += '\n\n'
+			text += emojis.requireAttention + emojis.seat
+		}
 	} else {
 		text += emojis.noPerson
 	}
 
 	text += '\n\n'
-
-	const maxSeats = applicantSeats(skills)
-	const maxSeatsReached = applicants.list.length > maxSeats
-	if (maxSeatsReached) {
-		text += emojis.requireAttention + emojis.seat
-		text += '\n\n'
-	}
 
 	return text
 }
