@@ -12,6 +12,7 @@ import {HOUR_IN_SECONDS, MINUTE_IN_SECONDS} from './lib/math/timestamp-constants
 
 import data from './lib/data'
 
+import {fixMallDataForAllMalls} from './lib/game-logic/mall-fix-data'
 import {removeOld} from './lib/game-logic/remove-old'
 
 import * as notifications from './lib/session-math/notification'
@@ -112,6 +113,10 @@ bot.catch((error: any) => {
 
 async function startup(): Promise<void> {
 	try {
+		console.time('check-mall-groups')
+		await fixMallDataForAllMalls(bot.telegram)
+		console.timeEnd('check-mall-groups')
+
 		await wikidata.preload(wdEntityStore)
 		await notifications.initialize(notificationManager, wdEntityStore)
 		bot.launch()

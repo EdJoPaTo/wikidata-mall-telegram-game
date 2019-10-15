@@ -1,11 +1,12 @@
 import {Composer, Extra, Markup, ContextMessageUpdate} from 'telegraf'
-import {markdown} from 'telegram-format'
 import stringify from 'json-stable-stringify'
 
 import {Mall} from '../lib/types/mall'
 import {Persist} from '../lib/types'
 
 import * as userMalls from '../lib/data/malls'
+
+import {fixMallDataForGroup} from '../lib/game-logic/mall-fix-data'
 
 import {emojis} from '../lib/interface/emojis'
 
@@ -168,25 +169,12 @@ bot.action('join', async ctx => {
 })
 
 bot.command('fix', async ctx => {
-	await ctx.reply('If you have to use this command, something is fishy. Tell @EdJoPaTo about it.')
-
-	const mallId = ctx.chat!.id
-	const mallData = await userMalls.get(mallId)
-	if (!mallData) {
-		return ctx.leaveChat()
+	if (!ctx.from || !ctx.chat || ctx.from.username !== 'EdJoPaTo') {
+		return ctx.reply('You should tell @EdJoPaTo something is strange.')
 	}
 
-	console.log('fix..', mallId, mallData)
-	await ctx.replyWithMarkdown('fix…\n' + mallData.member.map(o => markdown.url(String(o), `tg://user?id=${o}`)).join(', '))
-
-	await checkEveryMemberAndRemoveIfNeeded(ctx, mallData)
-	console.log('fixed', mallId, mallData)
-
-	await userMalls.set(mallId, mallData)
-	return ctx.reply(
-		'everything should be in sync now.\n' +
-		mallData.member.map(o => markdown.url(String(o), `tg://user?id=${o}`)).join(', ')
-	)
+	await fixMallDataForGroup(ctx.telegram, ctx.chat.id)
+	return ctx.reply('everything should be in sync now.')
 })
 
 bot.command(['language', 'settings'], async ctx => {
