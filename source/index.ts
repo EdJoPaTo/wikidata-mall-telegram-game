@@ -80,7 +80,13 @@ const notificationManager = new NotificationManager(
 	async (chatId, notification, fireDate) => {
 		try {
 			const text = notificationText(notification, fireDate)
-			await bot.telegram.sendMessage(chatId, text, Extra.markdown() as any)
+			if (notification.photo) {
+				await bot.telegram.sendPhoto(chatId, notification.photo, new Extra({
+					caption: text
+				}).markdown() as any)
+			} else {
+				await bot.telegram.sendMessage(chatId, text, Extra.markdown() as any)
+			}
 		} catch (error) {
 			const {message} = error as Error
 			if (message.includes('chat not found')) {

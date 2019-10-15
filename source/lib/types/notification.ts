@@ -6,8 +6,11 @@ export type NotificationType =
 	'skillFinished' |
 	'storeProductsEmpty'
 
+type Url = string
+
 export interface Notification {
 	type: NotificationType;
 	date: Date;
 	text: string;
+	photo?: Url;
 }
