@@ -72,7 +72,7 @@ export function productionPartNotificationString(productionPart: ProductionPart,
 	return reader.label()
 }
 
-export function attractionDisasterNotificationString(attraction: Attraction, entityStore: WikidataEntityStore, locale: string | undefined): string {
+export function attractionDisasterNotification(attraction: Attraction, entityStore: WikidataEntityStore, locale: string | undefined): {text: string; photo?: string} {
 	const attractionReader = new WikidataEntityReader(entityStore.entity(attraction.item), locale)
 	const disasterReader = new WikidataEntityReader(entityStore.entity(attraction.disasterKind), locale)
 
@@ -83,5 +83,8 @@ export function attractionDisasterNotificationString(attraction: Attraction, ent
 	text += '\n'
 	text += attractionReader.label()
 
-	return text
+	const photoUrls = disasterReader.images(800)
+	const photo = photoUrls[0]
+
+	return {photo, text}
 }

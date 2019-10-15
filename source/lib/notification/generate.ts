@@ -13,7 +13,7 @@ import {shopProductsEmptyTimestamps} from '../game-math/shop-time'
 
 import {getAttractionHeight} from '../game-logic/mall-attraction'
 
-import {attractionDisasterNotificationString, productionPartNotificationString} from '../interface/mall'
+import {attractionDisasterNotification, productionPartNotificationString} from '../interface/mall'
 import {nameMarkdown} from '../interface/person'
 import {skillFinishedNotificationString} from '../interface/skill'
 
@@ -96,7 +96,7 @@ function generateMallAttractionDestruction(session: Session, mall: Mall | undefi
 	return [{
 		type: 'mallAttractionDisaster',
 		date: new Date(mall.attraction.disasterTimestamp * 1000),
-		text: attractionDisasterNotificationString(mall.attraction, entityStore, locale)
+		...attractionDisasterNotification(mall.attraction, entityStore, locale)
 	}]
 }
 
