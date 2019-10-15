@@ -110,15 +110,18 @@ bot.catch((error: any) => {
 	console.error('telegraf error occured', error)
 })
 
-wikidata.preload(wdEntityStore)
-	.then(async () => {
+async function startup(): Promise<void> {
+	try {
+		await wikidata.preload(wdEntityStore)
 		await notifications.initialize(notificationManager, wdEntityStore)
 		bot.launch()
 		console.log(new Date(), 'Bot started')
 
 		setInterval(async () => wikidata.update(wdEntityStore), 4 * HOUR_IN_SECONDS * 1000)
 		setTimeout(async () => wikidata.update(wdEntityStore), 15 * MINUTE_IN_SECONDS * 1000)
-	})
-	.catch(error => {
+	} catch (error) {
 		console.error('startup failed:', error)
-	})
+	}
+}
+
+startup()
