@@ -5,7 +5,7 @@ import {Person} from '../../lib/types/people'
 
 import {secondsBetweenApplicants, applicantSeats, canBeEmployed, sortIndexOfPerson} from '../../lib/game-math/applicant'
 
-import {createApplicant} from '../../lib/game-logic/applicant'
+import {createRobot} from '../../lib/game-logic/applicant'
 
 import {applicantInfluencesPart} from '../../lib/interface/applicants'
 import {emojis} from '../../lib/interface/emojis'
@@ -127,7 +127,7 @@ menu.button(buttonText(emojis.production + emojis.personRobot, 'person.type.robo
 		}
 
 		const now = Date.now() / 1000
-		applicants.list.push(createApplicant(skills, now, 1))
+		applicants.list.push(createRobot(skills, now))
 	}
 })
 

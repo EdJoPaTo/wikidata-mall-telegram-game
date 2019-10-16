@@ -121,6 +121,19 @@ function randomTalents(distribution: Gaussian): Talents {
 	return talents
 }
 
+export function createRobot(skills: Skills, now: number): RobotWorker {
+	const retirement = daysUntilRetirement(skills)
+	const retirementTimestamp = Math.floor(now + (DAY_IN_SECONDS * retirement.max))
+
+	return {
+		name: wdName.randomName(),
+		type: 'robot',
+		hobby: hobbyForType('robot'),
+		retirementTimestamp,
+		talents: talentsForType('robot')
+	}
+}
+
 export function tinkerWithRobot(robot: RobotWorker): void {
 	robot.tinkeredAmount = (robot.tinkeredAmount || 0) + 1
 
