@@ -1,7 +1,7 @@
 import {Gaussian} from 'gaussian'
 
 import {Skills} from '../types/skills'
-import {RefinedWorker, RefinedState, Person, RobotWorker, TALENTS, Talents} from '../types/people'
+import {RefinedWorker, RefinedState, Person, RobotWorker, Talents} from '../types/people'
 
 import {currentLevel} from './skill'
 import {MINIMAL_TALENT} from './constants'
@@ -65,12 +65,15 @@ export function robotTinkerCost(robot: RobotWorker): number {
 }
 
 export function randomTalents(distribution: Gaussian, randomFunction: () => number = Math.random): Talents {
-	const talents: any = {}
-	for (const t of TALENTS) {
-		talents[t] = randomTalent(distribution, randomFunction())
-	}
+	return randomTalentsDistinct(distribution, distribution, distribution, randomFunction)
+}
 
-	return talents
+export function randomTalentsDistinct(purchaseDistribution: Gaussian, sellingDistribution: Gaussian, storageDistribution: Gaussian, randomFunction: () => number = Math.random): Talents {
+	return {
+		purchasing: randomTalent(purchaseDistribution, randomFunction()),
+		selling: randomTalent(sellingDistribution, randomFunction()),
+		storage: randomTalent(storageDistribution, randomFunction())
+	}
 }
 
 export function randomTalent(distribution: Gaussian, x: number = Math.random()): number {

@@ -2,18 +2,14 @@ import gaussian, {Gaussian} from 'gaussian'
 
 import {Talents, PersonType} from '../types/people'
 
-import {randomTalent, randomTalents} from '../game-math/applicant'
+import {randomTalents, randomTalentsDistinct} from '../game-math/applicant'
 
 export function talentsForType(type: PersonType): Talents {
 	switch (type) {
 		case 'robot': return randomTalents(distribution.robot)
 		case 'halloweenPumpkin': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
 		case 'refined': return randomTalents(distribution.refined)
-		case 'alien': return {
-			purchasing: randomTalent(distribution.alienOther),
-			selling: randomTalent(distribution.alienSell),
-			storage: randomTalent(distribution.alienOther)
-		}
+		case 'alien': return randomTalentsDistinct(distribution.alienOther, distribution.alienSell, distribution.alienOther)
 		default: return randomTalents(distribution.temporary)
 	}
 }
