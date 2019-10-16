@@ -2,6 +2,8 @@ import {MINUTE_IN_SECONDS, HOUR_IN_SECONDS} from '../math/timestamp-constants'
 
 export const PURCHASING_FACTOR = 0.95
 
+export const MINIMAL_TALENT = 0.001
+
 export const ROBOT_TINKER_INCREASE_LUCK = 0.6
 export const ROBOT_TINKER_CHANGE = 0.05
 
