@@ -17,3 +17,7 @@ export function distanceSteps(values: readonly number[]): number[] {
 export function interpolate(start: number, end: number, position: number): number {
 	return start + ((end - start) * position)
 }
+
+export function relativePositionBetween(start: number, end: number, x: number): number {
+	return (x - start) / (end - start)
+}
