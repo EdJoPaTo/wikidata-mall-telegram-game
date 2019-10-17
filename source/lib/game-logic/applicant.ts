@@ -8,8 +8,8 @@ import * as wdSets from '../wikidata/sets'
 import * as wdShops from '../wikidata/shops'
 
 import {DAY_IN_SECONDS} from '../math/timestamp-constants'
-import {interpolate} from '../math/distance'
 import {randomBetween} from '../math/probability'
+import {relativePositionBetween} from '../math/distance'
 
 import {daysUntilRetirement} from '../game-math/applicant'
 import {ROBOT_TINKER_CHANGE, ROBOT_TINKER_INCREASE_LUCK} from '../game-math/constants'
@@ -44,7 +44,7 @@ function typeFromRandom(random: number, now: number): PersonType {
 
 	if (month === 10 && dayOfMonth > 15) {
 		// October -> Halloween
-		const relativeDay = interpolate(15, 32, dayOfMonth + relativePositionOnDay)
+		const relativeDay = relativePositionBetween(15, 32, dayOfMonth + relativePositionOnDay)
 		const probability = relativeDay * 0.7
 		if (random < probability) {
 			return 'halloweenPumpkin'
