@@ -19,6 +19,7 @@ const toplevelShopCategories: string[] = [
 	'Q31807746', // Furniture
 	'Q34379', // Musical instrument
 	'Q40218', // Spacecraft
+	'Q42889', // Vehicle
 	'Q5082128', // Mobile device
 	'Q628983', // Working ship
 	'Q6999', // Astronomical object
