@@ -49,7 +49,7 @@ bot.on('message', async (ctx, next) => {
 			line += emojis.requireAttention + emojis.production
 		} else if (currentProduction.lastProducedItems.includes(o.qNumber())) {
 			line += emojis.requireAttention + emojis.old
-		} else if (wdBlacklist.includes(o.qNumber())) {
+		} else if (wdBlacklist.productionIncludes(o.qNumber())) {
 			line += emojis.blacklisted
 		} else if (!hasEnoughParts(o)) {
 			line += emojis.requireAttention + emojis.part

@@ -22,7 +22,7 @@ async function menuText(ctx: any): Promise<string> {
 	const currentProduction = await mallProduction.get()
 
 	const blacklistedVoteKeys = Object.keys(currentProduction.nextItemVote)
-		.filter(o => wdBlacklist.includes(o))
+		.filter(o => wdBlacklist.productionIncludes(o))
 	if (blacklistedVoteKeys.length > 0) {
 		for (const o of blacklistedVoteKeys) {
 			delete currentProduction.nextItemVote[o]

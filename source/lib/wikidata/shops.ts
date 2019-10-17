@@ -62,7 +62,7 @@ export async function preload(): Promise<string[]> {
 	console.timeLog('wikidata-shops', 'allShopTypes', allShopTypes.length)
 
 	const shopTypes = allShopTypes
-		.filter(o => !blacklist.includes(o))
+		.filter(o => !blacklist.basicIncludes(o))
 	console.timeLog('wikidata-shops', 'shopTypes without blacklisted ones', shopTypes.length)
 
 	const products = await stagedAsync(
