@@ -44,7 +44,7 @@ function typeFromRandom(random: number, now: number): PersonType {
 
 	if (month === 10 && dayOfMonth > 15) {
 		// October -> Halloween
-		const relativeDay = 1 || interpolate(15, 32, dayOfMonth + relativePositionOnDay)
+		const relativeDay = interpolate(15, 32, dayOfMonth + relativePositionOnDay)
 		const probability = relativeDay * 0.7
 		if (random < probability) {
 			return 'halloweenPumpkin'
