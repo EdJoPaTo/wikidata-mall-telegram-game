@@ -119,9 +119,11 @@ bot.catch((error: any) => {
 
 async function startup(): Promise<void> {
 	try {
-		console.time('check-mall-groups')
-		await fixMallDataForAllMalls(bot.telegram)
-		console.timeEnd('check-mall-groups')
+		if (process.env.NODE_ENV === 'production') {
+			console.time('check-mall-groups')
+			await fixMallDataForAllMalls(bot.telegram)
+			console.timeEnd('check-mall-groups')
+		}
 
 		await wikidata.preload(wdEntityStore)
 		await notifications.initialize(notificationManager, wdEntityStore)
