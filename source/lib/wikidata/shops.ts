@@ -3,6 +3,8 @@ import arrayFilterUnique from 'array-filter-unique'
 
 import {stagedAsync} from '../js-helper/async'
 
+import * as blacklist from './blacklist'
+
 const toplevelShopCategories: string[] = [
 	'Q11410', // Game
 	'Q11422', // Toy
@@ -55,10 +57,13 @@ export async function preload(): Promise<string[]> {
 		toplevelShopCategories.map(o => shopTypesQuery(o))
 	) as string[]
 
-	const shopTypes = shopTypesArr
+	const allShopTypes = shopTypesArr
 		.filter(arrayFilterUnique())
+	console.timeLog('wikidata-shops', 'allShopTypes', allShopTypes.length)
 
-	console.timeLog('wikidata-shops', 'shopTypes', shopTypes.length)
+	const shopTypes = allShopTypes
+		.filter(o => !blacklist.includes(o))
+	console.timeLog('wikidata-shops', 'shopTypes without blacklisted ones', shopTypes.length)
 
 	const products = await stagedAsync(
 		loadProducts,
