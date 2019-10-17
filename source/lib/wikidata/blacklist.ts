@@ -1,29 +1,33 @@
 import * as wdGot from 'wikidata-sdk-got'
 import arrayFilterUnique from 'array-filter-unique/dist'
 
-const BLACKLIST_TOPLEVEL = [
-	'Q1274979',
-	'Q18643213',
-	'Q309314',
-	'Q4936952',
-	'Q728'
+const BLACKLIST_BASICS_TOPLEVEL = [
+	'Q1274979', // Creature
+	'Q18643213', // Military Equipment
+	'Q309314', // Quantity
+	'Q4936952', // Anatomical structure
+	'Q728' // Weapon
 ]
 
-let BLACKLIST: string[] = []
+let BLACKLIST_BASICS: string[] = []
 
-export async function preload(): Promise<void> {
+async function loadFromToplevel(toplevel: readonly string[]): Promise<string[]> {
 	let query = ''
 	query += 'SELECT ?item WHERE {'
-	query += BLACKLIST_TOPLEVEL
+	query += toplevel
 		.map(o => `{ ?item wdt:P279* wd:${o}. }`)
 		.join('UNION')
 	query += '}'
 
 	const result = await wdGot.sparqlQuerySimplifiedMinified(query)
-	BLACKLIST = (result as string[])
+	return (result as string[])
 		.filter(arrayFilterUnique())
 }
 
+export async function preload(): Promise<void> {
+	BLACKLIST_BASICS = await loadFromToplevel(BLACKLIST_BASICS_TOPLEVEL)
+}
+
 export function includes(item: string): boolean {
-	return BLACKLIST.includes(item)
+	return BLACKLIST_BASICS.includes(item)
 }
