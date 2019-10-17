@@ -3,6 +3,7 @@ const basic: Record<string, string> = {
 	applicantsAvailable: '📬',
 	applicantsEmpty: '📭',
 	attraction: '🎡',
+	blacklisted: '😶',
 	chat: '💭',
 	clearSkillQueue: '❌',
 	close: '🛑',

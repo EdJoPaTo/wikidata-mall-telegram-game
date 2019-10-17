@@ -3,6 +3,7 @@ import {readFileSync} from 'fs'
 import WikidataEntityStore from 'wikidata-entity-store'
 
 import * as attractions from './attractions'
+import * as blacklist from './blacklist'
 import * as inUseItems from './preload-in-use-items'
 import * as name from './name'
 import * as production from './production'
@@ -17,6 +18,7 @@ export async function preload(store: WikidataEntityStore): Promise<void> {
 		readFileSync('wikidata-items.yaml', 'utf8')
 	))
 	await preloadSpecific('name', async () => name.preload())
+	await preloadSpecific('blacklist', async () => blacklist.preload())
 	qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
 	qNumbers.push(...await preloadSpecific('production', async () => production.preload(store)))
 	qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))
@@ -42,6 +44,7 @@ export async function update(store: WikidataEntityStore): Promise<void> {
 		const resourceKeyQItems = resourceKeys.map(o => store.qNumber(o))
 		qNumbers.push(...resourceKeyQItems)
 
+		await preloadSpecific('blacklist', async () => blacklist.preload())
 		qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
 		qNumbers.push(...await preloadSpecific('production', async () => production.preload(store)))
 		qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))

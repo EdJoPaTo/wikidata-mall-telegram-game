@@ -6,6 +6,7 @@ import WikidataEntityStore from 'wikidata-entity-store'
 import {hasEnoughParts} from '../lib/game-logic/mall-production'
 
 import {getParts} from '../lib/wikidata/production'
+import * as wdBlacklist from '../lib/wikidata/blacklist'
 import * as mallProduction from '../lib/data/mall-production'
 
 import {emojis} from '../lib/interface/emojis'
@@ -48,6 +49,8 @@ bot.on('message', async (ctx, next) => {
 			line += emojis.requireAttention + emojis.production
 		} else if (currentProduction.lastProducedItems.includes(o.qNumber())) {
 			line += emojis.requireAttention + emojis.old
+		} else if (wdBlacklist.includes(o.qNumber())) {
+			line += emojis.blacklisted
 		} else if (!hasEnoughParts(o)) {
 			line += emojis.requireAttention + emojis.part
 		} else if (o.images().length === 0) {
