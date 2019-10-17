@@ -3,8 +3,8 @@ import arrayFilterUnique from 'array-filter-unique/dist'
 
 const BLACKLIST_BASICS_TOPLEVEL = [
 	'Q18643213', // Military Equipment
+	'Q25570959', // Animal structure
 	'Q309314', // Quantity
-	'Q4936952', // Anatomical structure
 	'Q728' // Weapon
 ]
 
