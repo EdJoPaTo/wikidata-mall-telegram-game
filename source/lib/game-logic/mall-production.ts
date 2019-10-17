@@ -11,7 +11,7 @@ type QNumber = string
 export async function preloadWithParts(store: WikidataEntityStore, qNumber: QNumber, now: number): Promise<void> {
 	await store.loadQNumbers(now - HOUR_IN_SECONDS, qNumber)
 	const reader = new WikidataEntityReader(store.entity(qNumber))
-	if (!canProduce(reader)) {
+	if (!hasEnoughParts(reader)) {
 		return
 	}
 
@@ -19,7 +19,7 @@ export async function preloadWithParts(store: WikidataEntityStore, qNumber: QNum
 	await store.loadQNumbers(now - DAY_IN_SECONDS, ...parts)
 }
 
-export function canProduce(item: WikidataEntityReader): boolean {
+export function hasEnoughParts(item: WikidataEntityReader): boolean {
 	const parts = getParts(item)
 	return parts.length >= 3
 }
