@@ -17,6 +17,7 @@ const basic: Record<string, string> = {
 	github: '🦑',
 	graduation: '🎉',
 	group: '👥',
+	halloweenPumpkin: '🎃',
 	help: '🃏',
 	hobbyDifferent: '❤️',
 	hobbyMatch: '💚',

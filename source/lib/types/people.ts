@@ -32,7 +32,13 @@ export interface Name {
 	family: string;
 }
 
-export type PersonType = 'refined' | 'temporary' | 'robot' | 'alien'
+export type PersonType =
+	'alien'|
+	'halloweenPumpkin' |
+	'refined' |
+	'robot' |
+	'temporary'
+
 export type RefinedState = 'toddler' | 'student' | 'finished'
 
 export type Talent = 'purchasing' | 'selling' | 'storage'

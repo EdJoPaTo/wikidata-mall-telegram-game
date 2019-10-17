@@ -1,7 +1,10 @@
 import randomItem from 'random-item'
 import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 
-type SetName = 'alienHobby' | 'disaster'
+type SetName =
+	'alienHobby' |
+	'disaster' |
+	'hobbyHalloween'
 
 const queries: Record<SetName, string> = {
 	alienHobby: `SELECT DISTINCT ?planet WHERE {
@@ -12,12 +15,17 @@ const queries: Record<SetName, string> = {
 	disaster: `SELECT DISTINCT ?item WHERE {
 ?item wdt:P279+ wd:Q3839081.
 ?item wdt:P18 ?image.
+}`,
+	hobbyHalloween: `SELECT ?item WHERE {
+?item wdt:P171 wd:Q28425.
+FILTER EXISTS { ?item wdt:P18 ?image. }
 }`
 }
 
 const entities: Record<SetName, string[]> = {
 	alienHobby: [],
-	disaster: []
+	disaster: [],
+	hobbyHalloween: []
 }
 
 export async function preload(): Promise<string[]> {

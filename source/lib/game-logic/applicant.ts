@@ -8,6 +8,7 @@ import * as wdSets from '../wikidata/sets'
 import * as wdShops from '../wikidata/shops'
 
 import {DAY_IN_SECONDS} from '../math/timestamp-constants'
+import {interpolate} from '../math/distance'
 import {randomBetween} from '../math/probability'
 
 import {daysUntilRetirement} from '../game-math/applicant'
@@ -16,7 +17,7 @@ import {ROBOT_TINKER_CHANGE, ROBOT_TINKER_INCREASE_LUCK} from '../game-math/cons
 import {talentsForType} from './applicant-talent'
 
 export function createApplicant(skills: Skills, now: number, retirementRandom = Math.random()): Person {
-	const type = typeFromRandom(retirementRandom)
+	const type = typeFromRandom(retirementRandom, now)
 	return createSpecificApplicant(type, skills, retirementRandom, now)
 }
 
@@ -30,9 +31,24 @@ function createSpecificApplicant(type: PersonType, skills: Skills, retirementRan
 	}
 }
 
-function typeFromRandom(random: number): PersonType {
+function typeFromRandom(random: number, now: number): PersonType {
+	const date = new Date(now * 1000)
+	const month = date.getUTCMonth() + 1
+	const dayOfMonth = date.getUTCDate()
+	const secondsOfDay = now % DAY_IN_SECONDS
+	const relativePositionOnDay = secondsOfDay / DAY_IN_SECONDS
+
 	if (random < 0.01) {
 		return 'alien'
+	}
+
+	if (month === 10 && dayOfMonth > 15) {
+		// October -> Halloween
+		const relativeDay = 1 || interpolate(15, 32, dayOfMonth + relativePositionOnDay)
+		const probability = relativeDay * 0.7
+		if (random < probability) {
+			return 'halloweenPumpkin'
+		}
 	}
 
 	if (random > 0.95) {
@@ -51,6 +67,7 @@ function nameForType(type: PersonType): Name {
 function hobbyForType(type: PersonType): string {
 	switch (type) {
 		case 'alien': return wdSets.getRandom('alienHobby')
+		case 'halloweenPumpkin': return wdSets.getRandom('hobbyHalloween')
 		case 'robot': return 'person.robotHobby'
 		default: return randomItem(wdShops.allShops())
 	}
