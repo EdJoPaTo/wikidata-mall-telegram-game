@@ -93,7 +93,7 @@ function updateCurrentProduction(production: MallProduction, now: number): void 
 
 	production.lastProducedItems = production.lastProducedItems
 		.filter(arrayFilterUnique())
-		.slice(0, 3) // The last 3 items are remembered for the votes
+		.slice(0, 10) // The last items are remembered for the votes
 
 	production.itemsProducedPerMall = {}
 
