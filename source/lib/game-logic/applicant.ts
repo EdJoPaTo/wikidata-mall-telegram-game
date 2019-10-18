@@ -1,6 +1,6 @@
 import randomItem from 'random-item'
 
-import {Person, TALENTS, PersonType, RobotWorker, Name} from '../types/people'
+import {Person, TALENTS, PersonType, RobotWorker, Name, PERSON_EVENT_TYPES} from '../types/people'
 import {Skills} from '../types/skills'
 
 import * as wdName from '../wikidata/name'
@@ -78,6 +78,8 @@ function retirementTimestampForType(type: PersonType, skills: Skills, retirement
 	let days: number
 	if (type === 'robot') {
 		days = retirement.max
+	} else if (PERSON_EVENT_TYPES.includes(type)) {
+		days = randomBetween(retirement.min, retirement.max, 1 - retirementRandom)
 	} else {
 		days = randomBetween(retirement.min, retirement.max, retirementRandom)
 	}
