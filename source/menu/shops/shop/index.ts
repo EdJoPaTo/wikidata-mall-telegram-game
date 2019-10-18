@@ -213,7 +213,7 @@ function userProducts(ctx: any): string[] {
 }
 
 menu.selectSubmenu('p', userProducts, productMenu, {
-	columns: 2,
+	columns: 3,
 	textFunc: (ctx: any, key) => ctx.wd.r(key).label()
 })
 
