@@ -34,6 +34,7 @@ export interface Name {
 
 export type PersonType =
 	'alien'|
+	'christmasAngel' |
 	'halloweenPumpkin' |
 	'refined' |
 	'robot' |
@@ -42,6 +43,7 @@ export type PersonType =
 export type RefinedState = 'toddler' | 'student' | 'finished'
 
 export const PERSON_EVENT_TYPES: PersonType[] = [
+	'christmasAngel',
 	'halloweenPumpkin'
 ]
 

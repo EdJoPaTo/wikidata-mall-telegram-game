@@ -6,10 +6,11 @@ import {randomTalents, randomTalentsDistinct} from '../game-math/applicant'
 
 export function talentsForType(type: PersonType): Talents {
 	switch (type) {
-		case 'robot': return randomTalents(distribution.robot)
+		case 'alien': return randomTalentsDistinct(distribution.alienOther, distribution.alienSell, distribution.alienOther)
+		case 'christmasAngel': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
 		case 'halloweenPumpkin': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
 		case 'refined': return randomTalents(distribution.refined)
-		case 'alien': return randomTalentsDistinct(distribution.alienOther, distribution.alienSell, distribution.alienOther)
+		case 'robot': return randomTalents(distribution.robot)
 		default: return randomTalents(distribution.temporary)
 	}
 }

@@ -4,6 +4,7 @@ import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 type SetName =
 	'alienHobby' |
 	'disaster' |
+	'hobbyChristmas' |
 	'hobbyHalloween'
 
 const queries: Record<SetName, string> = {
@@ -16,6 +17,10 @@ const queries: Record<SetName, string> = {
 ?item wdt:P279+ wd:Q3839081.
 ?item wdt:P18 ?image.
 }`,
+	hobbyChristmas: `SELECT ?item WHERE {
+?item wdt:P171 wd:Q39624.
+FILTER EXISTS { ?item wdt:P18 ?image. }
+}`,
 	hobbyHalloween: `SELECT ?item WHERE {
 ?item wdt:P171 wd:Q28425.
 FILTER EXISTS { ?item wdt:P18 ?image. }
@@ -25,6 +30,7 @@ FILTER EXISTS { ?item wdt:P18 ?image. }
 const entities: Record<SetName, string[]> = {
 	alienHobby: [],
 	disaster: [],
+	hobbyChristmas: [],
 	hobbyHalloween: []
 }
 

@@ -5,6 +5,7 @@ const basic: Record<string, string> = {
 	attraction: '🎡',
 	blacklisted: '😶',
 	chat: '💭',
+	christmasAngel: '👼',
 	clearSkillQueue: '❌',
 	close: '🛑',
 	collector: '🧳',

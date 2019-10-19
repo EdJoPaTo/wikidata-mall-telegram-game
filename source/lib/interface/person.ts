@@ -32,6 +32,7 @@ export function personStateEmoji(person: Person, now: number): string {
 
 	switch (person.type) {
 		case 'alien': return emojis.personAlien
+		case 'christmasAngel': return emojis.christmasAngel
 		case 'halloweenPumpkin': return emojis.halloweenPumpkin
 		case 'robot': return emojis.personRobot
 		default: return emojis.personTemporary

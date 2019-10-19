@@ -49,6 +49,13 @@ function typeFromRandom(random: number, now: number): PersonType {
 		if (random < probability) {
 			return 'halloweenPumpkin'
 		}
+	} else if (month === 12 && dayOfMonth <= 26) {
+		// December -> Christmas
+		const relativeDay = Math.min(1, relativePositionBetween(1, 24, dayOfMonth + relativePositionOnDay))
+		const probability = relativeDay * 0.7
+		if (random < probability) {
+			return 'christmasAngel'
+		}
 	}
 
 	if (random > 0.95) {
@@ -67,6 +74,7 @@ function nameForType(type: PersonType): Name {
 function hobbyForType(type: PersonType): string {
 	switch (type) {
 		case 'alien': return wdSets.getRandom('alienHobby')
+		case 'christmasAngel': return wdSets.getRandom('hobbyChristmas')
 		case 'halloweenPumpkin': return wdSets.getRandom('hobbyHalloween')
 		case 'robot': return 'person.robotHobby'
 		default: return randomItem(wdShops.allShops())
