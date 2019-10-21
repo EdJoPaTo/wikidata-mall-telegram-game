@@ -50,7 +50,7 @@
 		"wikidata-sdk-got": "^1.1.1"
 	},
 	"devDependencies": {
-		"@sindresorhus/tsconfig": "^0.4.0",
+		"@sindresorhus/tsconfig": "^0.5.0",
 		"@types/emoji-regex": "^8.0.0",
 		"@types/gaussian": "^1.1.1",
 		"@types/json-stable-stringify": "^1.0.32",

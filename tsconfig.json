@@ -6,8 +6,9 @@
 	],
 	"compilerOptions": {
 		"declaration": false,
-		"target": "esnext",
 		"esModuleInterop": true,
+		"sourceMap": true,
+		"target": "esnext",
 		"outDir": "dist"
 	}
 }

@@ -49,20 +49,20 @@ async function checkEveryMemberAndRemoveIfNeeded(ctx: ContextMessageUpdate, mall
 
 if (process.env.NODE_ENV !== 'production') {
 	bot.use((ctx, next) => {
-		console.log('happened in chat:', ctx.updateType, (ctx as any).updateSubTypes, ctx.chat)
+		console.log('happened in chat:', ctx.updateType, ctx.updateSubTypes, ctx.chat)
 		return next && next()
 	})
 }
 
 bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async (ctx: ContextMessageUpdate) => {
-	if ((ctx as any).updateSubTypes.includes('migrate_to_chat_id')) {
+	if (ctx.updateSubTypes.includes('migrate_to_chat_id')) {
 		return
 	}
 
 	try {
 		await ctx.reply((ctx as any).i18n.t('mall.supergroupMigration'))
 	} catch (error) {
-		console.log('supergroup migration hint error', error.message, ctx.updateType, (ctx as any).updateSubTypes, ctx.update)
+		console.log('supergroup migration hint error', error.message, ctx.updateType, ctx.updateSubTypes, ctx.update)
 	}
 }))
 
@@ -127,7 +127,7 @@ bot.on(['group_chat_created', 'new_chat_members'], async ctx => {
 			}
 		}
 	} catch (error) {
-		console.error('error while detecting big group', ctx.updateType, (ctx as any).updateSubTypes, error)
+		console.error('error while detecting big group', ctx.updateType, ctx.updateSubTypes, error)
 	}
 
 	return replyJoinMessage(ctx)

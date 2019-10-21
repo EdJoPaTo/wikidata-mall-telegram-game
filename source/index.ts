@@ -36,7 +36,7 @@ if (process.env.NODE_ENV !== 'production') {
 	bot.use(async (ctx, next) => {
 		const updateId = ctx.update.update_id.toString(36)
 		const content = (ctx.callbackQuery && ctx.callbackQuery.data) || (ctx.message && ctx.message.text)
-		const identifier = `${updateId} ${ctx.updateType} ${(ctx as any).updateSubTypes} ${ctx.from!.first_name} ${content && content.length} ${content}`
+		const identifier = `${updateId} ${ctx.updateType} ${ctx.updateSubTypes} ${ctx.from!.first_name} ${content && content.length} ${content}`
 
 		console.time(identifier)
 		if (next) {
@@ -55,7 +55,7 @@ bot.use(new ErrorMiddleware({
 	], {columns: 1})
 }).middleware())
 
-bot.use((data as any).middleware())
+bot.use(data.middleware())
 
 removeOld()
 
@@ -104,14 +104,14 @@ bot.use(new TelegrafWikibase(wdEntityStore, {
 
 bot.use(sessionMathMiddleware())
 
-bot.use((Telegraf as any).privateChat(menu.init({
+bot.use(Telegraf.privateChat(menu.init({
 	backButtonText: (ctx: any) => `🔙 ${ctx.i18n.t('menu.back')}`,
 	mainMenuButtonText: (ctx: any) => `🔝 ${ctx.wd.r('menu.menu').label()}`
 })))
 
-bot.use((Telegraf as any).groupChat((mall as any).middleware()))
+bot.use(Telegraf.groupChat(mall.middleware()))
 
-bot.use((fallback as any).middleware())
+bot.use(fallback.middleware())
 
 bot.catch((error: any) => {
 	console.error('telegraf error occured', error)

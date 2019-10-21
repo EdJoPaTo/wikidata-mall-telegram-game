@@ -5,8 +5,8 @@ import groupLogic from './group-logic'
 
 const bot = new Composer()
 
-bot.use((groupLogic as any).middleware())
+bot.use(groupLogic.middleware())
 
-bot.use((applicants as any).middleware())
+bot.use(applicants.middleware())
 
 export default bot
