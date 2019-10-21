@@ -1,16 +1,17 @@
 import arrayFilterUnique from 'array-filter-unique/dist'
 import stringify from 'json-stable-stringify'
-import WikidataEntityReader from 'wikidata-entity-reader'
 import WikidataEntityStore from 'wikidata-entity-store'
+
+import {randomUniqueEntries} from '../js-helper/array'
+
+import {DAY_IN_SECONDS} from '../math/timestamp-constants'
 
 import {Mall, MallProduction} from '../types/mall'
 import {Persist} from '../types'
 
-import {DAY_IN_SECONDS} from '../math/timestamp-constants'
-
 import {productionReward} from '../game-math/mall'
 
-import {getParts} from '../wikidata/production'
+import {getProducts, getParts} from '../wikidata/production'
 
 import * as mallProduction from '../data/mall-production'
 
@@ -61,12 +62,14 @@ export async function before(persist: Persist, store: WikidataEntityStore, now: 
 	const productionBefore = stringify(production)
 
 	updateCurrentProduction(production, now)
+	removeUnavailableVoteItems(production)
+	fillupPossibleVoteItems(production)
 
 	if (production.itemToProduce) {
 		await store.preloadQNumbers(production.itemToProduce)
 	}
 
-	const parts = production.itemToProduce ? getParts(new WikidataEntityReader(store.entity(production.itemToProduce))) : []
+	const parts = production.itemToProduce ? getParts(production.itemToProduce) : []
 	removePartsNotInCurrentProduction(persist.mall, parts)
 	removePartsByLeftMembers(persist.mall)
 	updateProductionProcessOfMall(persist.mall, production, parts, now)
@@ -110,6 +113,35 @@ function updateCurrentProduction(production: MallProduction, now: number): void 
 		} else {
 			delete production.nextItemVote[o]
 		}
+	}
+}
+
+function removeUnavailableVoteItems(currentProduction: MallProduction): void {
+	const allPossible = getProducts()
+	const remove = Object.keys(currentProduction.nextItemVote)
+		.filter(o => !allPossible.includes(o))
+
+	for (const o of remove) {
+		delete currentProduction.nextItemVote[o]
+	}
+}
+
+function fillupPossibleVoteItems(currentProduction: MallProduction): void {
+	const currentlyPossibleVoteEntries = Object.keys(currentProduction.nextItemVote)
+
+	const fillAmount = 6 - currentlyPossibleVoteEntries.length
+
+	const used: string[] = [
+		...currentProduction.lastProducedItems,
+		...currentlyPossibleVoteEntries
+	]
+	if (currentProduction.itemToProduce) {
+		used.push(currentProduction.itemToProduce)
+	}
+
+	const fill = randomUniqueEntries(getProducts(), fillAmount, used)
+	for (const o of fill) {
+		currentProduction.nextItemVote[o] = []
 	}
 }
 

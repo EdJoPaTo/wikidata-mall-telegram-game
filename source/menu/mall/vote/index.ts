@@ -6,7 +6,6 @@ import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../.
 import {Session} from '../../../lib/types'
 
 import * as mallProduction from '../../../lib/data/mall-production'
-import * as wdBlacklist from '../../../lib/wikidata/blacklist'
 
 import {buttonText, menuPhoto} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
@@ -20,17 +19,6 @@ import optionMenu from './option'
 async function menuText(ctx: any): Promise<string> {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
 	const currentProduction = await mallProduction.get()
-
-	const blacklistedVoteKeys = Object.keys(currentProduction.nextItemVote)
-		.filter(o => wdBlacklist.productionIncludes(o))
-	if (blacklistedVoteKeys.length > 0) {
-		for (const o of blacklistedVoteKeys) {
-			delete currentProduction.nextItemVote[o]
-		}
-
-		await mallProduction.set(currentProduction)
-	}
-
 	const votes = Object.values(currentProduction.nextItemVote).flat().length
 
 	let text = ''

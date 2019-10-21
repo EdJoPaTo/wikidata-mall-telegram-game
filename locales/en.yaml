@@ -95,13 +95,8 @@ help:
     With the vote you can decide what you want to produce in the next iteration.
 
 
-    You can propose Wikidata items to be produced.
-    Within your mall group chat use /production and reply with QNumbers you like to add.
-
-    You can also use the inline search of @WikidataBot.
-
-
-    It's not possible to propose items that are currently in production or were in one of the last iterations.
+    At least 2 votes have to be given for an item to be chosen for the next iteration.
+    If there are less than 2 votes for every item no production will be possible for the following iteration.
   product: >
     This is a product you can sell.
 

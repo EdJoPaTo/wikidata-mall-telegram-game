@@ -20,7 +20,7 @@ export async function preload(store: WikidataEntityStore): Promise<void> {
 	await preloadSpecific('name', async () => name.preload())
 	await preloadSpecific('blacklist', async () => blacklist.preload())
 	qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
-	qNumbers.push(...await preloadSpecific('production', async () => production.preload(store)))
+	qNumbers.push(...await preloadSpecific('production', async () => production.preload()))
 	qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))
 	qNumbers.push(...await preloadSpecific('shops', async () => shops.preload()))
 
@@ -46,7 +46,7 @@ export async function update(store: WikidataEntityStore): Promise<void> {
 
 		await preloadSpecific('blacklist', async () => blacklist.preload())
 		qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
-		qNumbers.push(...await preloadSpecific('production', async () => production.preload(store)))
+		qNumbers.push(...await preloadSpecific('production', async () => production.preload()))
 		qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))
 		qNumbers.push(...await preloadSpecific('shops', async () => shops.preload()))
 

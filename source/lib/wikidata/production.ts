@@ -1,31 +1,79 @@
-import arrayFilterUnique from 'array-filter-unique'
-import WikidataEntityReader from 'wikidata-entity-reader'
-import WikidataEntityStore from 'wikidata-entity-store'
+import {sparqlQuerySimplified} from 'wikidata-sdk-got'
 
-import * as mallProduction from '../data/mall-production'
+import {filterDictKeysByValues, recreateDictWithGivenKeyOrder, joinDictArrayArrays} from '../js-helper/dictionary'
+import {sequentialAsync} from '../js-helper/async'
 
-const PART_CLAIMS = [
-	'P186', // Material used
-	'P527', // Has Part
-	'P2670' // Has Part of the class
+import * as blacklist from './blacklist'
+
+const CATEGORIES = [
+	'Q2095', // Food
+	'Q39546' // Tools
 ]
-export function getParts(item: WikidataEntityReader): string[] {
-	return PART_CLAIMS
-		.flatMap(o => item.claim(o))
-		.filter(arrayFilterUnique())
+
+let producable: Record<string, string[]> = {}
+
+function buildQuery(category: string): string {
+	/*
+	Properties
+	P186 material used
+	P527 has part (not used as it might include unique parts)
+	P2670 has part of the class
+	*/
+	return `SELECT ?product ?part WHERE {
+?product wdt:P279* wd:${category}.
+FILTER EXISTS { ?product wdt:P18 ?image. }
+{ ?product wdt:P186 ?part. }
+UNION
+{ ?product wdt:P2670 ?part. }
+}`
 }
 
-export async function preload(store: WikidataEntityStore): Promise<string[]> {
-	const current = await mallProduction.get()
-	const productsToPreload: string[] = Object.keys(current.nextItemVote)
-	if (current.itemToProduce) {
-		productsToPreload.push(current.itemToProduce)
+export function getProducts(): readonly string[] {
+	return Object.keys(producable)
+}
+
+export function getParts(product: string): readonly string[] {
+	return producable[product] || []
+}
+
+export async function preload(): Promise<string[]> {
+	const resultsArr = await sequentialAsync(preloadCategory, CATEGORIES)
+
+	const results = joinDictArrayArrays(resultsArr)
+	for (const o of Object.keys(results)) {
+		if (blacklist.basicIncludes(o)) {
+			delete results[o]
+		}
 	}
 
-	await store.updateQNumbers(productsToPreload, 1)
-	const parts = productsToPreload
-		.map(o => new WikidataEntityReader(store.entity(o)))
-		.flatMap(o => getParts(o))
+	producable = results
 
-	return parts
+	const keys = Object.keys(producable)
+	const values = Object.values(producable).flat()
+	return [
+		...keys,
+		...values
+	]
+}
+
+async function preloadCategory(category: string): Promise<Record<string, string[]>> {
+	const query = buildQuery(category)
+	const result = await sparqlQuerySimplified(query) as readonly Record<string, string>[]
+
+	const reduced = result.reduce(reduceRowsIntoKeyValue, {})
+	const filteredKeys = filterDictKeysByValues(reduced, (_, v) => v.length >= 3)
+	const filtered = recreateDictWithGivenKeyOrder(reduced, filteredKeys)
+	return filtered
+}
+
+function reduceRowsIntoKeyValue(coll: Record<string, string[]>, {product, part}: Record<string, string>): Record<string, string[]> {
+	if (!coll[product]) {
+		coll[product] = []
+	}
+
+	if (!coll[product].includes(part) && Boolean(part)) {
+		coll[product].push(part)
+	}
+
+	return coll
 }

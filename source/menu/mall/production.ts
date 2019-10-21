@@ -1,10 +1,9 @@
 import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
-import WikidataEntityStore from 'wikidata-entity-store'
 
 import {MINUTE_IN_SECONDS} from '../../lib/math/timestamp-constants'
 
-import {MallProduction, ProductionPart} from '../../lib/types/mall'
+import {ProductionPart} from '../../lib/types/mall'
 import {Persist, Session} from '../../lib/types'
 
 import {productionReward, productionSeconds} from '../../lib/game-math/mall'
@@ -14,8 +13,6 @@ import * as userInfo from '../../lib/data/user-info'
 
 import {getParts} from '../../lib/wikidata/production'
 
-import {preloadWithParts} from '../../lib/game-logic/mall-production'
-
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {countdownMinuteSecond, humanReadableTimestamp} from '../../lib/interface/formatted-time'
 import {emojis} from '../../lib/interface/emojis'
@@ -23,17 +20,6 @@ import {formatFloat, formatInt} from '../../lib/interface/format-number'
 import {infoHeader, labeledValue, labeledInt} from '../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../help'
-
-async function getProduction(ctx: any): Promise<MallProduction> {
-	const now = Date.now() / 1000
-	const store = ctx.wd.store as WikidataEntityStore
-	const production = await mallProduction.get()
-	if (production.itemToProduce) {
-		await preloadWithParts(store, production.itemToProduce, now)
-	}
-
-	return production
-}
 
 async function partLine(ctx: any, part: ProductionPart, now: number): Promise<string> {
 	const finished = part.finishTimestamp < now
@@ -65,12 +51,12 @@ async function menuText(ctx: any): Promise<string> {
 		throw new Error('You are not part of a mall')
 	}
 
-	const {itemToProduce, competitionUntil} = await getProduction(ctx)
+	const {itemToProduce, competitionUntil} = await mallProduction.get()
 	if (!itemToProduce) {
 		throw new Error('There is nothing to produce')
 	}
 
-	const parts = getParts(ctx.wd.r(itemToProduce))
+	const parts = getParts(itemToProduce)
 	const inProduction = mall.production.map(o => o.part)
 	const missing = parts.filter(o => !inProduction.includes(o))
 
@@ -128,8 +114,8 @@ async function menuText(ctx: any): Promise<string> {
 }
 
 const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(async (ctx: any) => {
-		const {itemToProduce} = await getProduction(ctx)
+	photo: menuPhoto(async () => {
+		const {itemToProduce} = await mallProduction.get()
 		return itemToProduce
 	})
 })
@@ -146,8 +132,8 @@ async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
 		return []
 	}
 
-	const {itemToProduce} = await getProduction(ctx)
-	const parts = getParts(ctx.wd.r(itemToProduce))
+	const {itemToProduce} = await mallProduction.get()
+	const parts = getParts(itemToProduce!)
 	const takenParts = mall.production.map(o => o.part)
 	const notTakenParts = parts
 		.filter(o => !takenParts.includes(o))
@@ -191,8 +177,8 @@ menu.urlButton(
 )
 
 menu.urlButton(
-	buttonText(emojis.wikidataItem, async ctx => (await getProduction(ctx)).itemToProduce || ''),
-	async (ctx: any) => ctx.wd.r((await getProduction(ctx)).itemToProduce).url(),
+	buttonText(emojis.wikidataItem, async () => (await mallProduction.get()).itemToProduce || ''),
+	async (ctx: any) => ctx.wd.r((await mallProduction.get()).itemToProduce).url(),
 	{
 		joinLastRow: true
 	}

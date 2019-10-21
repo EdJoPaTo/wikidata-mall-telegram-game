@@ -24,3 +24,27 @@ export function sortDictKeysByNumericValues(dict: Record<string, number>, revers
 	return sortDictKeysByValues(dict, reverse ? (a, b) => b - a : (a, b) => a - b)
 }
 
+export function filterDictKeysByValues<Value>(dict: Record<string, Value>, filterFn: (key: string, value: Value) => boolean): string[] {
+	const keys = Object.keys(dict)
+	const resultKeys = keys
+		.filter(o => filterFn(o, dict[o]))
+
+	return resultKeys
+}
+
+export function joinDictArrayArrays<Value>(dictArr: Record<string, Value[]>[]): Record<string, Value[]> {
+	const result: Record<string, Value[]> = {}
+
+	for (const entry of dictArr) {
+		const keys = Object.keys(entry)
+		for (const key of keys) {
+			if (!result[key]) {
+				result[key] = []
+			}
+
+			result[key].push(...entry[key])
+		}
+	}
+
+	return result
+}

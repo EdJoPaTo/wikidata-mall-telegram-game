@@ -2,8 +2,6 @@ import {markdown as format} from 'telegram-format/dist'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
-import {preloadWithParts} from '../../../lib/game-logic/mall-production'
-
 import {getParts} from '../../../lib/wikidata/production'
 import * as mallProduction from '../../../lib/data/mall-production'
 
@@ -17,16 +15,14 @@ function fromCtx(ctx: any): string {
 	return ctx.match[1]
 }
 
-async function menuText(ctx: any): Promise<string> {
-	const now = Date.now() / 1000
+function menuText(ctx: any): string {
 	const qNumber = fromCtx(ctx)
 	const reader = ctx.wd.r(qNumber) as WikidataEntityReader
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.vote})
 
-	await preloadWithParts(ctx.wd.store, qNumber, now)
-	const parts = getParts(reader)
+	const parts = getParts(qNumber)
 
 	text += parts
 		.map(o => ctx.wd.r(o) as WikidataEntityReader)
