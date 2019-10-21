@@ -34,25 +34,23 @@ const entities: Record<SetName, string[]> = {
 	hobbyHalloween: []
 }
 
-export async function preload(): Promise<string[]> {
-	console.time('wikidata-sets')
+export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
 	await Promise.all(
 		(Object.keys(queries) as SetName[])
-			.map(async key => loadQNumbersOfKey(key))
+			.map(async key => loadQNumbersOfKey(logger, key))
 	)
 
 	const qNumbers = Object.values(entities).flat()
-	console.timeLog('wikidata-sets', 'sum', qNumbers.length)
-	console.timeEnd('wikidata-sets')
+	logger('sum', qNumbers.length)
 	return qNumbers
 }
 
-async function loadQNumbersOfKey(key: SetName): Promise<void> {
+async function loadQNumbersOfKey(logger: (...args: any[]) => void, key: SetName): Promise<void> {
 	try {
 		const results = await sparqlQuerySimplifiedMinified(queries[key])
 		const qNumbers = results as string[]
 		entities[key] = qNumbers
-		console.timeLog('wikidata-sets', key, qNumbers.length)
+		logger(key, qNumbers.length)
 	} catch (error) {
 		console.error('wikidata-set query failed', key, error)
 	}

@@ -6,12 +6,11 @@ const cache = new Map()
 const givenNames: string[] = []
 const familyNames: string[] = []
 
-export async function preload(): Promise<void> {
-	console.time('wikidata-name')
+export async function preload(logger: (...args: any[]) => void): Promise<void> {
 	const [first, second] = await Promise.all([
 		// Unisex given names
-		instancesOfLabels('Q3409032'),
-		instancesOfLabels('Q101352')
+		instancesOfLabels(logger, 'Q3409032'),
+		instancesOfLabels(logger, 'Q101352')
 	])
 
 	for (const name of first) {
@@ -25,8 +24,6 @@ export async function preload(): Promise<void> {
 			familyNames.push(name)
 		}
 	}
-
-	console.timeEnd('wikidata-name')
 }
 
 function buildQuery(category: string): string {
@@ -38,13 +35,13 @@ FILTER(LANG(?label) = "en")
 LIMIT 5000`
 }
 
-async function instancesOfLabels(category: string): Promise<string[]> {
+async function instancesOfLabels(logger: (...args: any[]) => void, category: string): Promise<string[]> {
 	const query = buildQuery(category)
 	const results = await wdkGot.sparqlQuerySimplifiedMinified(query, {cache}) as string[]
 	const sorted = results
 		.sort((a, b) => a.localeCompare(b))
 
-	console.timeLog('wikidata-name', category)
+	logger(category)
 	return sorted
 }
 

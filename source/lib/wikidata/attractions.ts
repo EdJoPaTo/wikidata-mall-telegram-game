@@ -20,9 +20,7 @@ FILTER((LANG(?label)) = "en")
 
 let attractions: Record<QNumber, number> = {}
 
-export async function preload(): Promise<string[]> {
-	console.time('wikidata-attractions')
-
+export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
 	const result = await sparqlQuerySimplified(query)
 	const resultAttractions: Attraction[] = result as any
 
@@ -33,9 +31,7 @@ export async function preload(): Promise<string[]> {
 			return coll
 		}, {})
 
-	console.timeLog('wikidata-attractions', Object.keys(attractions).length)
-
-	console.timeEnd('wikidata-attractions')
+	logger(Object.keys(attractions).length)
 	return Object.keys(attractions)
 }
 

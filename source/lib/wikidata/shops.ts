@@ -50,9 +50,7 @@ OPTIONAL { ?product wdt:P18 ?image. }
 }`
 }
 
-export async function preload(): Promise<string[]> {
-	console.time('wikidata-shops')
-
+export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
 	const shopTypesArr = await stagedAsync(
 		sparqlQuerySimplifiedMinified,
 		toplevelShopCategories.map(o => shopTypesQuery(o))
@@ -60,24 +58,23 @@ export async function preload(): Promise<string[]> {
 
 	const allShopTypes = shopTypesArr
 		.filter(arrayFilterUnique())
-	console.timeLog('wikidata-shops', 'allShopTypes', allShopTypes.length)
+	logger('allShopTypes', allShopTypes.length)
 
 	const shopTypes = allShopTypes
 		.filter(o => !blacklist.basicIncludes(o))
-	console.timeLog('wikidata-shops', 'shopTypes without blacklisted ones', shopTypes.length)
+	logger('shopTypes without blacklisted ones', shopTypes.length)
 
 	const products = await stagedAsync(
 		loadProducts,
 		shopTypes
 	)
 
-	console.timeLog('wikidata-shops', 'products', products.length)
+	logger('products', products.length)
 
 	const amountRemoved = removeNotAnymoreExistingShops(shopTypes)
-	console.timeLog('wikidata-shops', 'old shops removed', amountRemoved)
+	logger('old shops removed', amountRemoved)
 
-	console.timeLog('wikidata-shops', 'shops with products', Object.keys(shopsWithProducts).length)
-	console.timeEnd('wikidata-shops')
+	logger('shops with products', Object.keys(shopsWithProducts).length)
 	return [
 		...Object.keys(shopsWithProducts),
 		...products

@@ -10,6 +10,8 @@ import * as production from './production'
 import * as sets from './sets'
 import * as shops from './shops'
 
+type Logger = (...args: any[]) => void
+
 export async function preload(store: WikidataEntityStore): Promise<void> {
 	console.time('wikidata preload')
 	const qNumbers: string[] = []
@@ -17,17 +19,17 @@ export async function preload(store: WikidataEntityStore): Promise<void> {
 	await preloadSpecific('resourceKeys', async () => store.addResourceKeyYaml(
 		readFileSync('wikidata-items.yaml', 'utf8')
 	))
-	await preloadSpecific('name', async () => name.preload())
+	await preloadSpecific('name', async logger => name.preload(logger))
 	await preloadSpecific('blacklist', async () => blacklist.preload())
-	qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
-	qNumbers.push(...await preloadSpecific('production', async () => production.preload()))
-	qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))
-	qNumbers.push(...await preloadSpecific('shops', async () => shops.preload()))
+	qNumbers.push(...await preloadSpecific('attractions', async logger => attractions.preload(logger)))
+	qNumbers.push(...await preloadSpecific('production', async logger => production.preload(logger)))
+	qNumbers.push(...await preloadSpecific('sets', async logger => sets.preload(logger)))
+	qNumbers.push(...await preloadSpecific('shops', async logger => shops.preload(logger)))
 
 	await preloadSpecific('preload wdItems', async () => store.preloadQNumbers(...qNumbers))
 
 	// Load them last to see how much is missing
-	await preloadSpecific('in-use-items', async () => inUseItems.preload(store))
+	await preloadSpecific('in-use-items', async logger => inUseItems.preload(store, logger))
 
 	console.timeEnd('wikidata preload')
 }
@@ -45,10 +47,10 @@ export async function update(store: WikidataEntityStore): Promise<void> {
 		qNumbers.push(...resourceKeyQItems)
 
 		await preloadSpecific('blacklist', async () => blacklist.preload())
-		qNumbers.push(...await preloadSpecific('attractions', async () => attractions.preload()))
-		qNumbers.push(...await preloadSpecific('production', async () => production.preload()))
-		qNumbers.push(...await preloadSpecific('sets', async () => sets.preload()))
-		qNumbers.push(...await preloadSpecific('shops', async () => shops.preload()))
+		qNumbers.push(...await preloadSpecific('attractions', async logger => attractions.preload(logger)))
+		qNumbers.push(...await preloadSpecific('production', async logger => production.preload(logger)))
+		qNumbers.push(...await preloadSpecific('sets', async logger => sets.preload(logger)))
+		qNumbers.push(...await preloadSpecific('shops', async logger => shops.preload(logger)))
 
 		await preloadSpecific('update wdItems', async () => store.updateQNumbers(qNumbers))
 	} catch (_) {
@@ -58,10 +60,15 @@ export async function update(store: WikidataEntityStore): Promise<void> {
 	console.timeEnd('wikidata preload')
 }
 
-async function preloadSpecific<T>(title: string, loadFunc: () => Promise<T>): Promise<T> {
+async function preloadSpecific<T>(title: string, loadFunc: (log: Logger) => Promise<T>): Promise<T> {
 	try {
+		const identifier = `wikidata preload ${title}`
+		const logFn: Logger = (...args) => console.timeLog(identifier, ...args)
+
 		console.timeLog('wikidata preload', 'start', title)
-		const result = await loadFunc()
+		console.time(identifier)
+		const result = await loadFunc(logFn)
+		console.timeEnd(identifier)
 		console.timeLog('wikidata preload', 'finish', title)
 		return result
 	} catch (error) {

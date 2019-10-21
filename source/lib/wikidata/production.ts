@@ -36,16 +36,19 @@ export function getParts(product: string): readonly string[] {
 	return producable[product] || []
 }
 
-export async function preload(): Promise<string[]> {
+export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
 	const resultsArr = await sequentialAsync(preloadCategory, CATEGORIES)
+	logger('finished queries')
 
 	const results = joinDictArrayArrays(resultsArr)
+	logger('products', Object.keys(results).length)
 	for (const o of Object.keys(results)) {
 		if (blacklist.basicIncludes(o)) {
 			delete results[o]
 		}
 	}
 
+	logger('products after blacklist', Object.keys(results).length)
 	producable = results
 
 	const keys = Object.keys(producable)
