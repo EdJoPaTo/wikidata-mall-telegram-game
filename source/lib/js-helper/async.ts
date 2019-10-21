@@ -20,8 +20,13 @@ export async function stagedAsync<Argument, Result>(func: (arg: Argument) => Pro
 	return results.flat()
 }
 
-export async function sequentialAsync<Argument>(func: (arg: Argument) => Promise<void>, args: readonly Argument[]): Promise<void> {
+export async function sequentialAsync<Argument, Result>(func: (arg: Argument) => Promise<Result>, args: readonly Argument[]): Promise<Result[]> {
+	const result = []
 	for (const o of args) {
-		await func(o)
+		result.push(
+			await func(o)
+		)
 	}
+
+	return result
 }
