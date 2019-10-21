@@ -256,7 +256,10 @@ async function menuText(ctx: any): Promise<string> {
 			break
 
 		case 'mallProduction':
-			text += infoHeader(ctx.wd.r(production.itemToProduce))
+			if (production.itemToProduce) {
+				text += infoHeader(ctx.wd.r(production.itemToProduce))
+			}
+
 			text += await generateTable(await getMallProductionTable(), mall && mall.chat.id, o => formatInt(o))
 			break
 
