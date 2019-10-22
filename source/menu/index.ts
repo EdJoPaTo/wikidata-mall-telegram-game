@@ -30,6 +30,9 @@ function menuText(ctx: any): string {
 	text += '\n'
 
 	text += ctx.i18n.t('menu.welcome')
+	text += '\n'
+	text += emojis.warning
+	text += ctx.i18n.t('menu.wikidataContentWarning')
 
 	text += '\n'
 	text += '⚠️*BETA*\n'

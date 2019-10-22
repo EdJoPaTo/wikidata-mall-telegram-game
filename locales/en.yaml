@@ -8,6 +8,14 @@ menu:
     Everything you see here is from there: Every name, description, button label, picture, …
 
     When you improve items on Wikidata you can improve this game and other projects. 😎
+  wikidataContentWarning: >
+    Wikidata contains kinda everything existing in the real world.
+    Most of the Wikidata Items have images which are picturing exactly that.
+
+    Stuff like Greek art and drugs exists.
+    If it is on Wikidata it might appear within this game.
+
+    If you think Wikipedia is 18+ you should consider Wikidata (and this game) 18+ too.
   back: back
 mall:
   alreadyInDifferentMall: You are already in a different mall.
