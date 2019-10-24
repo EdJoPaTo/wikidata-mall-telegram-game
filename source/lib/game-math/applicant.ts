@@ -13,7 +13,7 @@ export function applicantSeats(skills: Skills): number {
 
 export function secondsBetweenApplicants(skills: Skills): number {
 	const applicantSpeedLevel = currentLevel(skills, 'applicantSpeed')
-	return 300 / (applicantSpeedLevel + 1)
+	return 480 / (applicantSpeedLevel + 1)
 }
 
 export function daysUntilRetirement(skills: Skills): {min: number; max: number} {

@@ -21,11 +21,11 @@ function secondsBetweenApplicantsMacro(t: ExecutionContext, applicantSpeedLevel:
 	t.is(secondsBetweenApplicants(skills), expected)
 }
 
-test('secondsBetweenApplicants level 0', secondsBetweenApplicantsMacro, 0, 300)
-test('secondsBetweenApplicants level 5', secondsBetweenApplicantsMacro, 5, 50)
-test('secondsBetweenApplicants level 9', secondsBetweenApplicantsMacro, 9, 30)
-test('secondsBetweenApplicants level 14', secondsBetweenApplicantsMacro, 14, 20)
-test('secondsBetweenApplicants level 24', secondsBetweenApplicantsMacro, 24, 12)
+test('secondsBetweenApplicants level 0', secondsBetweenApplicantsMacro, 0, 480)
+test('secondsBetweenApplicants level 5', secondsBetweenApplicantsMacro, 5, 80)
+test('secondsBetweenApplicants level 9', secondsBetweenApplicantsMacro, 9, 48)
+test('secondsBetweenApplicants level 14', secondsBetweenApplicantsMacro, 14, 32)
+test('secondsBetweenApplicants level 24', secondsBetweenApplicantsMacro, 24, 19.2)
 
 function daysUntilRetirementMacro(t: ExecutionContext, healthCareLevel: number, expectedMin: number, expectedMax: number): void {
 	const skills: Skills = {healthCare: healthCareLevel}
