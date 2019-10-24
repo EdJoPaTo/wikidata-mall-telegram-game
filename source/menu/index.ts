@@ -34,11 +34,6 @@ function menuText(ctx: any): string {
 	text += emojis.warning
 	text += ctx.i18n.t('menu.wikidataContentWarning')
 
-	text += '\n'
-	text += '⚠️*BETA*\n'
-	text += 'complete data reset may happen any time\n'
-	text += 'please join the [chat](https://t.me/WikidataMallChat) to discuss features and bugs :)\n'
-
 	return text
 }
 
