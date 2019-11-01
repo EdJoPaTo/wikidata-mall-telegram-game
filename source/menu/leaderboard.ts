@@ -52,7 +52,9 @@ async function getMatchingHobbiesTable(now: number): Promise<LeaderboardEntries<
 	for (const playerId of playerIds) {
 		const shops = allUserShops[playerId]
 		const currently = employeesWithFittingHobbyAmount(shops)
-		values[playerId] = currently
+		if (currently > 0) {
+			values[playerId] = currently
+		}
 	}
 
 	return {
