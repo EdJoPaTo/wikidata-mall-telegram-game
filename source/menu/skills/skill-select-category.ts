@@ -1,4 +1,5 @@
 import {markdown as format} from 'telegram-format'
+import arrayReduceGroupBy from 'array-reduce-group-by'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {Session, Persist} from '../../lib/types'
@@ -66,15 +67,7 @@ function menuText(ctx: any): string {
 	const categoriesSeenBefore = Object.keys(persist.skills[skill] || {})
 		.filter(o => !shops.includes(o))
 	const seenBeforeGroupedByLevel = categoriesSeenBefore
-		.reduce((coll: Record<number, string[]>, add) => {
-			const level = categorySkillSpecificLevel(persist.skills, skill, add)
-			if (!coll[level]) {
-				coll[level] = []
-			}
-
-			coll[level].push(add)
-			return coll
-		}, {})
+		.reduce(arrayReduceGroupBy(o => categorySkillSpecificLevel(persist.skills, skill, o)), {})
 
 	if (categoriesSeenBefore.length > 0) {
 		text +=	Object.keys(seenBeforeGroupedByLevel)
