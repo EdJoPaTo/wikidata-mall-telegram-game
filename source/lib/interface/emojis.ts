@@ -46,7 +46,6 @@ const basic: Record<string, string> = {
 	recruitment: '👏',
 	requireAttention: '🥺',
 	retirement: '👻',
-	robotTinkering: '🙈',
 	seat: '💺',
 	seatProtection: '🤕',
 	selling: '🤝',

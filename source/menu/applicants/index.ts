@@ -5,8 +5,6 @@ import {Person} from '../../lib/types/people'
 
 import {secondsBetweenApplicants, applicantSeats, canBeEmployed, sortIndexOfPerson} from '../../lib/game-math/applicant'
 
-import {createRobot} from '../../lib/game-logic/applicant'
-
 import {applicantInfluencesPart} from '../../lib/interface/applicants'
 import {emojis} from '../../lib/interface/emojis'
 import {formatFloat} from '../../lib/interface/format-number'
@@ -109,25 +107,6 @@ menu.selectSubmenu('a', availableApplicants, applicantMenu, {
 		const hasShopOfHobby = persist.shops.some(o => o.id === hobby)
 		const hasShopOfHobbyString = hasShopOfHobby ? emojis.hobbyMatch : ''
 		return `${hasShopOfHobbyString}${name.given} ${name.family}`
-	}
-})
-
-menu.button(buttonText(emojis.production + emojis.personRobot, 'person.type.robot'), 'craft-robot', {
-	hide: (ctx: any) => {
-		const {applicants, skills} = ctx.persist as Persist
-		const maxSeats = applicantSeats(skills)
-		return applicants.list.length >= maxSeats
-	},
-	doFunc: (ctx: any) => {
-		const {applicants, skills} = ctx.persist as Persist
-
-		const maxSeats = applicantSeats(skills)
-		if (applicants.list.length >= maxSeats) {
-			return ctx.answerCbQuery(emojis.requireAttention + emojis.seat)
-		}
-
-		const now = Date.now() / 1000
-		applicants.list.push(createRobot(skills, now))
 	}
 })
 

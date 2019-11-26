@@ -1,7 +1,7 @@
 import {Gaussian} from 'gaussian'
 
 import {Skills} from '../types/skills'
-import {RefinedWorker, RefinedState, Person, RobotWorker, Talents} from '../types/people'
+import {RefinedWorker, RefinedState, Person, Talents} from '../types/people'
 
 import {currentLevel} from './skill'
 import {MINIMAL_TALENT} from './constants'
@@ -55,13 +55,6 @@ export function sortIndexOfPerson(person: Person, now: number): number {
 	}
 
 	return 2
-}
-
-export function robotTinkerCost(robot: RobotWorker): number {
-	const tinkerAmount = robot.tinkeredAmount || 0
-	const index = tinkerAmount + 1
-	const base = 100000
-	return base * index
 }
 
 export function randomTalents(distribution: Gaussian, randomFunction: () => number = Math.random): Talents {

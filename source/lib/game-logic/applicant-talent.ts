@@ -10,7 +10,6 @@ export function talentsForType(type: PersonType): Talents {
 		case 'christmasAngel': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
 		case 'halloweenPumpkin': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
 		case 'refined': return randomTalents(distribution.refined)
-		case 'robot': return randomTalents(distribution.robot)
 		default: return randomTalents(distribution.temporary)
 	}
 }
@@ -23,7 +22,6 @@ const distribution: Record<string, Gaussian> = {
 	eventGood: gaussian(1.45, 0.15 ** 2),
 	eventBad: gaussian(1.05, 0.08 ** 2),
 	refined: gaussian(1.23, 0.18 ** 2),
-	robot: gaussian(1.28, 0.005 ** 2),
 	temporary: gaussian(1.08, 0.13 ** 2)
 }
 

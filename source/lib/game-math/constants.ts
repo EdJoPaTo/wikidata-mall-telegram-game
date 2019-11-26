@@ -4,9 +4,6 @@ export const PURCHASING_FACTOR = 0.95
 
 export const MINIMAL_TALENT = 0.001
 
-export const ROBOT_TINKER_INCREASE_LUCK = 0.6
-export const ROBOT_TINKER_CHANGE = 0.05
-
 export const EMPLOYMENT_PROTECTION_SECONDS = 30 * MINUTE_IN_SECONDS
 
 export const MALL_MIN_PEOPLE = 3

@@ -6,17 +6,13 @@ import {MINUTE_IN_SECONDS} from '../../lib/math/timestamp-constants'
 import {randomBetween} from '../../lib/math/probability'
 
 import {Person} from '../../lib/types/people'
-import {Persist, Session} from '../../lib/types'
+import {Persist} from '../../lib/types'
 
-import {canBeEmployed, minutesUntilGraduation, getRefinedState, robotTinkerCost} from '../../lib/game-math/applicant'
+import {canBeEmployed, minutesUntilGraduation, getRefinedState} from '../../lib/game-math/applicant'
 import {mallMemberAmountWithinLimits} from '../../lib/game-math/mall'
-
-import {tinkerWithRobot} from '../../lib/game-logic/applicant'
 
 import {buttonText, menuPhoto} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
-import {formatInt} from '../../lib/interface/format-number'
-import {labeledFloat} from '../../lib/interface/formatted-strings'
 import {personMarkdown, personStateEmoji, wdResourceKeyOfPerson} from '../../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from '../help'
@@ -35,7 +31,6 @@ function fromCtx(ctx: any): {applicantId: number; applicant: Person; hobbyIsFitt
 }
 
 function menuText(ctx: any): string {
-	const session = ctx.session as Session
 	const {applicant, hobbyIsFitting} = fromCtx(ctx)
 	const now = Date.now() / 1000
 
@@ -44,47 +39,11 @@ function menuText(ctx: any): string {
 	text += personMarkdown(ctx, applicant, hobbyIsFitting, now)
 	text += '\n\n'
 
-	if (applicant.type === 'robot') {
-		text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
-	}
-
 	return text
 }
 
 const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto(ctx => fromCtx(ctx).applicant.hobby)
-})
-
-function robotTinkerCostSuffix(ctx: any): string {
-	const {applicant} = fromCtx(ctx)
-	if (applicant.type !== 'robot') {
-		return ''
-	}
-
-	const cost = robotTinkerCost(applicant)
-	return `(${formatInt(cost)}${emojis.currency})`
-}
-
-menu.button(buttonText(emojis.robotTinkering, 'person.robotTinkering', {suffix: robotTinkerCostSuffix}), 'robotTinkering', {
-	hide: (ctx: any) => {
-		const {applicant} = fromCtx(ctx)
-		return applicant.type !== 'robot'
-	},
-	doFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		const {applicant} = fromCtx(ctx)
-		if (applicant.type !== 'robot') {
-			return
-		}
-
-		const cost = robotTinkerCost(applicant)
-		if (session.money < cost) {
-			return ctx.answerCbQuery(emojis.requireAttention + emojis.currency)
-		}
-
-		tinkerWithRobot(applicant)
-		session.money -= cost
-	}
 })
 
 menu.button(buttonText(emojis.personStudent, 'action.education'), 'educate', {

@@ -1,6 +1,6 @@
 import randomItem from 'random-item'
 
-import {Person, TALENTS, PersonType, RobotWorker, Name, PERSON_EVENT_TYPES} from '../types/people'
+import {Person, PersonType, Name, PERSON_EVENT_TYPES} from '../types/people'
 import {Skills} from '../types/skills'
 
 import * as wdName from '../wikidata/name'
@@ -12,7 +12,6 @@ import {randomBetween} from '../math/probability'
 import {relativePositionBetween} from '../math/distance'
 
 import {daysUntilRetirement} from '../game-math/applicant'
-import {ROBOT_TINKER_CHANGE, ROBOT_TINKER_INCREASE_LUCK} from '../game-math/constants'
 
 import {talentsForType} from './applicant-talent'
 
@@ -76,7 +75,6 @@ function hobbyForType(type: PersonType): string {
 		case 'alien': return wdSets.getRandom('alienHobby')
 		case 'christmasAngel': return wdSets.getRandom('hobbyChristmas')
 		case 'halloweenPumpkin': return wdSets.getRandom('hobbyHalloween')
-		case 'robot': return 'person.robotHobby'
 		default: return randomItem(wdShops.allShops())
 	}
 }
@@ -84,9 +82,7 @@ function hobbyForType(type: PersonType): string {
 function retirementTimestampForType(type: PersonType, skills: Skills, retirementRandom: number, now: number): number {
 	const retirement = daysUntilRetirement(skills)
 	let days: number
-	if (type === 'robot') {
-		days = retirement.max
-	} else if (PERSON_EVENT_TYPES.includes(type)) {
+	if (PERSON_EVENT_TYPES.includes(type)) {
 		days = randomBetween(retirement.min, retirement.max, 1 - retirementRandom)
 	} else {
 		days = randomBetween(retirement.min, retirement.max, retirementRandom)
@@ -94,18 +90,4 @@ function retirementTimestampForType(type: PersonType, skills: Skills, retirement
 
 	const retirementTimestamp = Math.floor(now + (DAY_IN_SECONDS * days))
 	return retirementTimestamp
-}
-
-export function createRobot(skills: Skills, now: number): RobotWorker {
-	return createSpecificApplicant('robot', skills, 1, now) as RobotWorker
-}
-
-export function tinkerWithRobot(robot: RobotWorker): void {
-	robot.tinkeredAmount = (robot.tinkeredAmount || 0) + 1
-
-	for (const t of TALENTS) {
-		const isImprovement = Math.random() < ROBOT_TINKER_INCREASE_LUCK
-		const change = isImprovement ? ROBOT_TINKER_CHANGE : -ROBOT_TINKER_CHANGE
-		robot.talents[t] += change
-	}
 }
