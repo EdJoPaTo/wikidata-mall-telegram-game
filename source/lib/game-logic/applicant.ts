@@ -57,7 +57,7 @@ function typeFromRandom(random: number, now: number): PersonType {
 		}
 	}
 
-	if (random > 0.95) {
+	if (random > 0.9) {
 		return 'robot'
 	}
 
