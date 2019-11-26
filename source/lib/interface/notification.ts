@@ -21,10 +21,6 @@ export function notificationText(notification: Notification, fireDate: Date): st
 		case 'employeeRetired':
 			text += emojis.retirement
 			break
-		case 'applicantGraduated':
-			text += emojis.graduation
-			text += emojis.personStudent
-			break
 		case 'mallProductionPartFinished':
 			text += emojis.productionFinished
 			text += emojis.production

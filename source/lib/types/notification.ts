@@ -1,5 +1,4 @@
 export type NotificationType =
-	'applicantGraduated' |
 	'employeeRetired' |
 	'mallAttractionDisaster' |
 	'mallProductionPartFinished' |

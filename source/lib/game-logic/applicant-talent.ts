@@ -9,8 +9,7 @@ export function talentsForType(type: PersonType): Talents {
 		case 'alien': return randomTalentsDistinct(distribution.alienOther, distribution.alienSell, distribution.alienOther)
 		case 'christmasAngel': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
 		case 'halloweenPumpkin': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
-		case 'refined': return randomTalents(distribution.refined)
-		default: return randomTalents(distribution.temporary)
+		default: return randomTalents(distribution.normal)
 	}
 }
 
@@ -21,8 +20,7 @@ const distribution: Record<string, Gaussian> = {
 	alienSell: gaussian(6, 0.5 ** 2),
 	eventGood: gaussian(1.45, 0.15 ** 2),
 	eventBad: gaussian(1.05, 0.08 ** 2),
-	refined: gaussian(1.23, 0.18 ** 2),
-	temporary: gaussian(1.08, 0.13 ** 2)
+	normal: gaussian(1.15, 0.18 ** 2)
 }
 
 /* DEBUG

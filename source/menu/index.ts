@@ -83,9 +83,8 @@ menu.submenu(buttonText(mallButtonEmojis, 'menu.mall'), 'mall', mall, {
 })
 
 function applicantEmoji(ctx: any): string {
-	const now = Date.now() / 1000
 	const {applicants} = ctx.persist as Persist
-	return applicantButtonEmoji(applicants.list, now)
+	return applicantButtonEmoji(applicants.list)
 }
 
 menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicants, {

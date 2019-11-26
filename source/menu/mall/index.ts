@@ -107,13 +107,12 @@ menu.submenu(buttonText(emojis.attraction, attractionLabelResourceKey), 'attract
 })
 
 function applicantEmoji(ctx: any): string {
-	const now = Date.now() / 1000
 	const {mall} = ctx.persist as Persist
 	if (!mall) {
 		throw new Error('user not part of a mall')
 	}
 
-	return applicantButtonEmoji(mall.applicants, now)
+	return applicantButtonEmoji(mall.applicants)
 }
 
 menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicantsMenu, {

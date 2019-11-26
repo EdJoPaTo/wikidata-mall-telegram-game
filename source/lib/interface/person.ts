@@ -6,7 +6,6 @@ import {Person, Talent, Name, TALENTS, Talents} from '../types/people'
 import {Session} from '../types'
 import {Shop} from '../types/shop'
 
-import {getRefinedState, canBeEmployed} from '../game-math/applicant'
 import {personalBonus, employeesWithFittingHobbyAmount} from '../game-math/personal'
 
 import {emojis} from './emojis'
@@ -15,33 +14,19 @@ import {labeledValue} from './formatted-strings'
 import {percentBonusString, percentString} from './format-percent'
 import * as formatQuickStats from './quick-stats'
 
-export function personStateEmoji(person: Person, now: number): string {
-	if (person.type === 'refined') {
-		const state = getRefinedState(person, now)
-		switch (state) {
-			case 'toddler':
-				return emojis.personToddler
-			case 'student':
-				return emojis.personStudent
-			case 'finished':
-				return emojis.personRefined
-			default:
-				throw new Error('unknown person state')
-		}
-	}
-
+export function personStateEmoji(person: Person): string {
 	switch (person.type) {
 		case 'alien': return emojis.personAlien
 		case 'christmasAngel': return emojis.christmasAngel
 		case 'halloweenPumpkin': return emojis.halloweenPumpkin
+		case 'refined': return emojis.personRefined
 		case 'robot': return emojis.personRobot
 		default: return emojis.personTemporary
 	}
 }
 
-export function wdResourceKeyOfPerson(person: Person, now: number): string {
-	const typeResourceKey = person.type === 'refined' ? getRefinedState(person, now) : person.type
-	return `person.type.${typeResourceKey}`
+export function wdResourceKeyOfPerson(person: Person): string {
+	return `person.type.${person.type}`
 }
 
 export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now: number): string {
@@ -51,8 +36,8 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	let text = ''
 	text += nameMarkdown(name)
 	text += '\n'
-	text += personStateEmoji(person, now)
-	text += ctx.wd.r(wdResourceKeyOfPerson(person, now)).label()
+	text += personStateEmoji(person)
+	text += ctx.wd.r(wdResourceKeyOfPerson(person)).label()
 	text += '\n'
 
 	text += isFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
@@ -66,16 +51,14 @@ export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now
 	text += emojis.retirement
 	text += labeledValue(ctx.wd.r('person.retirement'), humanReadableTimestamp(retirementTimestamp, locale, timeZone))
 
-	if (canBeEmployed(person, now)) {
-		text += '*'
-		text += ctx.wd.r('person.talent').label()
-		text += '*'
-		text += '\n'
+	text += '*'
+	text += ctx.wd.r('person.talent').label()
+	text += '*'
+	text += '\n'
 
-		text += (Object.keys(talents) as Talent[])
-			.map(t => talentLine(ctx, t, talents[t]))
-			.join('\n')
-	}
+	text += (Object.keys(talents) as Talent[])
+		.map(t => talentLine(ctx, t, talents[t]))
+		.join('\n')
 
 	return text.trim()
 }

@@ -1,7 +1,7 @@
 type QNumber = string
 type UnixTimestamp = number
 
-interface BasicPerson {
+export interface Person {
 	name: Name;
 	type: PersonType;
 	hobby: QNumber;
@@ -9,17 +9,6 @@ interface BasicPerson {
 	retirementTimestamp: UnixTimestamp;
 	talents: Talents;
 }
-
-export interface SimpleWorker extends BasicPerson {
-	type: Exclude<PersonType, 'refined'>;
-}
-
-export interface RefinedWorker extends BasicPerson {
-	type: 'refined';
-	graduation?: UnixTimestamp;
-}
-
-export type Person = SimpleWorker | RefinedWorker
 
 export interface Name {
 	given: string;
@@ -33,8 +22,6 @@ export type PersonType =
 	'refined' |
 	'robot' |
 	'temporary'
-
-export type RefinedState = 'toddler' | 'student' | 'finished'
 
 export const PERSON_EVENT_TYPES: PersonType[] = [
 	'christmasAngel',

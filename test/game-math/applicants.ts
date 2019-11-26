@@ -1,9 +1,8 @@
 import test, {ExecutionContext} from 'ava'
 
-import {RefinedWorker, RefinedState, SimpleWorker, Person} from '../../source/lib/types/people'
 import {Skills} from '../../source/lib/types/skills'
 
-import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement, minutesUntilGraduation, getRefinedState, canBeEmployed} from '../../source/lib/game-math/applicant'
+import {applicantSeats, secondsBetweenApplicants, daysUntilRetirement} from '../../source/lib/game-math/applicant'
 
 function applicantSeatsMacro(t: ExecutionContext, applicantSeatsLevel: number, expected: number): void {
 	const skills: Skills = {applicantSeats: applicantSeatsLevel}
@@ -40,64 +39,3 @@ test('daysUntilRetirement level 5', daysUntilRetirementMacro, 5, 0, 11)
 test('daysUntilRetirement level 10', daysUntilRetirementMacro, 10, 0, 16)
 test('daysUntilRetirement level 15', daysUntilRetirementMacro, 15, 0, 21)
 test('daysUntilRetirement level 25', daysUntilRetirementMacro, 25, 0, 31)
-
-test('minutesUntilGraduation', t => {
-	t.deepEqual(minutesUntilGraduation(), {min: 2, max: 15})
-})
-
-const basePerson = {
-	name: {given: 'A', family: 'B'},
-	hobby: 'Q5',
-	retirementTimestamp: 0,
-	talentModificationMean: 0,
-	talentModificationSigma: 0,
-	talents: {
-		purchasing: 0,
-		selling: 0,
-		storage: 0
-	}
-}
-
-const toddler: RefinedWorker = {
-	...basePerson,
-	type: 'refined'
-}
-
-const student: RefinedWorker = {
-	...basePerson,
-	type: 'refined',
-	graduation: 20
-}
-
-const refinedFinished: RefinedWorker = {
-	...basePerson,
-	type: 'refined',
-	graduation: 10
-}
-
-const temporaryWorker: SimpleWorker = {
-	...basePerson,
-	type: 'temporary'
-}
-
-const oldPerson: any = {
-	basePerson
-}
-
-function getRefinedStateMacro(t: ExecutionContext, person: RefinedWorker, expected: RefinedState): void {
-	t.is(getRefinedState(person, 15), expected)
-}
-
-test('getRefinedState toddler', getRefinedStateMacro, toddler, 'toddler')
-test('getRefinedState student', getRefinedStateMacro, student, 'student')
-test('getRefinedState refinedFinished', getRefinedStateMacro, refinedFinished, 'finished')
-
-function canBeEmployedMacro(t: ExecutionContext, person: Person, expected: boolean): void {
-	t.is(canBeEmployed(person, 15), expected)
-}
-
-test('canBeEmployed toddler', canBeEmployedMacro, toddler, false)
-test('canBeEmployed student', canBeEmployedMacro, student, false)
-test('canBeEmployed refinedFinished', canBeEmployedMacro, refinedFinished, true)
-test('canBeEmployed temporaryWorker', canBeEmployedMacro, temporaryWorker, true)
-test('canBeEmployed oldPerson', canBeEmployedMacro, oldPerson, true)

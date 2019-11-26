@@ -3,7 +3,6 @@ import WikidataEntityStore from 'wikidata-entity-store'
 
 import {Mall} from '../types/mall'
 import {Notification} from '../types/notification'
-import {Person, RefinedWorker} from '../types/people'
 import {Session, Persist} from '../types'
 import {Shop} from '../types/shop'
 
@@ -23,7 +22,6 @@ export function generateNotifications(userId: number, session: Session, persist:
 	return [
 		...generateProductsEmpty(persist.shops, persist.mall, entityStore, locale),
 		...generateShopsPersonalRetirement(session, persist.shops, entityStore),
-		...generateApplicantGraduation(persist.applicants.list),
 		...generateMallProductionPartFinished(userId, session, persist.mall, entityStore),
 		...generateMallAttractionDestruction(session, persist.mall, entityStore),
 		...generateSkill(session, entityStore)
@@ -67,21 +65,6 @@ function generateShopPersonalRetirement(session: Session, shop: Shop, entityStor
 			type: 'employeeRetired',
 			date: new Date(o.retirementTimestamp * 1000),
 			text: `${nameMarkdown(o.name)}\n${shopText}`
-		}))
-
-	return result
-}
-
-function generateApplicantGraduation(applicants: readonly Person[]): readonly Notification[] {
-	const refined = applicants
-		.filter(o => o.type === 'refined') as RefinedWorker[]
-
-	const result = refined
-		.filter(o => o.graduation)
-		.map((o): Notification => ({
-			type: 'applicantGraduated',
-			date: new Date(o.graduation! * 1000),
-			text: `${nameMarkdown(o.name)}`
 		}))
 
 	return result

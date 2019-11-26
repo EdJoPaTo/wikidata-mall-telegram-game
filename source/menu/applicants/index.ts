@@ -3,7 +3,7 @@ import TelegrafInlineMenu from 'telegraf-inline-menu'
 import {Session, Persist} from '../../lib/types'
 import {Person} from '../../lib/types/people'
 
-import {secondsBetweenApplicants, applicantSeats, canBeEmployed, sortIndexOfPerson} from '../../lib/game-math/applicant'
+import {secondsBetweenApplicants, applicantSeats} from '../../lib/game-math/applicant'
 
 import {applicantInfluencesPart} from '../../lib/interface/applicants'
 import {emojis} from '../../lib/interface/emojis'
@@ -19,21 +19,18 @@ import applicantMenu from './applicant'
 
 function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): string {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
-	const now = Date.now() / 1000
 
 	let text = ''
-	text += personStateEmoji(applicant, now)
+	text += personStateEmoji(applicant)
 	text += nameMarkdown(applicant.name)
 	text += '\n    '
 	text += isHobbyFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
 	text += ctx.wd.r(applicant.hobby).label()
-	if (canBeEmployed(applicant, now)) {
-		text += '\n    '
-		text += emojis.retirement
-		text += humanReadableTimestamp(applicant.retirementTimestamp, locale, timeZone)
-		text += '\n    '
-		text += personAllTalentsLine(applicant.talents)
-	}
+	text += '\n    '
+	text += emojis.retirement
+	text += humanReadableTimestamp(applicant.retirementTimestamp, locale, timeZone)
+	text += '\n    '
+	text += personAllTalentsLine(applicant.talents)
 
 	return text
 }
@@ -59,7 +56,6 @@ function menuText(ctx: any): string {
 
 		const shopIds = persist.shops.map(o => o.id)
 		text += persist.applicants.list
-			.sort((a, b) => sortIndexOfPerson(a, now) - sortIndexOfPerson(b, now))
 			.slice(offset, offset + 20)
 			.map(o => applicantEntry(ctx, o, shopIds.includes(o.hobby)))
 			.join('\n')
@@ -96,10 +92,9 @@ menu.selectSubmenu('a', availableApplicants, applicantMenu, {
 		session.page = page
 	},
 	prefixFunc: (ctx: any, key) => {
-		const now = Date.now() / 1000
 		const {applicants} = ctx.persist as Persist
 		const applicant = applicants.list[Number(key)]
-		return personStateEmoji(applicant, now)
+		return personStateEmoji(applicant)
 	},
 	textFunc: (ctx: any, key) => {
 		const persist = ctx.persist as Persist
