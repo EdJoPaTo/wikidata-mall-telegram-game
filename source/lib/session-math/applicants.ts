@@ -51,13 +51,3 @@ function addWaitingApplicants(applicants: Applicants, skills: Skills, now: numbe
 	// If not reset the timer to now
 	applicants.timestamp = Math.floor(maxSeats - applicants.list.length > 0 ? newTimestamp : now)
 }
-
-export function after(persist: Persist): void {
-	removeNextTalentModification(persist.applicants)
-}
-
-function removeNextTalentModification(applicants: Applicants): void {
-	for (const applicant of applicants.list) {
-		delete applicant.nextTalentModification
-	}
-}

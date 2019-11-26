@@ -8,7 +8,6 @@ interface BasicPerson {
 	seatProtectionUntil?: UnixTimestamp;
 	retirementTimestamp: UnixTimestamp;
 	talents: Talents;
-	nextTalentModification?: UnixTimestamp;
 }
 
 export interface SimpleWorker extends BasicPerson {

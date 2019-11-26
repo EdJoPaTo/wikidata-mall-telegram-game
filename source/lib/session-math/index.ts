@@ -57,8 +57,6 @@ export default function middleware(): Middleware<ContextMessageUpdate> {
 			await next()
 		}
 
-		applicants.after(persist)
-
 		notification(ctx.from.id, session, persist)
 	}
 }
