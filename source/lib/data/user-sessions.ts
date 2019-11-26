@@ -1,5 +1,4 @@
 import randomItem from 'random-item'
-import stringify from 'json-stable-stringify'
 
 import {Session} from '../types'
 
@@ -17,7 +16,7 @@ const localSession = new LocalSession({
 	database: 'persist/sessions.json',
 	// Format of storage/database (default: JSON.stringify / JSON.parse)
 	format: {
-		serialize: (obj: any) => stringify(obj, {space: '\t'}) + '\n',
+		serialize: (obj: any) => JSON.stringify(obj, null, '\t'),
 		deserialize: (str: string) => JSON.parse(str)
 	},
 	getSessionKey: (ctx: any) => `${ctx.from.id}`
