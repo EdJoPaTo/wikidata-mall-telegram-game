@@ -41,9 +41,9 @@ function typeFromRandom(random: number, now: number): PersonType {
 		return 'alien'
 	}
 
-	if (month === 10 && dayOfMonth > 15) {
+	if (month === 10 && dayOfMonth > 24) {
 		// October -> Halloween
-		const relativeDay = relativePositionBetween(15, 32, dayOfMonth + relativePositionOnDay)
+		const relativeDay = relativePositionBetween(24, 32, dayOfMonth + relativePositionOnDay)
 		const probability = relativeDay * 0.7
 		if (random < probability) {
 			return 'halloweenPumpkin'
@@ -51,7 +51,7 @@ function typeFromRandom(random: number, now: number): PersonType {
 	} else if (month === 12 && dayOfMonth <= 26) {
 		// December -> Christmas
 		const relativeDay = Math.min(1, relativePositionBetween(1, 24, dayOfMonth + relativePositionOnDay))
-		const probability = relativeDay * 0.7
+		const probability = relativeDay * 0.5
 		if (random < probability) {
 			return 'christmasAngel'
 		}
