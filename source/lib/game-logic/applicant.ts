@@ -61,7 +61,7 @@ function typeFromRandom(random: number, now: number): PersonType {
 		return 'robot'
 	}
 
-	return random > 0.6 ? 'refined' : 'temporary'
+	return 'refined'
 }
 
 function nameForType(type: PersonType): Name {
