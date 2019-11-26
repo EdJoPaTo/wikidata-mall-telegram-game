@@ -18,7 +18,7 @@ export function talentsForType(type: PersonType): Talents {
 const distribution: Record<string, Gaussian> = {
 	alienOther: gaussian(1.4, 0.1 ** 2),
 	alienSell: gaussian(6, 0.5 ** 2),
-	eventGood: gaussian(1.45, 0.15 ** 2),
+	eventGood: gaussian(1.4, 0.1 ** 2),
 	eventBad: gaussian(1.05, 0.08 ** 2),
 	normal: gaussian(1.15, 0.18 ** 2)
 }
