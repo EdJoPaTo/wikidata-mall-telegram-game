@@ -1,4 +1,4 @@
-import arrayFilterUnique from 'array-filter-unique/dist'
+import arrayFilterUnique from 'array-filter-unique'
 import stringify from 'json-stable-stringify'
 import WikidataEntityStore from 'wikidata-entity-store'
 

@@ -1,5 +1,5 @@
 import * as wdGot from 'wikidata-sdk-got'
-import arrayFilterUnique from 'array-filter-unique/dist'
+import arrayFilterUnique from 'array-filter-unique'
 
 const BLACKLIST_BASICS_TOPLEVEL = [
 	'Q18643213', // Military Equipment
