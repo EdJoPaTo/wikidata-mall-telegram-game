@@ -4,15 +4,6 @@ import {Talents, PersonType} from '../types/people'
 
 import {randomTalents, randomTalentsDistinct} from '../game-math/applicant'
 
-export function talentsForType(type: PersonType): Talents {
-	switch (type) {
-		case 'alien': return randomTalentsDistinct(distribution.alienOther, distribution.alienSell, distribution.alienOther)
-		case 'christmasAngel': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
-		case 'halloweenPumpkin': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
-		default: return randomTalents(distribution.normal)
-	}
-}
-
 // Gaussian takes sigma^2, everyone else takes sigma (standardDeviation)
 // -> use sigma and square it on startup
 const distribution: Record<string, Gaussian> = {
@@ -21,6 +12,15 @@ const distribution: Record<string, Gaussian> = {
 	eventGood: gaussian(1.4, 0.1 ** 2),
 	eventBad: gaussian(1.05, 0.08 ** 2),
 	normal: gaussian(1.15, 0.18 ** 2)
+}
+
+export function talentsForType(type: PersonType): Talents {
+	switch (type) {
+		case 'alien': return randomTalentsDistinct(distribution.alienOther, distribution.alienSell, distribution.alienOther)
+		case 'christmasAngel': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
+		case 'halloweenPumpkin': return randomTalentsDistinct(distribution.eventGood, distribution.eventBad, distribution.eventGood)
+		default: return randomTalents(distribution.normal)
+	}
 }
 
 /* DEBUG
