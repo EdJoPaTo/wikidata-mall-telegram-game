@@ -24,14 +24,14 @@ import {helpButtonText, createHelpMenu} from '../help'
 async function partLine(ctx: any, part: ProductionPart, now: number): Promise<string> {
 	const finished = part.finishTimestamp < now
 	const user = await userInfo.get(part.user)
-	const name = user ? user.first_name : '??'
+	const name = format.escape(user ? user.first_name : '??')
 	const isMe = ctx.from.id === part.user
 
 	let text = ''
-	text += format.bold(ctx.wd.r(part.part).label())
+	text += format.bold(format.escape(ctx.wd.r(part.part).label()))
 	text += '\n  '
 	text += finished ? emojis.productionFinished : emojis.countdown
-	text += isMe ? format.italic(name) : format.escape(name)
+	text += isMe ? format.italic(name) : name
 
 	if (!finished) {
 		text += ' '
@@ -107,7 +107,7 @@ async function menuText(ctx: any): Promise<string> {
 
 	text += missing
 		.map(o => ctx.wd.r(o).label())
-		.map(o => `${format.bold(o)}\n  ${emojis.noPerson}`)
+		.map(o => `${format.bold(format.escape(o))}\n  ${emojis.noPerson}`)
 		.join('\n')
 
 	return text

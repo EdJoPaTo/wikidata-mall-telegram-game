@@ -1,4 +1,4 @@
-import {markdown as format} from 'telegram-format/dist'
+import {markdown as format} from 'telegram-format'
 import TelegrafInlineMenu from 'telegraf-inline-menu'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
@@ -26,7 +26,7 @@ function menuText(ctx: any): string {
 
 	text += parts
 		.map(o => ctx.wd.r(o) as WikidataEntityReader)
-		.map(o => format.url(o.label(), o.url()))
+		.map(o => format.url(format.escape(o.label()), o.url()))
 		.join(', ')
 
 	return text

@@ -48,7 +48,7 @@ function menuText(ctx: any): string {
 	text += '\n'
 
 	if (ctx.match instanceof Object && ctx.match[1]) {
-		text += format.bold(ctx.match[1])
+		text += format.bold(format.escape(ctx.match[1]))
 		text += '\n\n'
 	}
 

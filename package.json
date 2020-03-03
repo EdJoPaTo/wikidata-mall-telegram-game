@@ -43,7 +43,7 @@
 		"telegraf-inline-menu": "^4.0.0",
 		"telegraf-session-local": "^1.0.2",
 		"telegraf-wikibase": "^0.4.0",
-		"telegram-format": "^1.1.0",
+		"telegram-format": "^2.0.0",
 		"telegram-typings": "^3.6.1",
 		"timezone-support": "^2.0.2",
 		"wikidata-entity-reader": "^1.3.0",

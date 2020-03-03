@@ -63,7 +63,7 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 
 		let caption = ''
 		caption += '😘'
-		caption += format.url(ctx.from!.first_name, `tg://user?id=${ctx.from.id}`)
+		caption += format.url(format.escape(ctx.from!.first_name), `tg://user?id=${ctx.from.id}`)
 		caption += '\n\n'
 		caption += personMarkdown(ctx, applicant, false, now)
 

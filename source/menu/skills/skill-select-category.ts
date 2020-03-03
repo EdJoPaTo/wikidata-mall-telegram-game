@@ -77,7 +77,7 @@ function menuText(ctx: any): string {
 		text += '\n\n'
 	}
 
-	text += format.bold(ctx.wd.r('menu.shop').label())
+	text += format.bold(format.escape(ctx.wd.r('menu.shop').label()))
 	text += '\n'
 	text +=	shops
 		.map(o => categorySkillLine(ctx, persist.skills, skill, o))

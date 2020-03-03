@@ -77,9 +77,9 @@ export function attractionDisasterNotification(attraction: Attraction, entitySto
 	const disasterReader = new WikidataEntityReader(entityStore.entity(attraction.disasterKind), locale)
 
 	let text = ''
-	text += format.bold(
+	text += format.bold(format.escape(
 		disasterReader.label()
-	)
+	))
 	text += '\n'
 	text += attractionReader.label()
 

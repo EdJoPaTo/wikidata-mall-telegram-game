@@ -21,7 +21,7 @@ export function infoHeader(wdr: WikidataEntityReader, options: InfoHeaderOptions
 		text += ' '
 	}
 
-	text += format.bold(label)
+	text += format.bold(format.escape(label))
 
 	if (titleSuffix) {
 		text += ' '

@@ -184,8 +184,9 @@ function entryLine(index: number, name: string, formattedValue: string, highligh
 
 	const parts: string[] = []
 	parts.push(`${rank}.`)
-	parts.push(format.italic(formattedValue))
-	parts.push(highlighted ? format.bold(name) : format.escape(name))
+	parts.push(format.italic(format.escape(formattedValue)))
+	const escapedName = format.escape(name)
+	parts.push(highlighted ? format.bold(escapedName) : escapedName)
 
 	return parts.join(' ')
 }
