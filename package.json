@@ -7,8 +7,8 @@
 	"repository": "EdJoPaTo/wikidata-mall-telegram-game",
 	"author": {
 		"name": "EdJoPaTo",
-		"email": "edjopato@gmail.com",
-		"url": "edjopato.de"
+		"email": "wikidata-mall-telegram-game@edjopato.de",
+		"url": "https://edjopato.de"
 	},
 	"engines": {
 		"node": ">=12"
