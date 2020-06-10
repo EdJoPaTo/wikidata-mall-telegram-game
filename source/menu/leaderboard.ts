@@ -75,7 +75,7 @@ async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
 		const shops = allUserShops[playerId]
 		const skills: Skills = allUserSkills[playerId] || {}
 		const roi = returnOnInvestment(shops, skills)
-		if (!isFinite(roi)) {
+		if (!Number.isFinite(roi)) {
 			continue
 		}
 
@@ -126,7 +126,7 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 		const income = shops
 			.map(o => maxSellPerMinute(o, skills, attractionHeight))
 			.reduce((a, b) => a + b, 0)
-		if (!isFinite(income) || income < 0.01) {
+		if (!Number.isFinite(income) || income < 0.01) {
 			continue
 		}
 

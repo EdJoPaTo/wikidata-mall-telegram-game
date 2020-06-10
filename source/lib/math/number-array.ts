@@ -20,6 +20,6 @@ export function calcQuickStats(numbers: readonly number[]): QuickStats {
 	}
 }
 
-export function numberArrayOnlyFinite(values: readonly (number | null | undefined)[]): number[] {
+export function numberArrayOnlyFinite(values: ReadonlyArray<number | null | undefined>): number[] {
 	return values.filter(o => o !== null && o !== undefined && Number.isFinite(o)) as number[]
 }

@@ -26,7 +26,7 @@ async function removeOldUsers(now: number): Promise<void> {
 		.map(o => Number(o))
 		.filter(o => {
 			const active = lastTimeActive(allShops[o])
-			return isFinite(active) && active < minTimestamp
+			return Number.isFinite(active) && active < minTimestamp
 		})
 
 	console.timeLog('removeOldUsers', toDelete.length, toDelete)
@@ -51,7 +51,7 @@ async function shopRemoveSoon(now: number): Promise<void> {
 		.map(o => Number(o))
 		.filter(o => {
 			const active = lastTimeActive(allShops[o])
-			return isFinite(active) && active < timestampSoon
+			return Number.isFinite(active) && active < timestampSoon
 		})
 
 	console.log('removeOldUsers soon', deleteWithin30d.length, deleteWithin30d)

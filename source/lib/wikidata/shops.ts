@@ -92,7 +92,7 @@ function removeNotAnymoreExistingShops(shops: string[]): number {
 }
 
 async function loadProducts(shopType: string): Promise<string[]> {
-	const result = await sparqlQuerySimplified(productsQuery(shopType)) as {product: string; image: string | undefined}[]
+	const result = await sparqlQuerySimplified(productsQuery(shopType)) as ReadonlyArray<{product: string; image: string | undefined}>
 
 	const products = result
 		.filter(o => o.image)

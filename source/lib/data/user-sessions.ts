@@ -1,29 +1,26 @@
+import LocalSession from 'telegraf-session-local'
 import randomItem from 'random-item'
 
 import {Session} from '../types'
 
-/* eslint @typescript-eslint/no-var-requires: warn */
-/* eslint @typescript-eslint/no-require-imports: warn */
-const LocalSession = require('telegraf-session-local')
-
 interface SessionRawEntry {
-	user: number;
-	data: Session;
+	readonly user: number;
+	readonly data: Session;
 }
 
-const localSession = new LocalSession({
+const localSession = new LocalSession<Session>({
 	// Database name/path, where sessions will be located (default: 'sessions.json')
 	database: 'persist/sessions.json',
 	// Format of storage/database (default: JSON.stringify / JSON.parse)
 	format: {
-		serialize: (obj: any) => JSON.stringify(obj, null, '\t'),
-		deserialize: (str: string) => JSON.parse(str)
+		serialize: object => JSON.stringify(object, null, '\t'),
+		deserialize: string => JSON.parse(string)
 	},
-	getSessionKey: (ctx: any) => `${ctx.from.id}`
+	getSessionKey: ctx => `${ctx.from.id}`
 })
 
 export function getRaw(): readonly SessionRawEntry[] {
-	return localSession.DB
+	return (localSession.DB as any)
 		.get('sessions').value()
 		.map((o: {id: string; data: any}) => {
 			const user = Number(o.id.split(':')[0])
@@ -32,7 +29,7 @@ export function getRaw(): readonly SessionRawEntry[] {
 }
 
 export function getUser(userId: number): any {
-	return localSession.DB
+	return (localSession.DB as any)
 		.get('sessions')
 		.getById(`${userId}`)
 		.get('data')
@@ -40,7 +37,7 @@ export function getUser(userId: number): any {
 }
 
 export function removeUser(userId: number): void {
-	return localSession.DB
+	return (localSession.DB as any)
 		.get('sessions')
 		.removeById(String(userId))
 }
@@ -52,5 +49,5 @@ export function getRandomUser(filter: (o: SessionRawEntry) => boolean = () => tr
 }
 
 export function middleware(): (ctx: any, next: any) => void {
-	return localSession.middleware()
+	return localSession.middleware() as any
 }

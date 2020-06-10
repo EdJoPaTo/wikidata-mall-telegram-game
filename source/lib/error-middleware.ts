@@ -1,4 +1,4 @@
-import {ContextMessageUpdate, Middleware, Extra} from 'telegraf'
+import {Context as TelegrafContext, Middleware, Extra} from 'telegraf'
 import {InlineKeyboardMarkup} from 'telegram-typings'
 
 export type ErrorMatchRule = RegExp | string
@@ -25,7 +25,7 @@ export class ErrorMiddleware {
 		this._userText = options.text
 	}
 
-	middleware(): Middleware<ContextMessageUpdate> {
+	middleware(): Middleware<TelegrafContext> {
 		return async (ctx, next) => {
 			try {
 				if (next) {
@@ -98,7 +98,7 @@ export class ErrorMiddleware {
 	}
 }
 
-function getUpdateContext(ctx: ContextMessageUpdate): Array<string | number | undefined> {
+function getUpdateContext(ctx: TelegrafContext): Array<string | number | undefined> {
 	const infos: Array<string | number | undefined> = []
 
 	if (ctx.chat) {

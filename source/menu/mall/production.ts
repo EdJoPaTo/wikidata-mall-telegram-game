@@ -57,8 +57,8 @@ async function menuText(ctx: any): Promise<string> {
 	}
 
 	const parts = getParts(itemToProduce)
-	const inProduction = mall.production.map(o => o.part)
-	const missing = parts.filter(o => !inProduction.includes(o))
+	const inProduction = new Set(mall.production.map(o => o.part))
+	const missing = parts.filter(o => !inProduction.has(o))
 
 	const currentlyBeeingProduced = mall.production.filter(o => o.finishTimestamp > now)
 	const productionMinutes = productionSeconds(currentlyBeeingProduced.length) / MINUTE_IN_SECONDS
@@ -134,9 +134,9 @@ async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
 
 	const {itemToProduce} = await mallProduction.get()
 	const parts = getParts(itemToProduce!)
-	const takenParts = mall.production.map(o => o.part)
+	const takenParts = new Set(mall.production.map(o => o.part))
 	const notTakenParts = parts
-		.filter(o => !takenParts.includes(o))
+		.filter(o => !takenParts.has(o))
 	return notTakenParts
 }
 

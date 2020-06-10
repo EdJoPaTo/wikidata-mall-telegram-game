@@ -77,6 +77,6 @@ test('recreateDictWithGivenKeyOrder fails on numeric keys', t => {
 
 	t.throws(
 		() => recreateDictWithGivenKeyOrder(input, ['8', '5', '2', '0']),
-		/numbers.+optimization/
+		{message: /numbers.+optimization/}
 	)
 })

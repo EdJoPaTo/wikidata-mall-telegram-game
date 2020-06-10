@@ -54,10 +54,10 @@ function menuText(ctx: any): string {
 		const page = Math.min(session.page || 1, maxPages)
 		const offset = (page - 1) * 20
 
-		const shopIds = persist.shops.map(o => o.id)
+		const shopIds = new Set(persist.shops.map(o => o.id))
 		text += persist.applicants.list
 			.slice(offset, offset + 20)
-			.map(o => applicantEntry(ctx, o, shopIds.includes(o.hobby)))
+			.map(o => applicantEntry(ctx, o, shopIds.has(o.hobby)))
 			.join('\n')
 		text += '\n\n'
 	}

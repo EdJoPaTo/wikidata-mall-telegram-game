@@ -53,7 +53,7 @@ export async function update(store: WikidataEntityStore): Promise<void> {
 		qNumbers.push(...await preloadSpecific('shops', async logger => shops.preload(logger)))
 
 		await preloadSpecific('update wdItems', async () => store.updateQNumbers(qNumbers))
-	} catch (_) {
+	} catch {
 		// Ignore update error. It is logged anyway and the game can run without the update working
 	}
 

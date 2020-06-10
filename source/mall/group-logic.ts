@@ -1,4 +1,4 @@
-import {Composer, Extra, Markup, ContextMessageUpdate} from 'telegraf'
+import {Composer, Extra, Markup, Context as TelegrafContext} from 'telegraf'
 import stringify from 'json-stable-stringify'
 
 import {Mall} from '../lib/types/mall'
@@ -12,7 +12,7 @@ import {emojis} from '../lib/interface/emojis'
 
 const bot = new Composer()
 
-async function replyJoinMessage(ctx: ContextMessageUpdate): Promise<void> {
+async function replyJoinMessage(ctx: TelegrafContext): Promise<void> {
 	const button = Markup.callbackButton((ctx as any).wd.r('mall.participation').label(), 'join')
 	const keyboard = Markup.inlineKeyboard([
 		button
@@ -25,7 +25,7 @@ async function replyJoinMessage(ctx: ContextMessageUpdate): Promise<void> {
 	await ctx.reply(text, Extra.markdown().inReplyTo(ctx.message!.message_id).markup(keyboard))
 }
 
-async function checkEveryMemberAndRemoveIfNeeded(ctx: ContextMessageUpdate, mallData: Mall): Promise<void> {
+async function checkEveryMemberAndRemoveIfNeeded(ctx: TelegrafContext, mallData: Mall): Promise<void> {
 	const remaining = await Promise.all(
 		mallData.member.map(async memberId => {
 			try {
@@ -48,13 +48,13 @@ async function checkEveryMemberAndRemoveIfNeeded(ctx: ContextMessageUpdate, mall
 }
 
 if (process.env.NODE_ENV !== 'production') {
-	bot.use((ctx, next) => {
+	bot.use(async (ctx, next) => {
 		console.log('happened in chat:', ctx.updateType, ctx.updateSubTypes, ctx.chat)
-		return next && next()
+		return next()
 	})
 }
 
-bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async (ctx: ContextMessageUpdate) => {
+bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async (ctx: TelegrafContext) => {
 	if (ctx.updateSubTypes.includes('migrate_to_chat_id')) {
 		return
 	}
@@ -79,7 +79,7 @@ bot.use(async (ctx, next) => {
 		}
 	}
 
-	return next && next()
+	return next()
 })
 
 bot.on('left_chat_member', async ctx => {
@@ -111,7 +111,7 @@ bot.on('migrate_from_chat_id', async ctx => {
 
 bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.username), async (ctx, next) => {
 	await ctx.reply((ctx as any).i18n.t('mall.groupPrivate'))
-	return next && next()
+	return next()
 }))
 
 bot.on(['group_chat_created', 'new_chat_members'], async ctx => {

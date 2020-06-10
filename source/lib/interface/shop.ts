@@ -22,7 +22,7 @@ export function incomePart(ctx: any, shops: readonly Shop[], persist: Persist, s
 		.map(o => currentSellPerMinute(o, skills, mallAttractionHeight))
 		.reduce((a, b) => a + b, 0)
 
-	if (!isFinite(income)) {
+	if (!Number.isFinite(income)) {
 		return ''
 	}
 

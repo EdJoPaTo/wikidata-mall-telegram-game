@@ -85,7 +85,7 @@ menu.simpleButton(buttonText(emojis.construction, 'action.construction'), 'const
 		session.money -= cost
 		persist.shops.push(newShop)
 		await ctx.answerCbQuery(emojis.yes)
-		await replyMenu.middleware()(ctx, undefined)
+		await replyMenu.middleware()(ctx, async () => {/* next does nothing */})
 	}
 })
 

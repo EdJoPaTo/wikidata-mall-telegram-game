@@ -1,6 +1,6 @@
 import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
 
-import {ContextMessageUpdate, Middleware} from 'telegraf'
+import {Context as TelegrafContext, Middleware} from 'telegraf'
 import {User} from 'telegram-typings'
 import stringify from 'json-stable-stringify'
 
@@ -20,7 +20,7 @@ export async function remove(userId: number): Promise<void> {
 	return data.delete(String(userId))
 }
 
-export function middleware(): Middleware<ContextMessageUpdate> {
+export function middleware(): Middleware<TelegrafContext> {
 	return async (ctx, next) => {
 		if (ctx.from) {
 			const old = await data.get(String(ctx.from.id))
@@ -31,6 +31,6 @@ export function middleware(): Middleware<ContextMessageUpdate> {
 			}
 		}
 
-		return next && next()
+		return next()
 	}
 }

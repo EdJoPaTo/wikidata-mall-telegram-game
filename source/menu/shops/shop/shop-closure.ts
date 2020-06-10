@@ -93,7 +93,7 @@ menu.simpleButton(buttonText(emojis.yes + emojis.close, 'action.close'), 'remove
 		persist.shops = persist.shops.filter(o => o.id !== shop.id)
 		session.money += reward
 
-		await replyMenu.middleware()(ctx, undefined)
+		await replyMenu.middleware()(ctx, async () => {/* next does nothing */})
 	}
 })
 

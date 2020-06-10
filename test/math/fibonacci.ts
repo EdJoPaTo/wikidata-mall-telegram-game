@@ -12,18 +12,18 @@ test('stateful example', t => {
 })
 
 test('fillArray example', t => {
-	const arr = [0, 1]
-	fillArray(arr, 5)
-	t.deepEqual(arr, [0, 1, 1, 2, 3, 5])
+	const array = [0, 1]
+	fillArray(array, 5)
+	t.deepEqual(array, [0, 1, 1, 2, 3, 5])
 })
 
 test('fillArray does not work to infinity', t => {
-	const arr = [0, 1]
-	t.throws(() => fillArray(arr, Infinity), /finite/)
+	const array = [0, 1]
+	t.throws(() => fillArray(array, Infinity), {message: /finite/})
 })
 
 test('fillArray does need start numbers', t => {
-	t.throws(() => fillArray([], 5), /array.+too short/)
+	t.throws(() => fillArray([], 5), {message: /array.+too short/})
 })
 
 test('cached works', t => {

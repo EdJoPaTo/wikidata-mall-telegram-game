@@ -11,7 +11,7 @@
 		"url": "https://edjopato.de"
 	},
 	"engines": {
-		"node": ">=12"
+		"node": ">=14"
 	},
 	"scripts": {
 		"build": "del dist && tsc",
@@ -30,7 +30,7 @@
 		"@edjopato/datastore": "^0.1.0",
 		"array-filter-unique": "^2.1.0",
 		"array-reduce-group-by": "^1.0.0",
-		"emoji-regex": "^8.0.0",
+		"emoji-regex": "^9.0.0",
 		"full-icu": "^1.3.0",
 		"gaussian": "^1.1.0",
 		"json-stable-stringify": "^1.0.1",
@@ -38,15 +38,15 @@
 		"node-schedule": "^1.3.2",
 		"random-item": "^3.0.0",
 		"source-map-support": "^0.5.13",
-		"telegraf": "^3.30.1",
+		"telegraf": "^3.38.0",
 		"telegraf-i18n": "^6.5.0",
 		"telegraf-inline-menu": "^4.0.0",
-		"telegraf-session-local": "^1.0.2",
+		"telegraf-session-local": "^1.0.3",
 		"telegraf-wikibase": "^0.4.0",
 		"telegram-format": "^2.0.0",
 		"telegram-typings": "^3.6.1",
 		"timezone-support": "^2.0.2",
-		"wikidata-entity-reader": "^1.3.0",
+		"wikidata-entity-reader": "^2.0.0",
 		"wikidata-entity-store": "^2.0.1",
 		"wikidata-sdk-got": "^1.1.1"
 	},
@@ -55,18 +55,14 @@
 		"@types/emoji-regex": "^8.0.0",
 		"@types/gaussian": "^1.1.1",
 		"@types/json-stable-stringify": "^1.0.32",
-		"@types/node": "^13.7.7",
+		"@types/node": "^14.0.13",
 		"@types/node-schedule": "^1.2.3",
-		"ava": "^2.1.0",
+		"ava": "^3.8.2",
 		"del-cli": "^3.0.0",
 		"nyc": "^15.0.0",
 		"ts-node": "^8.0.2",
 		"typescript": "^3.7.2",
-		"xo": "^0.27.2"
-	},
-	"ava": {
-		"babel": false,
-		"compileEnhancements": false
+		"xo": "^0.32.0"
 	},
 	"nyc": {
 		"extension": [
@@ -86,24 +82,18 @@
 		]
 	},
 	"xo": {
-		"semi": false,
-		"extends": "xo-typescript",
-		"extensions": [
-			"ts"
-		],
+		"semicolon": false,
 		"rules": {
 			"ava/no-ignored-test-files": "off",
-			"require-atomic-updates": "warn",
-			"@typescript-eslint/array-type": "warn",
-			"@typescript-eslint/no-dynamic-delete": "warn",
+			"require-atomic-updates": "off",
+			"unicorn/no-fn-reference-in-iterator": "off",
+			"unicorn/no-reduce": "off",
+			"unicorn/prevent-abbreviations": "off",
+			"@typescript-eslint/no-dynamic-delete": "off",
 			"@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
 			"@typescript-eslint/prefer-nullish-coalescing": "off",
 			"@typescript-eslint/prefer-optional-chain": "off",
-			"@typescript-eslint/restrict-template-expressions": "off",
-			"@typescript-eslint/semi": [
-				"error",
-				"never"
-			]
+			"@typescript-eslint/restrict-template-expressions": "off"
 		}
 	}
 }

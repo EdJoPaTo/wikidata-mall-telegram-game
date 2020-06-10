@@ -1,4 +1,0 @@
-start - open the menu
-production - add products to the production vote
-language - set your language
-settings - open settings

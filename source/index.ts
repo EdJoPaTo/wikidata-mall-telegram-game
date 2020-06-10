@@ -57,8 +57,6 @@ bot.use(new ErrorMiddleware({
 
 bot.use(data.middleware())
 
-removeOld()
-
 const i18n = new TelegrafI18n({
 	directory: 'locales',
 	defaultLanguage: 'en',
@@ -119,6 +117,14 @@ bot.catch((error: any) => {
 
 async function startup(): Promise<void> {
 	try {
+		await bot.telegram.setMyCommands([
+			{command: 'start', description: 'open the menu'},
+			{command: 'language', description: 'set your language'},
+			{command: 'settings', description: 'open settings'}
+		])
+
+		await removeOld()
+
 		if (process.env.NODE_ENV === 'production') {
 			console.time('check-mall-groups')
 			await fixMallDataForAllMalls(bot.telegram)
@@ -137,4 +143,4 @@ async function startup(): Promise<void> {
 	}
 }
 
-startup()
+void startup()

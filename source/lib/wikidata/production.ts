@@ -61,7 +61,7 @@ export async function preload(logger: (...args: any[]) => void): Promise<string[
 
 async function preloadCategory(category: string): Promise<Record<string, string[]>> {
 	const query = buildQuery(category)
-	const result = await sparqlQuerySimplified(query) as readonly Record<string, string>[]
+	const result = await sparqlQuerySimplified(query) as ReadonlyArray<Record<string, string>>
 
 	const reduced = result.reduce(reduceRowsIntoKeyValue, {})
 	const filteredKeys = filterDictKeysByValues(reduced, (_, v) => v.length >= 3)

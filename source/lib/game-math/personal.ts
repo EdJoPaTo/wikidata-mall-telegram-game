@@ -20,7 +20,7 @@ export function personalBonusWhenEmployed(shop: Shop, talent: Talent, person?: P
 }
 
 export function allEmployees(personal: Personal): readonly Person[] {
-	const withUndefined: (Person | undefined)[] = Object.values(personal)
+	const withUndefined: Array<Person | undefined> = Object.values(personal)
 	return withUndefined.filter(o => o) as Person[]
 }
 

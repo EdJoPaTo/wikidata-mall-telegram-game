@@ -34,10 +34,10 @@ export function incomeLoop(session: Session, persist: Persist, now: number): voi
 }
 
 function ensureCurrentlyTrainedSkillForShopHasItsShop(session: Session, persist: Persist): void {
-	const existingShops = persist.shops.map(o => o.id)
+	const existingShops = new Set(persist.shops.map(o => o.id))
 
 	const endTimestampsWhichAreBad = session.skillQueue
-		.filter(o => o.category && !existingShops.includes(o.category))
+		.filter(o => o.category && !existingShops.has(o.category))
 		.map(o => o.endTimestamp)
 	const allowedEndTimestamp = Math.min(...endTimestampsWhichAreBad)
 	session.skillQueue = session.skillQueue

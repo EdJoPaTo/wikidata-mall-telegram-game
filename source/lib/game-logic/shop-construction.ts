@@ -30,7 +30,7 @@ export async function getCurrentConstructions(now: number): Promise<Construction
 
 	const after = stringify(data)
 	if (before !== after) {
-		dataShopConstruction.set(data)
+		await dataShopConstruction.set(data)
 	}
 
 	return data

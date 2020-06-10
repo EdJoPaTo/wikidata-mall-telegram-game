@@ -1,4 +1,4 @@
-import {ContextMessageUpdate, Middleware} from 'telegraf'
+import {Context as TelegrafContext, Middleware} from 'telegraf'
 import WikidataEntityStore from 'wikidata-entity-store'
 
 import {Session, Persist} from '../types'
@@ -10,7 +10,7 @@ import notification from './notification'
 import * as personal from './personal'
 import * as skills from './skills'
 
-export default function middleware(): Middleware<ContextMessageUpdate> {
+export default function middleware(): Middleware<TelegrafContext> {
 	return async (ctx: any, next) => {
 		const session = ctx.session as Session
 		const persist = ctx.persist as Persist
@@ -66,7 +66,7 @@ function init(session: Session, now: number): void {
 		session.gameStarted = now
 	}
 
-	if (!isFinite(session.money)) {
+	if (!Number.isFinite(session.money)) {
 		session.money = 300
 	}
 }

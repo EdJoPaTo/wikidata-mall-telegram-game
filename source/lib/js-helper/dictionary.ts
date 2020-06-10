@@ -1,7 +1,7 @@
 export function recreateDictWithGivenKeyOrder<T>(dict: Record<string, T>, newOrder: readonly string[]): Record<string, T> {
 	const result: Record<string, T> = {}
 	for (const key of newOrder) {
-		if (!isNaN(Number(key))) {
+		if (!Number.isNaN(Number(key))) {
 			throw new TypeError('this will not work as numbers are ordered for performance optimization')
 		}
 
@@ -32,7 +32,7 @@ export function filterDictKeysByValues<Value>(dict: Record<string, Value>, filte
 	return resultKeys
 }
 
-export function joinDictArrayArrays<Value>(dictArr: Record<string, Value[]>[]): Record<string, Value[]> {
+export function joinDictArrayArrays<Value>(dictArr: ReadonlyArray<Record<string, Value[]>>): Record<string, Value[]> {
 	const result: Record<string, Value[]> = {}
 
 	for (const entry of dictArr) {

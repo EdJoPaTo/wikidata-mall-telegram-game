@@ -184,7 +184,7 @@ test('returnOnInvestment with personal without skills', t => {
 test('returnOnInvestment without products', t => {
 	const skills: Skills = {}
 	const shop = generateShop([])
-	t.is(returnOnInvestment([shop], skills), NaN)
+	t.is(returnOnInvestment([shop], skills), Number.NaN)
 })
 
 test('returnOnInvestment with sell skill without personal', t => {
