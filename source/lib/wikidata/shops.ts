@@ -51,12 +51,12 @@ OPTIONAL { ?product wdt:P18 ?image. }
 }
 
 export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
-	const shopTypesArr = await stagedAsync(
+	const shopTypesArray = await stagedAsync(
 		sparqlQuerySimplifiedMinified,
 		toplevelShopCategories.map(o => shopTypesQuery(o))
 	) as string[]
 
-	const allShopTypes = shopTypesArr
+	const allShopTypes = shopTypesArray
 		.filter(arrayFilterUnique())
 	logger('allShopTypes', allShopTypes.length)
 

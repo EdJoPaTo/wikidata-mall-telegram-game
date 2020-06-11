@@ -89,10 +89,8 @@
 			"require-atomic-updates": "off",
 			"unicorn/no-fn-reference-in-iterator": "off",
 			"unicorn/no-reduce": "off",
-			"unicorn/prevent-abbreviations": "off",
 			"@typescript-eslint/prefer-readonly-parameter-types": "off",
 			"@typescript-eslint/no-dynamic-delete": "off",
-			"@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
 			"@typescript-eslint/prefer-nullish-coalescing": "off",
 			"@typescript-eslint/prefer-optional-chain": "off",
 			"@typescript-eslint/restrict-template-expressions": "off"

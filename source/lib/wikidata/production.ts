@@ -37,10 +37,10 @@ export function getParts(product: string): readonly string[] {
 }
 
 export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
-	const resultsArr = await sequentialAsync(preloadCategory, CATEGORIES)
+	const resultsArray = await sequentialAsync(preloadCategory, CATEGORIES)
 	logger('finished queries')
 
-	const results = joinDictArrayArrays(resultsArr)
+	const results = joinDictArrayArrays(resultsArray)
 	logger('products', Object.keys(results).length)
 	for (const o of Object.keys(results)) {
 		if (blacklist.basicIncludes(o)) {

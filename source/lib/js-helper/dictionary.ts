@@ -1,4 +1,4 @@
-export function recreateDictWithGivenKeyOrder<T>(dict: Record<string, T>, newOrder: readonly string[]): Record<string, T> {
+export function recreateDictWithGivenKeyOrder<T>(dict: Readonly<Record<string, T>>, newOrder: readonly string[]): Record<string, T> {
 	const result: Record<string, T> = {}
 	for (const key of newOrder) {
 		if (!Number.isNaN(Number(key))) {
@@ -11,20 +11,20 @@ export function recreateDictWithGivenKeyOrder<T>(dict: Record<string, T>, newOrd
 	return result
 }
 
-export function sortDictKeysByValues<Value>(dict: Record<string, Value>, compareFn: (a: Value, b: Value) => number): string[] {
+export function sortDictKeysByValues<Value>(dict: Readonly<Record<string, Value>>, compareFn: (a: Value, b: Value) => number): string[] {
 	return Object.keys(dict)
 		.sort((a, b) => compareFn(dict[a], dict[b]))
 }
 
-export function sortDictKeysByStringValues(dict: Record<string, string>, locale?: string): string[] {
+export function sortDictKeysByStringValues(dict: Readonly<Record<string, string>>, locale?: string): string[] {
 	return sortDictKeysByValues(dict, (a, b) => a.localeCompare(b, locale))
 }
 
-export function sortDictKeysByNumericValues(dict: Record<string, number>, reverse = false): string[] {
+export function sortDictKeysByNumericValues(dict: Readonly<Record<string, number>>, reverse = false): string[] {
 	return sortDictKeysByValues(dict, reverse ? (a, b) => b - a : (a, b) => a - b)
 }
 
-export function filterDictKeysByValues<Value>(dict: Record<string, Value>, filterFn: (key: string, value: Value) => boolean): string[] {
+export function filterDictKeysByValues<Value>(dict: Readonly<Record<string, Value>>, filterFn: (key: string, value: Value) => boolean): string[] {
 	const keys = Object.keys(dict)
 	const resultKeys = keys
 		.filter(o => filterFn(o, dict[o]))
@@ -32,10 +32,10 @@ export function filterDictKeysByValues<Value>(dict: Record<string, Value>, filte
 	return resultKeys
 }
 
-export function joinDictArrayArrays<Value>(dictArr: ReadonlyArray<Record<string, Value[]>>): Record<string, Value[]> {
+export function joinDictArrayArrays<Value>(dictArray: ReadonlyArray<Readonly<Record<string, Value[]>>>): Record<string, Value[]> {
 	const result: Record<string, Value[]> = {}
 
-	for (const entry of dictArr) {
+	for (const entry of dictArray) {
 		const keys = Object.keys(entry)
 		for (const key of keys) {
 			if (!result[key]) {

@@ -49,7 +49,7 @@ function buildAttractionOptions(ctx: any): Record<string, string> {
 		return {}
 	}
 
-	const all = wdAttractions.allHeightSortedArr()
+	const all = wdAttractions.allHeightSortedArray()
 	const result: Record<string, string> = {}
 	for (const o of all) {
 		const r = ctx.wd.r(o.item) as WikidataEntityReader

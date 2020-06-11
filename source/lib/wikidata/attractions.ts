@@ -39,7 +39,7 @@ export function all(): Record<QNumber, number> {
 	return attractions
 }
 
-export function allHeightSortedArr(): readonly Attraction[] {
+export function allHeightSortedArray(): readonly Attraction[] {
 	return Object.keys(attractions)
 		.map(o => ({item: o, height: attractions[o]}))
 		.sort((a, b) => a.height - b.height)

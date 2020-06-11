@@ -37,12 +37,12 @@ export function infoHeader(wdr: WikidataEntityReader, options: InfoHeaderOptions
 	return text
 }
 
-export function labeledFloat(label: string | WikidataEntityReader, num: number, unit = ''): string {
-	return labeledValue(label, `${formatFloat(num)}${unit}`)
+export function labeledFloat(label: string | WikidataEntityReader, number: number, unit = ''): string {
+	return labeledValue(label, `${formatFloat(number)}${unit}`)
 }
 
-export function labeledInt(label: string | WikidataEntityReader, num: number, unit = ''): string {
-	return labeledValue(label, `${formatInt(num)}${unit}`)
+export function labeledInt(label: string | WikidataEntityReader, number: number, unit = ''): string {
+	return labeledValue(label, `${formatInt(number)}${unit}`)
 }
 
 export function labeledValue(label: string | WikidataEntityReader, value: string | WikidataEntityReader): string {

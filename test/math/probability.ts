@@ -9,7 +9,7 @@ function happensMacro(t: ExecutionContext, probability: number, arrayTrue: (arra
 		values.push(happens(probability))
 	}
 
-	const amountTrue = values.filter(o => o === true).length
+	const amountTrue = values.filter(o => o).length
 	const amountFalse = runs - amountTrue
 
 	t.log((amountTrue / runs).toFixed(3), 'true')
@@ -19,11 +19,11 @@ function happensMacro(t: ExecutionContext, probability: number, arrayTrue: (arra
 }
 
 function happensSometimesMacro(t: ExecutionContext, probability: number): void {
-	return happensMacro(t, probability, array => array.some(o => o === true) && array.some(o => o === false))
+	return happensMacro(t, probability, array => array.some(o => o) && array.some(o => !o))
 }
 
-test('happens not', happensMacro, 0, array => array.every(o => o === false))
-test('happens definitely', happensMacro, 1, array => array.every(o => o === true))
+test('happens not', happensMacro, 0, array => array.every(o => !o))
+test('happens definitely', happensMacro, 1, array => array.every(o => o))
 test('happens sometimes 0.1', happensSometimesMacro, 0.1)
 test('happens sometimes 0.5', happensSometimesMacro, 0.5)
 test('happens sometimes 0.9', happensSometimesMacro, 0.9)

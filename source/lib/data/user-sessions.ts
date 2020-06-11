@@ -43,9 +43,9 @@ export function removeUser(userId: number): void {
 }
 
 export function getRandomUser(filter: (o: SessionRawEntry) => boolean = () => true): SessionRawEntry {
-	const rawArr = getRaw()
+	const rawArray = getRaw()
 		.filter(filter)
-	return randomItem(rawArr)
+	return randomItem(rawArray)
 }
 
 export function middleware(): (ctx: any, next: any) => void {

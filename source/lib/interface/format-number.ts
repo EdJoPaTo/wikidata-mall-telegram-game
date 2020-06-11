@@ -2,23 +2,23 @@ import {scientificExponent} from '../math/number'
 
 const LETTERS = ['', 'k', 'M', 'G', 'T', 'P', 'E']
 
-function formatNumber(num: number, formatRelevantNumber: (relevantNumPart: number, scientificExponent: number) => string): string {
-	const sciExp = scientificExponent(num)
-	const sciNum = 10 ** sciExp
-	const relevantNumPart = num / sciNum
-	const numberString = formatRelevantNumber(relevantNumPart, sciExp)
+function formatNumber(number: number, formatRelevantNumber: (relevantNumPart: number, scientificExponent: number) => string): string {
+	const sciExp = scientificExponent(number)
+	const sciNumber = 10 ** sciExp
+	const relevantNumberPart = number / sciNumber
+	const numberString = formatRelevantNumber(relevantNumberPart, sciExp)
 
 	const letterString = LETTERS[sciExp / 3]
 
 	return numberString + letterString
 }
 
-export function formatFloat(num: number): string {
-	return formatNumber(num, num => num.toPrecision(3))
+export function formatFloat(number: number): string {
+	return formatNumber(number, number => number.toPrecision(3))
 }
 
-export function formatInt(num: number): string {
-	return formatNumber(num, (relevantNumPart, sciExp) =>
-		sciExp < 2 ? relevantNumPart.toFixed(0) : relevantNumPart.toPrecision(3)
+export function formatInt(number: number): string {
+	return formatNumber(number, (relevantNumberPart, sciExp) =>
+		sciExp < 2 ? relevantNumberPart.toFixed(0) : relevantNumberPart.toPrecision(3)
 	)
 }
