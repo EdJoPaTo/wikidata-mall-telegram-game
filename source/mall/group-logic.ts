@@ -1,8 +1,8 @@
-import {Composer, Extra, Markup, Context as TelegrafContext} from 'telegraf'
+import {Composer, Extra, Markup} from 'telegraf'
 import stringify from 'json-stable-stringify'
 
 import {Mall} from '../lib/types/mall'
-import {Persist} from '../lib/types'
+import {Context} from '../lib/types'
 
 import * as userMalls from '../lib/data/malls'
 
@@ -10,22 +10,22 @@ import {fixMallDataForGroup} from '../lib/game-logic/mall-fix-data'
 
 import {emojis} from '../lib/interface/emojis'
 
-const bot = new Composer()
+const bot = new Composer<Context>()
 
-async function replyJoinMessage(ctx: TelegrafContext): Promise<void> {
-	const button = Markup.callbackButton((ctx as any).wd.r('mall.participation').label(), 'join')
+async function replyJoinMessage(ctx: Context): Promise<void> {
+	const button = Markup.callbackButton(ctx.wd.reader('mall.participation').label(), 'join')
 	const keyboard = Markup.inlineKeyboard([
 		button
 	])
 	let text = ''
 	text += '👋'
 	text += '\n\n'
-	text += (ctx as any).wd.r('menu.mall').label()
+	text += ctx.wd.reader('menu.mall').label()
 
 	await ctx.reply(text, Extra.markdown().inReplyTo(ctx.message!.message_id).markup(keyboard))
 }
 
-async function checkEveryMemberAndRemoveIfNeeded(ctx: TelegrafContext, mallData: Mall): Promise<void> {
+async function checkEveryMemberAndRemoveIfNeeded(ctx: Context, mallData: Mall): Promise<void> {
 	const remaining = await Promise.all(
 		mallData.member.map(async memberId => {
 			try {
@@ -43,7 +43,7 @@ async function checkEveryMemberAndRemoveIfNeeded(ctx: TelegrafContext, mallData:
 		})
 	)
 	const remainingIds = remaining
-		.filter(o => Boolean(o)) as number[]
+		.filter((o): o is number => typeof o === 'number')
 	mallData.member = remainingIds
 }
 
@@ -54,13 +54,13 @@ if (process.env.NODE_ENV !== 'production') {
 	})
 }
 
-bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async (ctx: TelegrafContext) => {
+bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async ctx => {
 	if (ctx.updateSubTypes.includes('migrate_to_chat_id')) {
 		return
 	}
 
 	try {
-		await ctx.reply((ctx as any).i18n.t('mall.supergroupMigration'))
+		await ctx.reply(ctx.i18n.t('mall.supergroupMigration'))
 	} catch (error) {
 		console.log('supergroup migration hint error', error.message, ctx.updateType, ctx.updateSubTypes, ctx.update)
 	}
@@ -85,7 +85,7 @@ bot.use(async (ctx, next) => {
 bot.on('left_chat_member', async ctx => {
 	const mallId = ctx.chat!.id
 	const left = ctx.message!.left_chat_member!
-	const myId = (ctx as any).botInfo.id as number
+	const myId = ctx.botInfo!.id
 
 	if (myId === left.id) {
 		await userMalls.remove(mallId)
@@ -110,7 +110,7 @@ bot.on('migrate_from_chat_id', async ctx => {
 })
 
 bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.username), async (ctx, next) => {
-	await ctx.reply((ctx as any).i18n.t('mall.groupPrivate'))
+	await ctx.reply(ctx.i18n.t('mall.groupPrivate'))
 	return next()
 }))
 
@@ -136,7 +136,6 @@ bot.on(['group_chat_created', 'new_chat_members'], async ctx => {
 bot.start(async ctx => replyJoinMessage(ctx))
 
 bot.action('join', async ctx => {
-	const persist = (ctx as any).persist as Persist
 	const mallId = ctx.chat!.id
 
 	let mallData = await userMalls.get(mallId)
@@ -144,8 +143,8 @@ bot.action('join', async ctx => {
 		return ctx.answerCbQuery('🥰')
 	}
 
-	if (persist.mall) {
-		return ctx.answerCbQuery((ctx as any).i18n.t('mall.alreadyInDifferentMall'))
+	if (ctx.persist.mall) {
+		return ctx.answerCbQuery(ctx.i18n.t('mall.alreadyInDifferentMall'))
 	}
 
 	let text = ''
@@ -178,7 +177,7 @@ bot.command('fix', async ctx => {
 })
 
 bot.command(['language', 'settings'], async ctx => {
-	const {username} = (ctx as any).botInfo
+	const {username} = ctx.botInfo!
 	return ctx.reply(`${emojis.chat}@${username}`)
 })
 

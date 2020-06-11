@@ -1,7 +1,6 @@
-import {Context as TelegrafContext, Middleware} from 'telegraf'
-import WikidataEntityStore from 'wikidata-entity-store'
+import {Middleware} from 'telegraf'
 
-import {Session, Persist} from '../types'
+import {Context, Session} from '../types'
 
 import * as applicants from './applicants'
 import * as income from './income'
@@ -10,54 +9,49 @@ import notification from './notification'
 import * as personal from './personal'
 import * as skills from './skills'
 
-export default function middleware(): Middleware<TelegrafContext> {
-	return async (ctx: any, next) => {
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
-		const store = ctx.wd.store as WikidataEntityStore
+export default function middleware(): Middleware<Context> {
+	return async (ctx, next) => {
 		const now = Math.floor(Date.now() / 1000)
 
 		// TODO: remove migration
-		if ((session as any).achievements) {
-			session.gameStarted = (session as any).achievements.gameStarted
-			delete (session as any).achievements
+		if ((ctx.session as any).achievements) {
+			ctx.session.gameStarted = (ctx.session as any).achievements.gameStarted
+			delete (ctx.session as any).achievements
 		}
 
-		init(session, now)
-		ensureStats(session)
+		init(ctx.session, now)
+		ensureStats(ctx.session)
 
 		// TODO: remove migration
-		if ((session as any).construction) {
-			delete (session as any).construction
+		if ((ctx.session as any).construction) {
+			delete (ctx.session as any).construction
 		}
 
-		mall.startup(persist)
-		skills.startup(session, persist)
+		mall.startup(ctx.persist)
+		skills.startup(ctx.session, ctx.persist)
 
 		let nextCalculationUntilTimestamp
 		do {
 			nextCalculationUntilTimestamp = Math.min(
 				now,
-				mall.incomeUntil(persist),
-				personal.incomeUntil(persist),
-				skills.incomeUntil(session)
+				mall.incomeUntil(ctx.persist),
+				personal.incomeUntil(ctx.persist),
+				skills.incomeUntil(ctx.session)
 			)
 
-			income.incomeLoop(session, persist, nextCalculationUntilTimestamp)
+			income.incomeLoop(ctx.session, ctx.persist, nextCalculationUntilTimestamp)
 
-			mall.incomeLoop(persist, nextCalculationUntilTimestamp)
-			personal.incomeLoop(persist, nextCalculationUntilTimestamp)
-			skills.incomeLoop(session, persist, nextCalculationUntilTimestamp)
+			mall.incomeLoop(ctx.persist, nextCalculationUntilTimestamp)
+			personal.incomeLoop(ctx.persist, nextCalculationUntilTimestamp)
+			skills.incomeLoop(ctx.session, ctx.persist, nextCalculationUntilTimestamp)
 		} while (nextCalculationUntilTimestamp < now)
 
-		applicants.before(session, persist, now)
-		await mall.before(persist, store, now)
+		applicants.before(ctx.session, ctx.persist, now)
+		await mall.before(ctx.persist, ctx.wd.store, now)
 
-		if (next) {
-			await next()
-		}
+		await next()
 
-		notification(ctx.from.id, session, persist)
+		notification(ctx.from!.id, ctx.session, ctx.persist)
 	}
 }
 

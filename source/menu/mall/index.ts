@@ -33,13 +33,13 @@ async function menuText(ctx: any): Promise<string> {
 	))
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.mall'), {titlePrefix: emojis.mall + mallMoji(mall)})
+	text += infoHeader(ctx.wd.reader('menu.mall'), {titlePrefix: emojis.mall + mallMoji(mall)})
 
-	text += labeledFloat(ctx.wd.r('other.money'), mall.money, emojis.currencyMall)
+	text += labeledFloat(ctx.wd.reader('other.money'), mall.money, emojis.currencyMall)
 	text += '\n'
 
 	text += format.bold(format.escape(
-		ctx.wd.r('mall.participation').label()
+		ctx.wd.reader('mall.participation').label()
 	))
 	text += ' '
 	text += '('
@@ -121,7 +121,7 @@ menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applica
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.mall').url()
+	(ctx: any) => ctx.wd.reader('menu.mall').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall'))

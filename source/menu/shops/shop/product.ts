@@ -49,7 +49,7 @@ function bonusSkill(ctx: any, skills: Skills, skill: SimpleSkill, bonusFunc: (le
 	text += emojis.skill
 	text += percentBonusString(bonus)
 	text += ' '
-	text += ctx.wd.r(`skill.${skill}`).label()
+	text += ctx.wd.reader(`skill.${skill}`).label()
 	text += ' ('
 	text += level
 	text += ')'
@@ -83,7 +83,7 @@ function menuText(ctx: any): string {
 	const {product, shop} = fromCtx(ctx)
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
-	const reader = ctx.wd.r(product.id) as WikidataEntityReader
+	const reader = ctx.wd.reader(product.id) as WikidataEntityReader
 
 	const capacity = storageCapacity(shop, persist.skills)
 	const basePrice = productBasePrice(product, persist.skills)
@@ -93,43 +93,43 @@ function menuText(ctx: any): string {
 	let text = ''
 	text += infoHeader(reader)
 
-	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), session.money, emojis.currency)
 	text += '\n'
 
 	text += emojis.storage
 	text += labeledValue(
-		ctx.wd.r('product.storage'),
+		ctx.wd.reader('product.storage'),
 		`${formatInt(product.itemsInStore)} / ${formatInt(capacity)}`
 	)
 
 	text += '\n'
 	text += '*'
-	text += ctx.wd.r('other.cost').label()
+	text += ctx.wd.reader('other.cost').label()
 	text += '*'
 	text += '\n'
 
 	if (!session.hideExplanationMath) {
-		text += labeledFloat(ctx.wd.r('product.listprice'), basePrice, emojis.currency)
+		text += labeledFloat(ctx.wd.reader('product.listprice'), basePrice, emojis.currency)
 		const collectorFactor = productBasePriceCollectorFactor(persist.skills)
 		if (collectorFactor > 1) {
 			text += '  '
 			text += emojis.skill
 			text += percentBonusString(collectorFactor)
 			text += ' '
-			text += ctx.wd.r('skill.collector').label()
+			text += ctx.wd.reader('skill.collector').label()
 			text += '\n'
 		}
 	}
 
 	text += emojis.purchasing
-	text += labeledFloat(ctx.wd.r('person.talents.purchasing'), purchaseCostPerItem, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('person.talents.purchasing'), purchaseCostPerItem, emojis.currency)
 	if (!session.hideExplanationMath) {
 		text += bonusPerson(shop, 'purchasing')
 		text += bonusSkill(ctx, persist.skills, 'metalScissors', purchasingCostScissorsBonus)
 	}
 
 	text += emojis.selling
-	text += labeledFloat(ctx.wd.r('person.talents.selling'), sellingCostPerItem, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('person.talents.selling'), sellingCostPerItem, emojis.currency)
 	if (!session.hideExplanationMath) {
 		text += bonusPerson(shop, 'selling')
 		text += bonusSkill(ctx, persist.skills, 'packaging', sellingCostPackagingBonus)
@@ -179,8 +179,8 @@ menu.select('buy', [1, 5, 10, 42, 50, 100, 250, 500].map(o => String(o)), {
 })
 
 menu.urlButton(
-	(ctx: any) => `${emojis.wikidataItem} ${ctx.wd.r('menu.wikidataItem').label()}`,
-	(ctx: any) => ctx.wd.r(fromCtx(ctx).product.id).url()
+	(ctx: any) => `${emojis.wikidataItem} ${ctx.wd.reader('menu.wikidataItem').label()}`,
+	(ctx: any) => ctx.wd.reader(fromCtx(ctx).product.id).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.product'))

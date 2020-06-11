@@ -11,6 +11,7 @@ import * as wikidata from './lib/wikidata'
 
 import {HOUR_IN_SECONDS, MINUTE_IN_SECONDS} from './lib/math/timestamp-constants'
 
+import {Context} from './lib/types'
 import data from './lib/data'
 
 import {fixMallDataForAllMalls} from './lib/game-logic/mall-fix-data'
@@ -31,7 +32,7 @@ import menu from './menu'
 
 const tokenFilePath = existsSync('/run/secrets') ? '/run/secrets/bot-token.txt' : 'bot-token.txt'
 const token = readFileSync(tokenFilePath, 'utf8').trim()
-const bot = new Telegraf(token)
+const bot = new Telegraf<Context>(token)
 
 bot.use(generateUpdateMiddleware())
 
@@ -92,7 +93,7 @@ bot.use(sessionMathMiddleware())
 
 bot.use(Telegraf.privateChat(menu.init({
 	backButtonText: (ctx: any) => `🔙 ${ctx.i18n.t('menu.back')}`,
-	mainMenuButtonText: (ctx: any) => `🔝 ${ctx.wd.r('menu.menu').label()}`
+	mainMenuButtonText: (ctx: any) => `🔝 ${ctx.wd.reader('menu.menu').label()}`
 })))
 
 bot.use(Telegraf.groupChat(mall.middleware()))

@@ -25,7 +25,7 @@ function applicantEntry(ctx: any, applicant: Person, isHobbyFitting: boolean): s
 	text += nameMarkdown(applicant.name)
 	text += '\n    '
 	text += isHobbyFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-	text += ctx.wd.r(applicant.hobby).label()
+	text += ctx.wd.reader(applicant.hobby).label()
 	text += '\n    '
 	text += emojis.retirement
 	text += humanReadableTimestamp(applicant.retirementTimestamp, locale, timeZone)
@@ -44,7 +44,7 @@ function menuText(ctx: any): string {
 	const interval = secondsBetweenApplicants(persist.skills)
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.applicant'))
+	text += infoHeader(ctx.wd.reader('menu.applicant'))
 
 	text += applicantInfluencesPart(ctx, persist.skills, persist.applicants.list.length, !session.hideExplanationMath)
 
@@ -64,11 +64,11 @@ function menuText(ctx: any): string {
 
 	if (persist.applicants.list.length < maxSeats) {
 		const secondsUntilNext = (persist.applicants.timestamp + interval) - now
-		text += ctx.wd.r('other.countdown').label()
+		text += ctx.wd.reader('other.countdown').label()
 		text += ': '
 		text += formatFloat(secondsUntilNext)
 		text += ' '
-		text += ctx.wd.r('unit.second').label()
+		text += ctx.wd.reader('unit.second').label()
 		text += '\n\n'
 	}
 
@@ -107,7 +107,7 @@ menu.selectSubmenu('a', availableApplicants, applicantMenu, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.applicant').url()
+	(ctx: any) => ctx.wd.reader('menu.applicant').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.applicants'))

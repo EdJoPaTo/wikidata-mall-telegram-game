@@ -24,9 +24,9 @@ function menuText(ctx: any): string {
 	const session = ctx.session as Session
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.menu'))
+	text += infoHeader(ctx.wd.reader('menu.menu'))
 
-	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), session.money, emojis.currency)
 	text += '\n'
 
 	text += ctx.i18n.t('menu.welcome')
@@ -64,7 +64,7 @@ menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 		text += username
 		text += ' → '
 		text += emojis.group
-		text += (ctx as any).wd.r('menu.chat').label()
+		text += (ctx as any).wd.reader('menu.chat').label()
 
 		await ctx.answerCbQuery(text, true)
 	}

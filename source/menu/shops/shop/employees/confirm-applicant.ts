@@ -36,7 +36,7 @@ function menuText(ctx: any): string {
 	const bonusWhenEmployed = personalBonusWhenEmployed(shop, talent, applicant)
 
 	let text = ''
-	text += infoHeader(ctx.wd.r(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
+	text += infoHeader(ctx.wd.reader(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
 
 	text += personMarkdown(ctx, applicant, shop.id === applicant.hobby, now)
 	text += '\n\n'

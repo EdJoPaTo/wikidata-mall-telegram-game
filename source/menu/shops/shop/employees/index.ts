@@ -26,7 +26,7 @@ function talentLine(ctx: any, shop: Shop, talent: Talent): string {
 	let text = ''
 	text += emojis[talent]
 	text += '*'
-	text += ctx.wd.r(`person.talents.${talent}`).label()
+	text += ctx.wd.reader(`person.talents.${talent}`).label()
 	text += '*'
 	text += '\n  '
 
@@ -42,7 +42,7 @@ function talentLine(ctx: any, shop: Shop, talent: Talent): string {
 function menuText(ctx: any): string {
 	const {shop} = fromCtx(ctx)
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.employee'))
+	text += infoHeader(ctx.wd.reader('menu.employee'))
 
 	text +=	TALENTS
 		.map(o => talentLine(ctx, shop, o))
@@ -62,7 +62,7 @@ menu.selectSubmenu('t', TALENTS, employee, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.employee').url()
+	(ctx: any) => ctx.wd.reader('menu.employee').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-employees'))

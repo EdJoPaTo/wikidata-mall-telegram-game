@@ -24,14 +24,14 @@ function fromCtx(ctx: any): {skill: CategorySkill} {
 }
 
 function categorySkillLine(ctx: any, skills: Skills, skill: CategorySkill, category: string): string {
-	return labeledInt(ctx.wd.r(category), categorySkillSpecificLevel(skills, skill, category))
+	return labeledInt(ctx.wd.reader(category), categorySkillSpecificLevel(skills, skill, category))
 		.trim()
 }
 
 function categoriesOfLevelLine(ctx: any, level: number, categories: string[], locale: string | undefined): string {
 	let text = ''
 	text += '*'
-	text += ctx.wd.r('skill.level').label()
+	text += ctx.wd.reader('skill.level').label()
 	text += ' '
 	text += level
 	text += '*'
@@ -40,7 +40,7 @@ function categoriesOfLevelLine(ctx: any, level: number, categories: string[], lo
 	text += ')'
 	text += ': '
 	text += categories
-		.map(o => ctx.wd.r(o).label() as string)
+		.map(o => ctx.wd.reader(o).label() as string)
 		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
 		.slice(0, 30) // Prevent Message too long
 		.join(', ')
@@ -59,7 +59,7 @@ function menuText(ctx: any): string {
 	const {skill} = fromCtx(ctx)
 
 	let text = ''
-	text += infoHeader(ctx.wd.r(`skill.${skill}`), {
+	text += infoHeader(ctx.wd.reader(`skill.${skill}`), {
 		titlePrefix: emojis.skill + (emojis[skill] || '')
 	})
 
@@ -77,7 +77,7 @@ function menuText(ctx: any): string {
 		text += '\n\n'
 	}
 
-	text += format.bold(format.escape(ctx.wd.r('menu.shop').label()))
+	text += format.bold(format.escape(ctx.wd.reader('menu.shop').label()))
 	text += '\n'
 	text +=	shops
 		.map(o => categorySkillLine(ctx, persist.skills, skill, o))
@@ -98,12 +98,12 @@ function shops(ctx: any): string[] {
 
 menu.selectSubmenu('s', shops, skillMenu, {
 	columns: 2,
-	textFunc: (ctx: any, key) => ctx.wd.r(key).label()
+	textFunc: (ctx: any, key) => ctx.wd.reader(key).label()
 })
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r(`skill.${fromCtx(ctx).skill}`).url()
+	(ctx: any) => ctx.wd.reader(`skill.${fromCtx(ctx).skill}`).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))

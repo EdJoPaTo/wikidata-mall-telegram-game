@@ -28,9 +28,7 @@ export class ErrorMiddleware {
 	middleware(): Middleware<TelegrafContext> {
 		return async (ctx, next) => {
 			try {
-				if (next) {
-					await next()
-				}
+				await next()
 			} catch (error) {
 				if (!(error instanceof Error)) {
 					throw new TypeError(`Error is not of type error: ${typeof error} ${error}`)

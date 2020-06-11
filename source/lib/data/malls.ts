@@ -41,6 +41,6 @@ export async function remove(mallId: number): Promise<void> {
 	data.delete(String(mallId))
 }
 
-export function middleware(): (ctx: any, next: any) => Promise<void> {
-	return generatePersistMiddleware('mall', data, async ctx => String(await getMallIdOfUser(ctx.from.id)))
+export function middleware(): (ctx: any, next: () => Promise<void>) => Promise<void> {
+	return generatePersistMiddleware('mall', data, async ctx => String(await getMallIdOfUser(ctx.from!.id)))
 }

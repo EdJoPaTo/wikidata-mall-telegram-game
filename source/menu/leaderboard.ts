@@ -232,10 +232,10 @@ async function menuText(ctx: any): Promise<string> {
 	const now = Date.now() / 1000
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.leaderboard'), {titlePrefix: emojis.leaderboard})
+	text += infoHeader(ctx.wd.reader('menu.leaderboard'), {titlePrefix: emojis.leaderboard})
 
 	const view = session.leaderboardView || DEFAULT_VIEW
-	text += infoHeader(ctx.wd.r(viewResourceKey(view)))
+	text += infoHeader(ctx.wd.reader(viewResourceKey(view)))
 
 	switch (view) {
 		case 'returnOnInvestment':
@@ -251,7 +251,7 @@ async function menuText(ctx: any): Promise<string> {
 			break
 
 		case 'sellPerMinute':
-			text += await generateTable(await getSellPerMinuteTable(now), ctx.from.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.r('unit.minute').label()}`)
+			text += await generateTable(await getSellPerMinuteTable(now), ctx.from.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.reader('unit.minute').label()}`)
 			break
 
 		case 'collector':
@@ -260,14 +260,14 @@ async function menuText(ctx: any): Promise<string> {
 
 		case 'mallProduction':
 			if (production.itemToProduce) {
-				text += infoHeader(ctx.wd.r(production.itemToProduce))
+				text += infoHeader(ctx.wd.reader(production.itemToProduce))
 			}
 
 			text += await generateTable(await getMallProductionTable(), mall && mall.chat.id, o => formatInt(o))
 			break
 
 		case 'mallAttraction':
-			text += await generateTable(await getMallAttractionTable(now), mall && mall.chat.id, o => `${formatFloat(o)} ${ctx.wd.r('unit.meter').label()}`)
+			text += await generateTable(await getMallAttractionTable(now), mall && mall.chat.id, o => `${formatFloat(o)} ${ctx.wd.reader('unit.meter').label()}`)
 			break
 
 		default:
@@ -313,13 +313,13 @@ menu.select('view', LEADERBOARD_VIEWS, {
 		session.leaderboardView = key as LeaderboardView
 	},
 	textFunc: (ctx: any, key) => {
-		return ctx.wd.r(viewResourceKey(key as LeaderboardView)).label()
+		return ctx.wd.reader(viewResourceKey(key as LeaderboardView)).label()
 	}
 })
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.leaderboard').url()
+	(ctx: any) => ctx.wd.reader('menu.leaderboard').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.leaderboard'))

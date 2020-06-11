@@ -22,13 +22,13 @@ async function menuText(ctx: any): Promise<string> {
 	const votes = Object.values(currentProduction.nextItemVote).flat().length
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('mall.voting'), {titlePrefix: emojis.production + emojis.vote})
+	text += infoHeader(ctx.wd.reader('mall.voting'), {titlePrefix: emojis.production + emojis.vote})
 
 	text += emojis.countdown
-	text += labeledValue(ctx.wd.r('other.end'), humanReadableTimestamp(currentProduction.competitionUntil, locale, timeZone))
+	text += labeledValue(ctx.wd.reader('other.end'), humanReadableTimestamp(currentProduction.competitionUntil, locale, timeZone))
 	text += '\n'
 
-	text += labeledInt(ctx.wd.r('mall.vote'), votes)
+	text += labeledInt(ctx.wd.reader('mall.vote'), votes)
 
 	return text
 }
@@ -44,7 +44,7 @@ async function voteOptions(ctx: any): Promise<Record<string, string>> {
 
 	const result: Record<string, string> = {}
 	for (const o of possible) {
-		const r = ctx.wd.r(o) as WikidataEntityReader
+		const r = ctx.wd.reader(o) as WikidataEntityReader
 		result[o] = r.label()
 	}
 
@@ -74,7 +74,7 @@ menu.selectSubmenu('v', voteOptions, optionMenu, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('mall.voting').url()
+	(ctx: any) => ctx.wd.reader('mall.voting').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production-vote'))

@@ -39,7 +39,7 @@ function menuText(ctx: any): string {
 	const current = session.timeZone || 'UTC'
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.timezone'), {titlePrefix: emojis.timezone})
+	text += infoHeader(ctx.wd.reader('menu.timezone'), {titlePrefix: emojis.timezone})
 
 	text += labeledValue(
 		format.escape(current),

@@ -2,15 +2,7 @@ import {KeyValueStorage} from '@edjopato/datastore'
 
 import stringify from 'json-stable-stringify'
 
-import {Session, Persist} from '../types'
-
-interface Context {
-	from: {
-		id: number;
-	};
-	persist: Persist;
-	session: Session;
-}
+import {Context, Persist} from '../types'
 
 const startTimestamp = Math.floor(Date.now() / 1000)
 
@@ -19,7 +11,7 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 	getIdFromCtx: (ctx: Context) => string | Promise<string>,
 	get: (ctx: string) => Promise<Persist[Key] | undefined>,
 	save: (ctx: string, value: Persist[Key]) => Promise<void>
-): (ctx: any, next: any) => Promise<void> {
+): (ctx: Context, next: () => Promise<void>) => Promise<void> {
 	return async (ctx: Context, next) => {
 		if (!ctx.persist) {
 			const persist: Persist = {
@@ -29,9 +21,9 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 				},
 				shops: [],
 				skills: {}
-			}
+			};
 
-			ctx.persist = persist
+			(ctx as any).persist = persist
 		}
 
 		const entryId = await getIdFromCtx(ctx)
@@ -52,7 +44,7 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 
 export function generatePersistMiddleware<Key extends keyof Persist>(
 	key: Key, datastore: KeyValueStorage<Persist[Key]>, getIdFunc: (ctx: Context) => string | Promise<string>
-): (ctx: any, next: any) => Promise<void> {
+): (ctx: Context, next: () => Promise<void>) => Promise<void> {
 	return generatePersistMiddlewareManually(
 		key,
 		getIdFunc,

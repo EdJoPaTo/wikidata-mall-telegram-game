@@ -20,7 +20,7 @@ import skillSelectCategory from './skill-select-category'
 function simpleSkillInfo(ctx: any, skills: Skills, skill: SimpleSkill): {emoji: string; label: string; level: number} {
 	return {
 		emoji: emojis[skill],
-		label: ctx.wd.r(`skill.${skill}`).label(),
+		label: ctx.wd.reader(`skill.${skill}`).label(),
 		level: currentLevel(skills, skill)
 	}
 }
@@ -28,7 +28,7 @@ function simpleSkillInfo(ctx: any, skills: Skills, skill: SimpleSkill): {emoji: 
 function categorySkillInfo(ctx: any, skills: Skills, skill: CategorySkill): {emoji: string; label: string; hours: number} {
 	return {
 		emoji: emojis[skill],
-		label: ctx.wd.r(`skill.${skill}`).label(),
+		label: ctx.wd.reader(`skill.${skill}`).label(),
 		hours: categorySkillHoursInvested(skills, skill)
 	}
 }
@@ -38,10 +38,10 @@ function menuText(ctx: any): string {
 	const persist = ctx.persist as Persist
 	const {__wikibase_language_code: locale} = session
 
-	const hourLabel = ctx.wd.r('unit.hour').label()
+	const hourLabel = ctx.wd.reader('unit.hour').label()
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.skill'), {titlePrefix: emojis.skill})
+	text += infoHeader(ctx.wd.reader('menu.skill'), {titlePrefix: emojis.skill})
 
 	const simpleSkillParts = SIMPLE_SKILLS
 		.map(o => simpleSkillInfo(ctx, persist.skills, o))
@@ -55,7 +55,7 @@ function menuText(ctx: any): string {
 
 	if (simpleSkillParts.length + categorySkillParts.length > 0) {
 		text += '*'
-		text += ctx.wd.r('skill.level').label()
+		text += ctx.wd.reader('skill.level').label()
 		text += '*'
 		text += '\n'
 
@@ -91,7 +91,7 @@ function skillOptions(ctx: any, skills: readonly Skill[]): Record<string, string
 	const {__wikibase_language_code: locale} = ctx.session as Session
 	const labels: Record<string, string> = {}
 	for (const key of skills) {
-		labels[key] = ctx.wd.r(`skill.${key}`).label()
+		labels[key] = ctx.wd.reader(`skill.${key}`).label()
 	}
 
 	const orderedKeys = sortDictKeysByStringValues(labels, locale === 'wikidatanish' ? 'en' : locale)
@@ -110,7 +110,7 @@ menu.selectSubmenu('c', ctx => skillOptions(ctx, CATEGORY_SKILLS), skillSelectCa
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.skill').url()
+	(ctx: any) => ctx.wd.reader('menu.skill').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))

@@ -14,10 +14,10 @@ const localeEmoji = require('locale-emoji')
 function menuText(ctx: any): string {
 	const flag = flagString(ctx.wd.locale(), true)
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.language'), {titlePrefix: flag})
+	text += infoHeader(ctx.wd.reader('menu.language'), {titlePrefix: flag})
 
 	if (ctx.wd.locale() !== 'wikidatanish') {
-		text += ctx.wd.r('other.translation').label()
+		text += ctx.wd.reader('other.translation').label()
 		text += ' '
 		text += '`'
 		text += ctx.wd.locale()
@@ -34,7 +34,7 @@ const menu = new TelegrafInlineMenu(menuText, {
 })
 menu.setCommand('language')
 
-menu.toggle((ctx: any) => ctx.wd.r('menu.allLanguages').label(), 'all', {
+menu.toggle((ctx: any) => ctx.wd.reader('menu.allLanguages').label(), 'all', {
 	isSetFunc: (ctx: any) => {
 		const session = ctx.session as Session
 		return Boolean(session.showAllLanguages)

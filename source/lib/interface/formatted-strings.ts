@@ -1,6 +1,8 @@
 import {markdown as format} from 'telegram-format'
 import WikidataEntityReader from 'wikidata-entity-reader'
 
+import {Context} from '../types'
+
 import {emojis} from './emojis'
 import {formatFloat, formatInt} from './format-number'
 
@@ -53,28 +55,28 @@ export function labeledValue(label: string | WikidataEntityReader, value: string
 	return labelString + seperator + valueString + '\n'
 }
 
-export function moneyCostPart(ctx: any, currentMoney: number, cost: number): string {
+export function moneyCostPart(ctx: Context, currentMoney: number, cost: number): string {
 	let text = ''
-	text += labeledFloat(ctx.wd.r('other.money'), currentMoney, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), currentMoney, emojis.currency)
 
 	if (currentMoney < cost) {
 		text += emojis.requireAttention
 	}
 
-	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.cost'), cost, emojis.currency)
 	text += '\n'
 	return text
 }
 
-export function mallMoneyCostPart(ctx: any, currentMoney: number, cost: number): string {
+export function mallMoneyCostPart(ctx: Context, currentMoney: number, cost: number): string {
 	let text = ''
-	text += labeledFloat(ctx.wd.r('other.money'), currentMoney, emojis.currencyMall)
+	text += labeledFloat(ctx.wd.reader('other.money'), currentMoney, emojis.currencyMall)
 
 	if (currentMoney < cost) {
 		text += emojis.requireAttention
 	}
 
-	text += labeledFloat(ctx.wd.r('other.cost'), cost, emojis.currencyMall)
+	text += labeledFloat(ctx.wd.reader('other.cost'), cost, emojis.currencyMall)
 	text += '\n'
 	return text
 }

@@ -1,9 +1,7 @@
-import WikidataEntityReader from 'wikidata-entity-reader'
-
 import {calcQuickStats} from '../math/number-array'
 
 import {Person, Talent, Name, TALENTS, Talents} from '../types/people'
-import {Session} from '../types'
+import {Context} from '../types'
 import {Shop} from '../types/shop'
 
 import {personalBonus, employeesWithFittingHobbyAmount} from '../game-math/personal'
@@ -29,30 +27,30 @@ export function wdResourceKeyOfPerson(person: Person): string {
 	return `person.type.${person.type}`
 }
 
-export function personMarkdown(ctx: any, person: Person, isFitting: boolean, now: number): string {
-	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
+export function personMarkdown(ctx: Context, person: Person, isFitting: boolean, now: number): string {
+	const {timeZone, __wikibase_language_code: locale} = ctx.session
 	const {name, hobby, seatProtectionUntil, retirementTimestamp, talents} = person
 
 	let text = ''
 	text += nameMarkdown(name)
 	text += '\n'
 	text += personStateEmoji(person)
-	text += ctx.wd.r(wdResourceKeyOfPerson(person)).label()
+	text += ctx.wd.reader(wdResourceKeyOfPerson(person)).label()
 	text += '\n'
 
 	text += isFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-	text += labeledValue(ctx.wd.r('person.hobby'), ctx.wd.r(hobby))
+	text += labeledValue(ctx.wd.reader('person.hobby'), ctx.wd.reader(hobby))
 
 	if (seatProtectionUntil && seatProtectionUntil > now) {
 		text += emojis.seatProtection
-		text += labeledValue(ctx.wd.r('person.seatProtection'), humanReadableTimestamp(seatProtectionUntil, locale, timeZone))
+		text += labeledValue(ctx.wd.reader('person.seatProtection'), humanReadableTimestamp(seatProtectionUntil, locale, timeZone))
 	}
 
 	text += emojis.retirement
-	text += labeledValue(ctx.wd.r('person.retirement'), humanReadableTimestamp(retirementTimestamp, locale, timeZone))
+	text += labeledValue(ctx.wd.reader('person.retirement'), humanReadableTimestamp(retirementTimestamp, locale, timeZone))
 
 	text += '*'
-	text += ctx.wd.r('person.talent').label()
+	text += ctx.wd.reader('person.talent').label()
 	text += '*'
 	text += '\n'
 
@@ -68,8 +66,8 @@ export function nameMarkdown(name: Name): string {
 	return `*${given}* ${family}`
 }
 
-function talentLine(ctx: any, t: Talent, percentage: number): string {
-	const reader = ctx.wd.r(`person.talents.${t}`) as WikidataEntityReader
+function talentLine(ctx: Context, t: Talent, percentage: number): string {
+	const reader = ctx.wd.reader(`person.talents.${t}`)
 	return `${emojis[t]} ${reader.label()}: ${percentBonusString(percentage)}`
 }
 
@@ -93,14 +91,14 @@ export function personInShopLine(shop: Shop, talent: Talent): string {
 	return `${percentBonusString(bonus)} ${isHobby ? emojis.hobbyMatch + ' ' : ''}${namePart}`
 }
 
-export function shopEmployeeOverview(ctx: any, shop: Shop, talents: readonly Talent[] = TALENTS): string {
+export function shopEmployeeOverview(ctx: Context, shop: Shop, talents: readonly Talent[] = TALENTS): string {
 	const employeeEntries = talents
 		.map(t => shopEmployeeEntry(ctx, shop, t))
 
 	let text = ''
 	text += emojis.shop
 	text += '*'
-	text += ctx.wd.r(shop.id).label()
+	text += ctx.wd.reader(shop.id).label()
 	text += '*'
 	text += '\n'
 
@@ -110,8 +108,8 @@ export function shopEmployeeOverview(ctx: any, shop: Shop, talents: readonly Tal
 	return text
 }
 
-function shopEmployeeEntry(ctx: any, shop: Shop, talent: Talent): string {
-	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
+function shopEmployeeEntry(ctx: Context, shop: Shop, talent: Talent): string {
+	const {timeZone, __wikibase_language_code: locale} = ctx.session
 	const person = shop.personal[talent]
 
 	let text = ''
@@ -129,7 +127,7 @@ function shopEmployeeEntry(ctx: any, shop: Shop, talent: Talent): string {
 		text += '\n'
 		text += '    '
 		text += emojis.hobbyDifferent
-		text += ctx.wd.r(person.hobby).label()
+		text += ctx.wd.reader(person.hobby).label()
 	}
 
 	text += '\n'
@@ -140,8 +138,8 @@ function shopEmployeeEntry(ctx: any, shop: Shop, talent: Talent): string {
 	return text
 }
 
-export function employeeStatsPart(ctx: any, shops: readonly Shop[], talents: readonly Talent[]): string {
-	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
+export function employeeStatsPart(ctx: Context, shops: readonly Shop[], talents: readonly Talent[]): string {
+	const {timeZone, __wikibase_language_code: locale} = ctx.session
 	const employeesInTalents = shops
 		.flatMap(o => {
 			const employees: Person[] = []
@@ -195,7 +193,7 @@ function retirementLines(people: readonly Person[], locale: string | undefined, 
 	]
 }
 
-function hobbiesStatsLine(ctx: any, shops: readonly Shop[], talents: readonly Talent[]): string {
+function hobbiesStatsLine(ctx: Context, shops: readonly Shop[], talents: readonly Talent[]): string {
 	const currently = employeesWithFittingHobbyAmount(shops, talents)
 	const possible = shops.length * talents.length
 	if (currently === 0 || possible === 0) {
@@ -205,7 +203,7 @@ function hobbiesStatsLine(ctx: any, shops: readonly Shop[], talents: readonly Ta
 	let text = ''
 	text += emojis.hobbyMatch
 	text += labeledValue(
-		ctx.wd.r('person.hobby'),
+		ctx.wd.reader('person.hobby'),
 		`${currently} / ${possible} (${percentString(currently / possible)})`
 	)
 	return text.trim()

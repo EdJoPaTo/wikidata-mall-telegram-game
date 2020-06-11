@@ -3,6 +3,7 @@ import emojiRegex from 'emoji-regex'
 import WikidataEntityReader from 'wikidata-entity-reader'
 import WikidataEntityStore from 'wikidata-entity-store'
 
+import {Context} from '../types'
 import {Mall, Attraction, ProductionPart} from '../types/mall'
 
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../game-math/constants'
@@ -26,7 +27,7 @@ export function mallMoji(mall: Mall): string {
 	return '??'
 }
 
-export function hintIncorrectPeopleAmount(ctx: any, mall: Mall): string {
+export function hintIncorrectPeopleAmount(ctx: Context, mall: Mall): string {
 	if (mallMemberAmountWithinLimits(mall)) {
 		return ''
 	}
@@ -35,7 +36,7 @@ export function hintIncorrectPeopleAmount(ctx: any, mall: Mall): string {
 	text += emojis.warning
 	text += mall.member.length
 	text += ' '
-	text += ctx.wd.r('mall.participation').label()
+	text += ctx.wd.reader('mall.participation').label()
 	text += ' ('
 	text += MALL_MIN_PEOPLE
 	text += ' - '
@@ -45,8 +46,8 @@ export function hintIncorrectPeopleAmount(ctx: any, mall: Mall): string {
 	return text
 }
 
-export function mallAttractionPart(ctx: any, attraction: string): string {
-	const attractionReader = ctx.wd.r(attraction) as WikidataEntityReader
+export function mallAttractionPart(ctx: Context, attraction: string): string {
+	const attractionReader = ctx.wd.reader(attraction)
 	const height = wdAttractions.getHeight(attraction)
 
 	let text = ''
@@ -55,11 +56,11 @@ export function mallAttractionPart(ctx: any, attraction: string): string {
 	})
 
 	text += labeledValue(
-		ctx.wd.r('other.height').label(),
-		`${formatFloat(height)} ${ctx.wd.r('unit.meter').label()}`
+		ctx.wd.reader('other.height').label(),
+		`${formatFloat(height)} ${ctx.wd.reader('unit.meter').label()}`
 	)
 	text += labeledValue(
-		ctx.wd.r('other.customer').label(),
+		ctx.wd.reader('other.customer').label(),
 		percentBonusString(attractionCustomerBonus(height))
 	)
 

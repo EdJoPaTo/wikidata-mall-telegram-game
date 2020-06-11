@@ -26,7 +26,7 @@ function fromCtx(ctx: any): {shop: Shop; indexOfShop: number} {
 
 function menuText(ctx: any): string {
 	const {shop} = fromCtx(ctx)
-	const reader = ctx.wd.r('action.close') as WikidataEntityReader
+	const reader = ctx.wd.reader('action.close') as WikidataEntityReader
 
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
@@ -37,12 +37,12 @@ function menuText(ctx: any): string {
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.close})
 
-	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), session.money, emojis.currency)
 	text += '\n'
 
 	text += emojis.close
 	text += '*'
-	text += ctx.wd.r(shop.id).label()
+	text += ctx.wd.reader(shop.id).label()
 	text += '*'
 	text += '\n'
 	text += '+'
@@ -99,7 +99,7 @@ menu.simpleButton(buttonText(emojis.yes + emojis.close, 'action.close'), 'remove
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('action.close').url()
+	(ctx: any) => ctx.wd.reader('action.close').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-closure'))

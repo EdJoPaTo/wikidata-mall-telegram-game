@@ -17,7 +17,7 @@ function fromCtx(ctx: any): string {
 
 function menuText(ctx: any): string {
 	const qNumber = fromCtx(ctx)
-	const reader = ctx.wd.r(qNumber) as WikidataEntityReader
+	const reader = ctx.wd.reader(qNumber) as WikidataEntityReader
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.vote})
@@ -25,7 +25,7 @@ function menuText(ctx: any): string {
 	const parts = getParts(qNumber)
 
 	text += parts
-		.map(o => ctx.wd.r(o) as WikidataEntityReader)
+		.map(o => ctx.wd.reader(o) as WikidataEntityReader)
 		.map(o => format.url(format.escape(o.label()), o.url()))
 		.join(', ')
 
@@ -63,7 +63,7 @@ menu.button(buttonText(emojis.yes, 'mall.vote'), 'vote', {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r(fromCtx(ctx)).url()
+	(ctx: any) => ctx.wd.reader(fromCtx(ctx)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production-vote'))

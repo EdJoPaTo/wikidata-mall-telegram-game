@@ -23,7 +23,7 @@ function menuText(ctx: any): string {
 	const personalMaxSeatsReached = applicants.list.length > personalMaxSeats
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.applicant'))
+	text += infoHeader(ctx.wd.reader('menu.applicant'))
 
 	const applicantEntries = mall.applicants
 		.map(applicant => {
@@ -77,7 +77,7 @@ menu.button(buttonText(emojis.seat, 'other.seat'), 'takeAll', {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.applicant').url()
+	(ctx: any) => ctx.wd.reader('menu.applicant').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.applicants'))

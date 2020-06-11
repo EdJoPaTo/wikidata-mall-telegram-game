@@ -9,7 +9,7 @@ export function createHelpMenu(i18nKey: string): TelegrafInlineMenu {
 
 	menu.urlButton(
 		buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-		(ctx: any) => ctx.wd.r('menu.help').url()
+		(ctx: any) => ctx.wd.reader('menu.help').url()
 	)
 
 	menu.urlButton(buttonText(emojis.chat, 'menu.chat'), 'https://t.me/WikidataMallChat')
@@ -28,7 +28,7 @@ export function helpButtonText(): (ctx: any) => Promise<string> {
 function menuText(i18nKey: string): (ctx: any) => string {
 	return ctx => {
 		let text = ''
-		text += infoHeader(ctx.wd.r('menu.help'), {titlePrefix: emojis.help})
+		text += infoHeader(ctx.wd.reader('menu.help'), {titlePrefix: emojis.help})
 
 		text += ctx.i18n.t(i18nKey).trim()
 

@@ -25,7 +25,7 @@ function menuText(ctx: any): string {
 	const {construction} = fromCtx(ctx)
 
 	let text = ''
-	text += infoHeader(ctx.wd.r(construction), {
+	text += infoHeader(ctx.wd.reader(construction), {
 		titlePrefix: emojis.construction + emojis.shop,
 		titleSuffix: constructionSuffix(persist.skills, construction)
 	})
@@ -91,7 +91,7 @@ menu.simpleButton(buttonText(emojis.construction, 'action.construction'), 'const
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r(fromCtx(ctx).construction).url()
+	(ctx: any) => ctx.wd.reader(fromCtx(ctx).construction).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops-construction'))

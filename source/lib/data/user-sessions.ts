@@ -48,6 +48,6 @@ export function getRandomUser(filter: (o: SessionRawEntry) => boolean = () => tr
 	return randomItem(rawArray)
 }
 
-export function middleware(): (ctx: any, next: any) => void {
+export function middleware(): (ctx: any, next: () => Promise<void>) => void {
 	return localSession.middleware() as any
 }

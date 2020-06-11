@@ -62,7 +62,7 @@ menu.button(buttonText(emojis.construction, 'action.construction'), 'construct',
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r(fromCtx(ctx)).url()
+	(ctx: any) => ctx.wd.reader(fromCtx(ctx)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.attraction'))

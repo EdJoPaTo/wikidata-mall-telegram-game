@@ -32,7 +32,7 @@ function menuText(ctx: any): string {
 	const now = Date.now() / 1000
 
 	let text = ''
-	text += infoHeader(ctx.wd.r(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
+	text += infoHeader(ctx.wd.reader(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
 
 	if (employee) {
 		text += personMarkdown(ctx, employee, shop.id === employee.hobby, now)
@@ -129,7 +129,7 @@ menu.selectSubmenu('a', availableApplicants, confirmEmployee, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r(`person.talents.${fromCtx(ctx).talent}`).url()
+	(ctx: any) => ctx.wd.reader(`person.talents.${fromCtx(ctx).talent}`).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-employees'))

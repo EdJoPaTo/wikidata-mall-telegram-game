@@ -26,25 +26,25 @@ async function menuText(ctx: any): Promise<string> {
 	const options = await constructionOptions()
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('action.construction'), {
+	text += infoHeader(ctx.wd.reader('action.construction'), {
 		titlePrefix: emojis.construction
 	})
 
 	text += moneyCostPart(ctx, session.money, cost)
 
 	text += options
-		.map(o => infoHeader(ctx.wd.r(o), {
+		.map(o => infoHeader(ctx.wd.reader(o), {
 			titlePrefix: emojis.shop,
 			titleSuffix: constructionSuffix(persist.skills, o)
 		}))
 		.join('')
 
 	text += emojis.countdown
-	text += ctx.wd.r('action.change').label()
+	text += ctx.wd.reader('action.change').label()
 	text += ': '
 	text += countdownHourMinute(nextConstructionChange(now) - now)
 	text += ' '
-	text += ctx.wd.r('unit.hour').label()
+	text += ctx.wd.reader('unit.hour').label()
 	text += '\n\n'
 
 	return text
@@ -64,13 +64,13 @@ menu.selectSubmenu('s', constructionOptions, constructionOptionMenu, {
 	columns: 1,
 	prefixFunc: () => emojis.construction,
 	textFunc: (ctx: any, key) => {
-		return ctx.wd.r(key).label()
+		return ctx.wd.reader(key).label()
 	}
 })
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('action.construction').url()
+	(ctx: any) => ctx.wd.reader('action.construction').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops-construction'))

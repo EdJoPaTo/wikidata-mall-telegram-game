@@ -67,7 +67,7 @@ menu.button(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		caption += '\n\n'
 		caption += personMarkdown(ctx, applicant, false, now)
 
-		const photo = ctx.wd.r(applicant.hobby).images(800)[0]
+		const photo = ctx.wd.reader(applicant.hobby).images(800)[0]
 		const groupKeyboard = Markup.inlineKeyboard([
 			Markup.callbackButton(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
 		])
@@ -97,12 +97,12 @@ menu.urlButton(
 		const {applicant} = fromCtx(ctx)
 		const typeEmoji = personStateEmoji(applicant)
 		const resourceKey = wdResourceKeyOfPerson(applicant)
-		return `${emojis.wikidataItem}${typeEmoji}${ctx.wd.r(resourceKey).label()}`
+		return `${emojis.wikidataItem}${typeEmoji}${ctx.wd.reader(resourceKey).label()}`
 	},
 	(ctx: any) => {
 		const {applicant} = fromCtx(ctx)
 		const resourceKey = wdResourceKeyOfPerson(applicant)
-		return ctx.wd.r(resourceKey).url()
+		return ctx.wd.reader(resourceKey).url()
 	}
 )
 
@@ -110,9 +110,9 @@ menu.urlButton(
 	(ctx: any) => {
 		const {applicant, hobbyIsFitting} = fromCtx(ctx)
 		const hobby = hobbyIsFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-		return `${emojis.wikidataItem}${hobby}${ctx.wd.r(applicant.hobby).label()}`
+		return `${emojis.wikidataItem}${hobby}${ctx.wd.reader(applicant.hobby).label()}`
 	},
-	(ctx: any) => ctx.wd.r(fromCtx(ctx).applicant.hobby).url(),
+	(ctx: any) => ctx.wd.reader(fromCtx(ctx).applicant.hobby).url(),
 	{
 		joinLastRow: true
 	}

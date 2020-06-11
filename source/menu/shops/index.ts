@@ -22,7 +22,7 @@ function shopLine(ctx: any, shop: Shop, skills: Skills): string {
 	const percentageFilled = storageFilledPercentage(shop, skills)
 
 	let text = ''
-	text += ctx.wd.r(shop.id).label()
+	text += ctx.wd.reader(shop.id).label()
 	text += ': '
 	text += percentString(percentageFilled)
 	text += emojis.storage
@@ -35,12 +35,12 @@ function menuText(ctx: any): string {
 	const persist = ctx.persist as Persist
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.shop'), {
+	text += infoHeader(ctx.wd.reader('menu.shop'), {
 		titlePrefix: emojis.shop,
 		titleSuffix: `(${persist.shops.length})`
 	})
 
-	text += labeledFloat(ctx.wd.r('other.money'), session.money, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), session.money, emojis.currency)
 	text += '\n'
 
 	text += incomePart(ctx, persist.shops, persist, !session.hideExplanationMath)
@@ -73,7 +73,7 @@ function userShops(ctx: any): string[] {
 
 menu.selectSubmenu('s', userShops, shopMenu, {
 	columns: 2,
-	textFunc: (ctx: any, key) => ctx.wd.r(key).label()
+	textFunc: (ctx: any, key) => ctx.wd.reader(key).label()
 })
 
 menu.submenu(buttonText(emojis.construction, 'action.construction'), 'build', constructionMenu)
@@ -111,7 +111,7 @@ menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: b
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.shop').url()
+	(ctx: any) => ctx.wd.reader('menu.shop').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops'))

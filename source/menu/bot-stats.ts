@@ -21,24 +21,24 @@ import {createHelpMenu, helpButtonText} from './help'
 
 async function menuText(ctx: any): Promise<string> {
 	let text = ''
-	text += infoHeader(ctx.wd.r('stat.stats'), {titlePrefix: emojis.stats})
+	text += infoHeader(ctx.wd.reader('stat.stats'), {titlePrefix: emojis.stats})
 
 	text += '*'
-	text += ctx.wd.r('menu.wikidata').label()
+	text += ctx.wd.reader('menu.wikidata').label()
 	text += '*'
 	text += '\n'
 
-	text += labeledInt(ctx.wd.r('menu.shop'), wdShops.allShops().length)
-	text += labeledInt(ctx.wd.r('product.product'), wdShops.allProductsAmount())
-	text += labeledInt(ctx.wd.r('stat.name.given'), wdNames.getGivenNames().length)
-	text += labeledInt(ctx.wd.r('stat.name.family'), wdNames.getFamilyNames().length)
-	text += labeledInt(ctx.wd.r('mall.production'), wdProduction.getProducts().length)
-	text += labeledInt(ctx.wd.r('mall.attraction'), Object.keys(wdAttractions.all()).length)
-	text += labeledInt(ctx.wd.r('mall.disaster'), wdSets.get('disaster').length)
+	text += labeledInt(ctx.wd.reader('menu.shop'), wdShops.allShops().length)
+	text += labeledInt(ctx.wd.reader('product.product'), wdShops.allProductsAmount())
+	text += labeledInt(ctx.wd.reader('stat.name.given'), wdNames.getGivenNames().length)
+	text += labeledInt(ctx.wd.reader('stat.name.family'), wdNames.getFamilyNames().length)
+	text += labeledInt(ctx.wd.reader('mall.production'), wdProduction.getProducts().length)
+	text += labeledInt(ctx.wd.reader('mall.attraction'), Object.keys(wdAttractions.all()).length)
+	text += labeledInt(ctx.wd.reader('mall.disaster'), wdSets.get('disaster').length)
 
 	text += '\n'
 	text += '*'
-	text += ctx.wd.r('stat.game').label()
+	text += ctx.wd.reader('stat.game').label()
 	text += '*'
 	text += '\n'
 
@@ -49,22 +49,22 @@ async function menuText(ctx: any): Promise<string> {
 	const allMallsDict = await userMalls.getAll()
 	const allMalls = Object.values(allMallsDict)
 
-	text += labeledInt(ctx.wd.r('stat.player'), userSessions.getRaw().length)
-	text += labeledInt(ctx.wd.r('menu.mall'), allMalls.length)
-	text += labeledInt(ctx.wd.r('menu.shop'), allShops.length)
-	text += labeledInt(ctx.wd.r('menu.employee'), allEmployees.length)
-	text += labeledInt(ctx.wd.r('product.product'), allProducts.length)
+	text += labeledInt(ctx.wd.reader('stat.player'), userSessions.getRaw().length)
+	text += labeledInt(ctx.wd.reader('menu.mall'), allMalls.length)
+	text += labeledInt(ctx.wd.reader('menu.shop'), allShops.length)
+	text += labeledInt(ctx.wd.reader('menu.employee'), allEmployees.length)
+	text += labeledInt(ctx.wd.reader('product.product'), allProducts.length)
 
 	const {gameStarted, stats, timeZone, __wikibase_language_code: locale} = ctx.session as Session
 
 	text += '\n'
 	text += '*'
-	text += ctx.wd.r('stat.player').label()
+	text += ctx.wd.reader('stat.player').label()
 	text += '*'
 	text += '\n'
 
-	text += labeledValue(ctx.wd.r('achievement.gameStarted'), humanReadableTimestamp(gameStarted, locale, timeZone))
-	text += labeledInt(ctx.wd.r('person.talents.purchasing'), stats.productsBought)
+	text += labeledValue(ctx.wd.reader('achievement.gameStarted'), humanReadableTimestamp(gameStarted, locale, timeZone))
+	text += labeledInt(ctx.wd.reader('person.talents.purchasing'), stats.productsBought)
 
 	return text
 }
@@ -75,7 +75,7 @@ const menu = new TelegrafInlineMenu(menuText, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('stat.stats').url()
+	(ctx: any) => ctx.wd.reader('stat.stats').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.bot-stats'))

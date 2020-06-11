@@ -18,7 +18,7 @@ function menuText(ctx: any): string {
 	const talents = talentSelection ? [talentSelection] : TALENTS
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('menu.employee'), {titlePrefix: emojis.person})
+	text += infoHeader(ctx.wd.reader('menu.employee'), {titlePrefix: emojis.person})
 
 	text += persist.shops
 		.map(o => shopEmployeeOverview(ctx, o, talents))
@@ -34,7 +34,7 @@ const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('menu.employee')
 })
 
-menu.toggle((ctx: any) => ctx.wd.r('menu.allLanguages').label(), 'all', {
+menu.toggle((ctx: any) => ctx.wd.reader('menu.allLanguages').label(), 'all', {
 	isSetFunc: (ctx: any) => {
 		const session = ctx.session as Session
 		return !session.employeeViewTalent
@@ -59,7 +59,7 @@ menu.select('talent', TALENTS, {
 		session.employeeViewTalent = key as Talent
 	},
 	textFunc: (ctx: any, key) => {
-		const label: string = ctx.wd.r(`person.talents.${key}`).label()
+		const label: string = ctx.wd.reader(`person.talents.${key}`).label()
 		const emoji = emojis[key]
 		return emoji + label
 	}
@@ -67,7 +67,7 @@ menu.select('talent', TALENTS, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r('menu.employee').url()
+	(ctx: any) => ctx.wd.reader('menu.employee').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.employees'))

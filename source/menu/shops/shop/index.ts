@@ -63,7 +63,7 @@ function canAddProductTechnically(shop: Shop, skills: Skills): boolean {
 function storageCapacityPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boolean): string {
 	let text = ''
 	text += emojis.storage
-	text += labeledInt(ctx.wd.r('product.storageCapacity'), storageCapacity(shop, skills))
+	text += labeledInt(ctx.wd.reader('product.storageCapacity'), storageCapacity(shop, skills))
 	if (showExplanation && shop.personal.storage) {
 		text += '  '
 		text += emojis.person
@@ -78,7 +78,7 @@ function storageCapacityPart(ctx: any, shop: Shop, skills: Skills, showExplanati
 		text += emojis.skill
 		text += percentBonusString(pressBonus)
 		text += ' '
-		text += ctx.wd.r('skill.machinePress').label()
+		text += ctx.wd.reader('skill.machinePress').label()
 		text += ' ('
 		text += pressLevel
 		text += ')'
@@ -100,7 +100,7 @@ function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boo
 
 	let text = ''
 	text += '*'
-	text += ctx.wd.r('other.assortment').label()
+	text += ctx.wd.reader('other.assortment').label()
 	text += '*'
 	text += ' ('
 	text += shop.products.length
@@ -115,7 +115,7 @@ function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boo
 		text += '+'
 		text += logisticsLevel
 		text += ' '
-		text += ctx.wd.r('skill.logistics').label()
+		text += ctx.wd.reader('skill.logistics').label()
 		text += ' ('
 		text += logisticsLevel
 		text += ')'
@@ -123,7 +123,7 @@ function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boo
 	}
 
 	text += shop.products
-		.map(product => labeledInt(ctx.wd.r(product.id), product.itemsInStore, emojis.storage))
+		.map(product => labeledInt(ctx.wd.reader(product.id), product.itemsInStore, emojis.storage))
 		.map(o => o.trim())
 		.join('\n')
 	text += '\n\n'
@@ -143,7 +143,7 @@ function addProductPart(ctx: any, shop: Shop, money: number): string {
 	let text = ''
 	text += emojis.add
 	text += '*'
-	text += ctx.wd.r('other.assortment').label()
+	text += ctx.wd.reader('other.assortment').label()
 	text += '*'
 	text += '\n'
 
@@ -162,14 +162,14 @@ function customerIntervalPart(ctx: any, shop: Shop, mall: Mall | undefined, show
 
 	let text = ''
 	text += '1 '
-	text += ctx.wd.r('other.customer').label()
+	text += ctx.wd.reader('other.customer').label()
 	text += ' / '
 	text += formatFloat(customerInterval(bonus))
 	text += ' '
-	text += ctx.wd.r('unit.second').label()
+	text += ctx.wd.reader('unit.second').label()
 	if (shop.products.length > 1) {
 		text += ' / '
-		text += ctx.wd.r('product.product').label()
+		text += ctx.wd.reader('product.product').label()
 	}
 
 	if (showExplanation && mall && mall.attraction) {
@@ -177,7 +177,7 @@ function customerIntervalPart(ctx: any, shop: Shop, mall: Mall | undefined, show
 		text += emojis.attraction
 		text += percentBonusString(bonus)
 		text += ' '
-		text += ctx.wd.r(mall.attraction.item).label()
+		text += ctx.wd.reader(mall.attraction.item).label()
 	}
 
 	text += '\n\n'
@@ -186,7 +186,7 @@ function customerIntervalPart(ctx: any, shop: Shop, mall: Mall | undefined, show
 
 function menuText(ctx: any): string {
 	const {shop} = fromCtx(ctx)
-	const reader = ctx.wd.r(shop.id) as WikidataEntityReader
+	const reader = ctx.wd.reader(shop.id) as WikidataEntityReader
 
 	const session = ctx.session as Session
 	const persist = ctx.persist as Persist
@@ -214,7 +214,7 @@ function userProducts(ctx: any): string[] {
 
 menu.selectSubmenu('p', userProducts, productMenu, {
 	columns: 3,
-	textFunc: (ctx: any, key) => ctx.wd.r(key).label()
+	textFunc: (ctx: any, key) => ctx.wd.reader(key).label()
 })
 
 menu.button(buttonText(emojis.add, 'other.assortment'), 'addProduct', {
@@ -311,7 +311,7 @@ menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureMenu, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r(fromCtx(ctx).shop.id).url()
+	(ctx: any) => ctx.wd.reader(fromCtx(ctx).shop.id).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop'))

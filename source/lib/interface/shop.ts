@@ -1,4 +1,4 @@
-import {Persist} from '../types'
+import {Persist, Context} from '../types'
 import {Shop} from '../types/shop'
 
 import {buyAllCostFactor, returnOnInvestment, currentSellPerMinute} from '../game-math/shop-cost'
@@ -10,7 +10,7 @@ import {emojis} from './emojis'
 import {formatFloat} from './format-number'
 import {percentBonusString} from './format-percent'
 
-export function incomePart(ctx: any, shops: readonly Shop[], persist: Persist, showExplanation: boolean): string {
+export function incomePart(ctx: Context, shops: readonly Shop[], persist: Persist, showExplanation: boolean): string {
 	const {skills, mall} = persist
 	const magnetismLevel = currentLevel(skills, 'magnetism')
 	const factor = buyAllCostFactor(skills, shops.length)
@@ -29,18 +29,18 @@ export function incomePart(ctx: any, shops: readonly Shop[], persist: Persist, s
 	let text = ''
 	text += emojis.income
 	text += '*'
-	text += ctx.wd.r('other.income').label()
+	text += ctx.wd.reader('other.income').label()
 	text += '*'
 
 	text += '\n'
 	text += formatFloat(sell)
 	text += emojis.currency
 	text += ' / '
-	text += ctx.wd.r('unit.minute').label()
+	text += ctx.wd.reader('unit.minute').label()
 
 	if (showExplanation) {
 		text += '\n'
-		text += ctx.wd.r('other.returnOnInvestment').label()
+		text += ctx.wd.reader('other.returnOnInvestment').label()
 		text += ': '
 		text += percentBonusString(income)
 

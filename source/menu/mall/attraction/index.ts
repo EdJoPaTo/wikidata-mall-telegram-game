@@ -22,7 +22,7 @@ function menuText(ctx: any): string {
 	}
 
 	let text = ''
-	text += infoHeader(ctx.wd.r('mall.attraction'), {titlePrefix: emojis.attraction})
+	text += infoHeader(ctx.wd.reader('mall.attraction'), {titlePrefix: emojis.attraction})
 
 	const {attraction} = mall
 	if (attraction) {
@@ -52,8 +52,8 @@ function buildAttractionOptions(ctx: any): Record<string, string> {
 	const all = wdAttractions.allHeightSortedArray()
 	const result: Record<string, string> = {}
 	for (const o of all) {
-		const r = ctx.wd.r(o.item) as WikidataEntityReader
-		result[o.item] = `${r.label()} (${formatFloat(o.height)} ${ctx.wd.r('unit.meter').label()})`
+		const r = ctx.wd.reader(o.item) as WikidataEntityReader
+		result[o.item] = `${r.label()} (${formatFloat(o.height)} ${ctx.wd.reader('unit.meter').label()})`
 	}
 
 	return result
@@ -75,7 +75,7 @@ menu.selectSubmenu('build', buildAttractionOptions, buildMenu, {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'mall.attraction'),
-	(ctx: any) => ctx.wd.r('mall.attraction').url()
+	(ctx: any) => ctx.wd.reader('mall.attraction').url()
 )
 
 function currentAttractionQNumber(ctx: any): string {
@@ -89,7 +89,7 @@ function currentAttractionQNumber(ctx: any): string {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, (ctx: any) => currentAttractionQNumber(ctx)),
-	(ctx: any) => ctx.wd.r(currentAttractionQNumber(ctx)).url(),
+	(ctx: any) => ctx.wd.reader(currentAttractionQNumber(ctx)).url(),
 	{
 		joinLastRow: true,
 		hide: (ctx: any) => {

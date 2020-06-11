@@ -35,15 +35,15 @@ function menuText(ctx: any): string {
 	const afterQueueLevel = levelAfterSkillQueue(persist.skills, session.skillQueue, skill, category)
 
 	let text = ''
-	text += infoHeader(ctx.wd.r(`skill.${skill}`), {
+	text += infoHeader(ctx.wd.reader(`skill.${skill}`), {
 		titlePrefix: emojis.skill + (emojis[skill] || '')
 	})
 
 	if (category) {
-		text += infoHeader(ctx.wd.r(category))
+		text += infoHeader(ctx.wd.reader(category))
 	}
 
-	text += ctx.wd.r('skill.level').label()
+	text += ctx.wd.reader('skill.level').label()
 	text += ': '
 	text += level
 	if (inQueue > 0) {
@@ -52,11 +52,11 @@ function menuText(ctx: any): string {
 
 	text += '\n'
 
-	text += ctx.wd.r('action.research').label()
+	text += ctx.wd.reader('action.research').label()
 	text += ': '
 	text += countdownHourMinute(skillUpgradeEndTimestamp(afterQueueLevel, 0))
 	text += ' '
-	text += ctx.wd.r('unit.hour').label()
+	text += ctx.wd.reader('unit.hour').label()
 	text += '\n'
 
 	text += '\n'
@@ -95,7 +95,7 @@ menu.button(buttonText(emojis.skill, 'action.research'), 'research', {
 
 menu.urlButton(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.r(`skill.${fromCtx(ctx).skill}`).url()
+	(ctx: any) => ctx.wd.reader(`skill.${fromCtx(ctx).skill}`).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))
