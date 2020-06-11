@@ -14,20 +14,20 @@ import {helpButtonText, createHelpMenu} from '../../help'
 
 import {menu as buildMenu} from './build'
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {mall} = ctx.persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('mall.attraction'), {titlePrefix: emojis.attraction})
+	text += infoHeader(await ctx.wd.reader('mall.attraction'), {titlePrefix: emojis.attraction})
 
 	const {attraction} = mall
 	if (attraction) {
-		text += mallAttractionPart(ctx, attraction.item)
+		text += await mallAttractionPart(ctx, attraction.item)
 
-		const reader = ctx.wd.reader(attraction.item)
+		const reader = await ctx.wd.reader(attraction.item)
 		return {
 			...bodyPhoto(reader),
 			text, parse_mode: 'Markdown'
@@ -39,20 +39,17 @@ function menuBody(ctx: Context): Body {
 
 export const menu = new MenuTemplate<Context>(menuBody)
 
-function buildAttractionOptions(ctx: Context): Record<string, string> {
+async function buildAttractionOptions(ctx: Context): Promise<string[]> {
 	const {mall} = ctx.persist
 	if (!mall || mall.attraction) {
-		return {}
+		return []
 	}
 
 	const all = wdAttractions.allHeightSortedArray()
-	const result: Record<string, string> = {}
-	for (const o of all) {
-		const r = ctx.wd.reader(o.item)
-		result[o.item] = `${emojis.construction}${r.label()} (${formatFloat(o.height)} ${ctx.wd.reader('unit.meter').label()})`
-	}
+	const itemIds = all.map(o => o.item)
 
-	return result
+	await ctx.wd.preload(itemIds)
+	return itemIds
 }
 
 menu.chooseIntoSubmenu('build', buildAttractionOptions, buildMenu, {
@@ -61,12 +58,18 @@ menu.chooseIntoSubmenu('build', buildAttractionOptions, buildMenu, {
 	setPage: (ctx, page) => {
 		ctx.session.page = page
 	},
-	getCurrentPage: ctx => ctx.session.page
+	getCurrentPage: ctx => ctx.session.page,
+	buttonText: async (ctx, key) => {
+		const height = wdAttractions.getHeight(key)
+		const reader = await ctx.wd.reader(key)
+		const readerMeter = await ctx.wd.reader('unit.meter')
+		return `${emojis.construction} ${reader.label()} (${formatFloat(height)} ${readerMeter.label()})`
+	}
 })
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'mall.attraction'),
-	ctx => ctx.wd.reader('mall.attraction').url()
+	async ctx => (await ctx.wd.reader('mall.attraction')).url()
 )
 
 function currentAttractionQNumber(ctx: Context): string {
@@ -80,7 +83,7 @@ function currentAttractionQNumber(ctx: Context): string {
 
 menu.url(
 	buttonText(emojis.wikidataItem, ctx => currentAttractionQNumber(ctx)),
-	ctx => ctx.wd.reader(currentAttractionQNumber(ctx)).url(),
+	async ctx => (await ctx.wd.reader(currentAttractionQNumber(ctx))).url(),
 	{
 		joinLastRow: true,
 		hide: ctx => {

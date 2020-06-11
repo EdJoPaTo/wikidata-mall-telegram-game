@@ -4,7 +4,7 @@ import {MediaBody} from 'telegraf-inline-menu/dist/source/body'
 import {Context} from '../types'
 
 import {emojis} from './emojis'
-import WikidataEntityReader from 'wikidata-entity-reader/dist/source'
+import WikidataEntityReader from 'wikidata-entity-reader'
 
 type ConstOrPromise<T> = T | Promise<T>
 type Func<T> = (ctx: Context, key?: string) => ConstOrPromise<T>
@@ -23,7 +23,7 @@ export function buttonText(emoji: ConstOrContextFunc<string>, resourceKey: Const
 		const resourceKeyString = typeof resourceKey === 'function' ? await resourceKey(ctx, key) : resourceKey
 		const suffixString = typeof suffix === 'function' ? await suffix(ctx, key) : suffix
 		const suffixPart = suffixString ? ` ${suffixString}` : ''
-		return `${requireAttentionString}${emojiString} ${ctx.wd.reader(resourceKeyString).label()}${suffixPart}`
+		return `${requireAttentionString}${emojiString} ${await ctx.wd.reader(resourceKeyString).then(r => r.label())}${suffixPart}`
 	}
 }
 
@@ -41,5 +41,5 @@ export function bodyPhoto(reader: WikidataEntityReader): MediaBody | Record<stri
 
 export const backButtons = createBackMainMenuButtons<Context>(
 	ctx => `🔙 ${ctx.i18n.t('menu.back')}`,
-	ctx => `🔝 ${ctx.wd.reader('menu.menu').label()}`
+	async ctx => `🔝 ${(await ctx.wd.reader('menu.menu')).label()}`
 )

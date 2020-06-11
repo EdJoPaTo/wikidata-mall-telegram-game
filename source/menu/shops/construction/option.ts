@@ -17,18 +17,18 @@ function fromCtx(ctx: Context): {construction: string} {
 	return {construction}
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const cost = costForAdditionalShop(ctx.persist.shops.length)
 	const {construction} = fromCtx(ctx)
 
 	let text = ''
-	const reader = ctx.wd.reader(construction)
+	const reader = await ctx.wd.reader(construction)
 	text += infoHeader(reader, {
 		titlePrefix: emojis.construction + emojis.shop,
 		titleSuffix: constructionSuffix(ctx.persist.skills, construction)
 	})
 
-	text += moneyCostPart(ctx, ctx.session.money, cost)
+	text += await moneyCostPart(ctx, ctx.session.money, cost)
 
 	return {
 		...bodyPhoto(reader),
@@ -85,7 +85,7 @@ menu.interact(buttonText(emojis.construction, 'action.construction'), 'construct
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader(fromCtx(ctx).construction).url()
+	async ctx => (await ctx.wd.reader(fromCtx(ctx).construction)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops-construction'))

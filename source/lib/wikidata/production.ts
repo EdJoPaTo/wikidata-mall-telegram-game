@@ -36,7 +36,7 @@ export function getParts(product: string): readonly string[] {
 	return producable[product] || []
 }
 
-export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
+export async function preload(logger: (...args: any[]) => void): Promise<void> {
 	const resultsArray = await sequentialAsync(preloadCategory, CATEGORIES)
 	logger('finished queries')
 
@@ -50,13 +50,6 @@ export async function preload(logger: (...args: any[]) => void): Promise<string[
 
 	logger('products after blacklist', Object.keys(results).length)
 	producable = results
-
-	const keys = Object.keys(producable)
-	const values = Object.values(producable).flat()
-	return [
-		...keys,
-		...values
-	]
 }
 
 async function preloadCategory(category: string): Promise<Record<string, string[]>> {

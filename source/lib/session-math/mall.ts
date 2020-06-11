@@ -1,12 +1,12 @@
 import arrayFilterUnique from 'array-filter-unique'
 import stringify from 'json-stable-stringify'
-import WikidataEntityStore from 'wikidata-entity-store'
 
 import {randomUniqueEntries} from '../js-helper/array'
 
 import {DAY_IN_SECONDS} from '../math/timestamp-constants'
 
 import {Mall, MallProduction} from '../types/mall'
+import {MiniWikidataStore} from '../notification/types'
 import {Persist} from '../types'
 
 import {productionReward} from '../game-math/mall'
@@ -53,7 +53,7 @@ export function incomeLoop(persist: Persist, now: number): void {
 	delete mall.attraction
 }
 
-export async function before(persist: Persist, store: WikidataEntityStore, now: number): Promise<void> {
+export async function before(persist: Persist, store: MiniWikidataStore, now: number): Promise<void> {
 	if (!persist.mall) {
 		return
 	}
@@ -66,7 +66,7 @@ export async function before(persist: Persist, store: WikidataEntityStore, now: 
 	fillupPossibleVoteItems(production)
 
 	if (production.itemToProduce) {
-		await store.preloadQNumbers(production.itemToProduce)
+		await store.preload([production.itemToProduce])
 	}
 
 	const parts = production.itemToProduce ? getParts(production.itemToProduce) : []

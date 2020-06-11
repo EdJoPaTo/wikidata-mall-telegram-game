@@ -10,21 +10,20 @@ import {shopEmployeeOverview, employeeStatsPart} from '../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from './help'
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const talentSelection = ctx.session.employeeViewTalent
 	const talents = talentSelection ? [talentSelection] : TALENTS
 
-	const reader = ctx.wd.reader('menu.employee')
+	const reader = await ctx.wd.reader('menu.employee')
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.person})
 
-	text += ctx.persist.shops
-		.map(o => shopEmployeeOverview(ctx, o, talents))
-		.join('\n\n')
+	const shopEmployeePart = await Promise.all(ctx.persist.shops.map(async shop => shopEmployeeOverview(ctx, shop, talents)))
+	text += shopEmployeePart.join('\n\n')
 	text += '\n\n'
 
-	text += employeeStatsPart(ctx, ctx.persist.shops, talents)
+	text += await employeeStatsPart(ctx, ctx.persist.shops, talents)
 
 	return {
 		...bodyPhoto(reader),
@@ -34,7 +33,7 @@ function menuBody(ctx: Context): Body {
 
 export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.toggle(ctx => ctx.wd.reader('menu.allLanguages').label(), 'all', {
+menu.toggle(async ctx => (await ctx.wd.reader('menu.allLanguages')).label(), 'all', {
 	isSet: ctx => !ctx.session.employeeViewTalent,
 	set: (ctx, newState) => {
 		if (newState) {
@@ -50,8 +49,8 @@ menu.select('talent', TALENTS, {
 	set: (ctx, key) => {
 		ctx.session.employeeViewTalent = key as Talent
 	},
-	buttonText: (ctx, key) => {
-		const label = ctx.wd.reader(`person.talents.${key}`).label()
+	buttonText: async (ctx, key) => {
+		const label = (await ctx.wd.reader(`person.talents.${key}`)).label()
 		const emoji = emojis[key]
 		return emoji + label
 	}
@@ -59,7 +58,7 @@ menu.select('talent', TALENTS, {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.employee').url()
+	async ctx => (await ctx.wd.reader('menu.employee')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.employees'))

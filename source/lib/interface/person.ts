@@ -27,7 +27,7 @@ export function wdResourceKeyOfPerson(person: Person): string {
 	return `person.type.${person.type}`
 }
 
-export function personMarkdown(ctx: Context, person: Person, isFitting: boolean, now: number): string {
+export async function personMarkdown(ctx: Context, person: Person, isFitting: boolean, now: number): Promise<string> {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session
 	const {name, hobby, seatProtectionUntil, retirementTimestamp, talents} = person
 
@@ -35,28 +35,29 @@ export function personMarkdown(ctx: Context, person: Person, isFitting: boolean,
 	text += nameMarkdown(name)
 	text += '\n'
 	text += personStateEmoji(person)
-	text += ctx.wd.reader(wdResourceKeyOfPerson(person)).label()
+	text += await ctx.wd.reader(wdResourceKeyOfPerson(person)).then(r => r.label())
 	text += '\n'
 
 	text += isFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-	text += labeledValue(ctx.wd.reader('person.hobby'), ctx.wd.reader(hobby))
+	text += labeledValue(await ctx.wd.reader('person.hobby'), await ctx.wd.reader(hobby))
 
 	if (seatProtectionUntil && seatProtectionUntil > now) {
 		text += emojis.seatProtection
-		text += labeledValue(ctx.wd.reader('person.seatProtection'), humanReadableTimestamp(seatProtectionUntil, locale, timeZone))
+		text += labeledValue(await ctx.wd.reader('person.seatProtection'), humanReadableTimestamp(seatProtectionUntil, locale, timeZone))
 	}
 
 	text += emojis.retirement
-	text += labeledValue(ctx.wd.reader('person.retirement'), humanReadableTimestamp(retirementTimestamp, locale, timeZone))
+	text += labeledValue(await ctx.wd.reader('person.retirement'), humanReadableTimestamp(retirementTimestamp, locale, timeZone))
 
 	text += '*'
-	text += ctx.wd.reader('person.talent').label()
+	text += (await ctx.wd.reader('person.talent')).label()
 	text += '*'
 	text += '\n'
 
-	text += (Object.keys(talents) as Talent[])
-		.map(t => talentLine(ctx, t, talents[t]))
-		.join('\n')
+	const talentLines = await Promise.all((Object.keys(talents) as Talent[])
+		.map(async t => talentLine(ctx, t, talents[t]))
+	)
+	text += talentLines.join('\n')
 
 	return text.trim()
 }
@@ -66,8 +67,8 @@ export function nameMarkdown(name: Name): string {
 	return `*${given}* ${family}`
 }
 
-function talentLine(ctx: Context, t: Talent, percentage: number): string {
-	const reader = ctx.wd.reader(`person.talents.${t}`)
+async function talentLine(ctx: Context, t: Talent, percentage: number): Promise<string> {
+	const reader = await ctx.wd.reader(`person.talents.${t}`)
 	return `${emojis[t]} ${reader.label()}: ${percentBonusString(percentage)}`
 }
 
@@ -91,14 +92,13 @@ export function personInShopLine(shop: Shop, talent: Talent): string {
 	return `${percentBonusString(bonus)} ${isHobby ? emojis.hobbyMatch + ' ' : ''}${namePart}`
 }
 
-export function shopEmployeeOverview(ctx: Context, shop: Shop, talents: readonly Talent[] = TALENTS): string {
-	const employeeEntries = talents
-		.map(t => shopEmployeeEntry(ctx, shop, t))
+export async function shopEmployeeOverview(ctx: Context, shop: Shop, talents: readonly Talent[] = TALENTS): Promise<string> {
+	const employeeEntries = await Promise.all(talents.map(async t => shopEmployeeEntry(ctx, shop, t)))
 
 	let text = ''
 	text += emojis.shop
 	text += '*'
-	text += ctx.wd.reader(shop.id).label()
+	text += await ctx.wd.reader(shop.id).then(r => r.label())
 	text += '*'
 	text += '\n'
 
@@ -108,7 +108,7 @@ export function shopEmployeeOverview(ctx: Context, shop: Shop, talents: readonly
 	return text
 }
 
-function shopEmployeeEntry(ctx: Context, shop: Shop, talent: Talent): string {
+async function shopEmployeeEntry(ctx: Context, shop: Shop, talent: Talent): Promise<string> {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session
 	const person = shop.personal[talent]
 
@@ -127,7 +127,7 @@ function shopEmployeeEntry(ctx: Context, shop: Shop, talent: Talent): string {
 		text += '\n'
 		text += '    '
 		text += emojis.hobbyDifferent
-		text += ctx.wd.reader(person.hobby).label()
+		text += await ctx.wd.reader(person.hobby).then(r => r.label())
 	}
 
 	text += '\n'
@@ -138,7 +138,7 @@ function shopEmployeeEntry(ctx: Context, shop: Shop, talent: Talent): string {
 	return text
 }
 
-export function employeeStatsPart(ctx: Context, shops: readonly Shop[], talents: readonly Talent[]): string {
+export async function employeeStatsPart(ctx: Context, shops: readonly Shop[], talents: readonly Talent[]): Promise<string> {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session
 	const employeesInTalents = shops
 		.flatMap(o => {
@@ -154,7 +154,7 @@ export function employeeStatsPart(ctx: Context, shops: readonly Shop[], talents:
 		})
 
 	const entries: string[] = [
-		hobbiesStatsLine(ctx, shops, talents),
+		await hobbiesStatsLine(ctx, shops, talents),
 		...retirementLines(employeesInTalents, locale, timeZone),
 		...talents.map(t => talentStatsLine(shops, t))
 	].filter(o => Boolean(o))
@@ -193,7 +193,7 @@ function retirementLines(people: readonly Person[], locale: string | undefined, 
 	]
 }
 
-function hobbiesStatsLine(ctx: Context, shops: readonly Shop[], talents: readonly Talent[]): string {
+async function hobbiesStatsLine(ctx: Context, shops: readonly Shop[], talents: readonly Talent[]): Promise<string> {
 	const currently = employeesWithFittingHobbyAmount(shops, talents)
 	const possible = shops.length * talents.length
 	if (currently === 0 || possible === 0) {
@@ -203,7 +203,7 @@ function hobbiesStatsLine(ctx: Context, shops: readonly Shop[], talents: readonl
 	let text = ''
 	text += emojis.hobbyMatch
 	text += labeledValue(
-		ctx.wd.reader('person.hobby'),
+		await ctx.wd.reader('person.hobby'),
 		`${currently} / ${possible} (${percentString(currently / possible)})`
 	)
 	return text.trim()

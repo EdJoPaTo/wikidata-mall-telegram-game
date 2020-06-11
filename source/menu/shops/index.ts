@@ -18,11 +18,11 @@ import {createHelpMenu, helpButtonText} from '../help'
 import {menu as constructionMenu} from './construction'
 import {menu as shopMenu} from './shop'
 
-function shopLine(ctx: Context, shop: Shop, skills: Skills): string {
+async function shopLine(ctx: Context, shop: Shop, skills: Skills): Promise<string> {
 	const percentageFilled = storageFilledPercentage(shop, skills)
 
 	let text = ''
-	text += ctx.wd.reader(shop.id).label()
+	text += await ctx.wd.reader(shop.id).then(r => r.label())
 	text += ': '
 	text += percentString(percentageFilled)
 	text += emojis.storage
@@ -30,23 +30,22 @@ function shopLine(ctx: Context, shop: Shop, skills: Skills): string {
 	return text
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	let text = ''
-	const reader = ctx.wd.reader('menu.shop')
+	const reader = await ctx.wd.reader('menu.shop')
 	text += infoHeader(reader, {
 		titlePrefix: emojis.shop,
 		titleSuffix: `(${ctx.persist.shops.length})`
 	})
 
-	text += labeledFloat(ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
 	text += '\n'
 
-	text += incomePart(ctx, ctx.persist.shops, ctx.persist, !ctx.session.hideExplanationMath)
+	text += await incomePart(ctx, ctx.persist.shops, ctx.persist, !ctx.session.hideExplanationMath)
 
 	if (ctx.persist.shops.length > 0) {
-		text += ctx.persist.shops
-			.map(o => shopLine(ctx, o, ctx.persist.skills))
-			.join('\n')
+		const shopLines = await Promise.all(ctx.persist.shops.map(async o => shopLine(ctx, o, ctx.persist.skills)))
+		text += shopLines.join('\n')
 		text += '\n\n'
 	}
 
@@ -70,7 +69,7 @@ function userShops(ctx: Context): string[] {
 
 menu.chooseIntoSubmenu('s', userShops, shopMenu, {
 	columns: 2,
-	buttonText: (ctx, key) => ctx.wd.reader(key).label()
+	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label()
 })
 
 menu.submenu(buttonText(emojis.construction, 'action.construction'), 'build', constructionMenu)
@@ -102,7 +101,7 @@ menu.interact(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix:
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.shop').url()
+	async ctx => (await ctx.wd.reader('menu.shop')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops'))

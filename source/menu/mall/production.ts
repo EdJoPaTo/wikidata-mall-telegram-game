@@ -28,7 +28,7 @@ async function partLine(ctx: Context, part: ProductionPart, now: number): Promis
 	const isMe = ctx.from!.id === part.user
 
 	let text = ''
-	text += format.bold(format.escape(ctx.wd.reader(part.part).label()))
+	text += format.bold(format.escape(await ctx.wd.reader(part.part).then(r => r.label())))
 	text += '\n  '
 	text += finished ? emojis.productionFinished : emojis.countdown
 	text += isMe ? format.italic(name) : name
@@ -37,7 +37,7 @@ async function partLine(ctx: Context, part: ProductionPart, now: number): Promis
 		text += ' '
 		text += countdownMinuteSecond(part.finishTimestamp - now)
 		text += ' '
-		text += ctx.wd.reader('unit.minute').label()
+		text += (await ctx.wd.reader('unit.minute')).label()
 	}
 
 	return text
@@ -64,31 +64,31 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const productionMinutes = productionSeconds(currentlyBeeingProduced.length) / MINUTE_IN_SECONDS
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('mall.production'), {titlePrefix: emojis.production})
+	text += infoHeader(await ctx.wd.reader('mall.production'), {titlePrefix: emojis.production})
 
 	text += emojis.countdown
-	text += labeledValue(ctx.wd.reader('other.end'), humanReadableTimestamp(competitionUntil, locale, timeZone))
+	text += labeledValue(await ctx.wd.reader('other.end'), humanReadableTimestamp(competitionUntil, locale, timeZone))
 	text += '\n'
 
-	const reader = ctx.wd.reader(itemToProduce)
+	const reader = await ctx.wd.reader(itemToProduce)
 	text += infoHeader(reader, {titlePrefix: emojis.production})
 
 	text += labeledValue(
-		ctx.wd.reader('mall.productionReward'),
+		await ctx.wd.reader('mall.productionReward'),
 		formatFloat(productionReward(parts.length)) + emojis.currencyMall
 	)
 	if (missing.length > 0) {
 		text += labeledInt(
-			ctx.wd.reader('mall.production'),
+			await ctx.wd.reader('mall.production'),
 			productionMinutes,
-			` ${ctx.wd.reader('unit.minute').label()}`
+			` ${(await ctx.wd.reader('unit.minute')).label()}`
 		)
 		if (!hideExplanationMath && currentlyBeeingProduced.length > 0) {
 			text += '  '
 			text += emojis.group
 			text += formatInt(currentlyBeeingProduced.length)
 			text += ' '
-			text += ctx.wd.reader('mall.productionTeamwork').label()
+			text += (await ctx.wd.reader('mall.productionTeamwork')).label()
 			text += '\n'
 		}
 	}
@@ -106,8 +106,10 @@ async function menuBody(ctx: Context): Promise<Body> {
 		text += '\n'
 	}
 
-	text += missing
-		.map(o => ctx.wd.reader(o).label())
+	await ctx.wd.preload(missing)
+	const readersMissing = await Promise.all(missing.map(async o => ctx.wd.reader(o)))
+	text += readersMissing
+		.map(o => o.label())
 		.map(o => `${format.bold(format.escape(o))}\n  ${emojis.noPerson}`)
 		.join('\n')
 
@@ -141,7 +143,7 @@ async function currentlyNotTakenParts(ctx: Context): Promise<string[]> {
 
 menu.choose('take', currentlyNotTakenParts, {
 	columns: 2,
-	buttonText: (ctx, key) => ctx.wd.reader(key).label(),
+	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label(),
 	do: (ctx, key) => {
 		const now = Date.now() / 1000
 		const {mall} = ctx.persist
@@ -174,12 +176,12 @@ menu.choose('take', currentlyNotTakenParts, {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'mall.production'),
-	ctx => ctx.wd.reader('mall.production').url()
+	async ctx => (await ctx.wd.reader('mall.production')).url()
 )
 
 menu.url(
 	buttonText(emojis.wikidataItem, async () => (await mallProduction.get()).itemToProduce || ''),
-	async ctx => ctx.wd.reader((await mallProduction.get()).itemToProduce!).url(),
+	async ctx => (await ctx.wd.reader((await mallProduction.get()).itemToProduce!)).url(),
 	{
 		joinLastRow: true
 	}

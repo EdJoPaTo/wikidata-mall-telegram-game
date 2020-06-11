@@ -25,7 +25,7 @@ function fromCtx(ctx: Context): {skill: Skill; category?: string} {
 	}
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {skill, category} = fromCtx(ctx)
 
 	const level = isSimpleSkill(skill) ? currentLevel(ctx.persist.skills, skill) : categorySkillSpecificLevel(ctx.persist.skills, skill, category!)
@@ -33,16 +33,16 @@ function menuBody(ctx: Context): Body {
 	const afterQueueLevel = levelAfterSkillQueue(ctx.persist.skills, ctx.session.skillQueue, skill, category)
 
 	let text = ''
-	const reader = ctx.wd.reader(`skill.${skill}`)
+	const reader = await ctx.wd.reader(`skill.${skill}`)
 	text += infoHeader(reader, {
 		titlePrefix: emojis.skill + (emojis[skill] || '')
 	})
 
 	if (category) {
-		text += infoHeader(ctx.wd.reader(category))
+		text += infoHeader(await ctx.wd.reader(category))
 	}
 
-	text += ctx.wd.reader('skill.level').label()
+	text += (await ctx.wd.reader('skill.level')).label()
 	text += ': '
 	text += level
 	if (inQueue > 0) {
@@ -51,15 +51,15 @@ function menuBody(ctx: Context): Body {
 
 	text += '\n'
 
-	text += ctx.wd.reader('action.research').label()
+	text += (await ctx.wd.reader('action.research')).label()
 	text += ': '
 	text += countdownHourMinute(skillUpgradeEndTimestamp(afterQueueLevel, 0))
 	text += ' '
-	text += ctx.wd.reader('unit.hour').label()
+	text += (await ctx.wd.reader('unit.hour')).label()
 	text += '\n'
 
 	text += '\n'
-	text += skillQueueString(ctx, ctx.session.skillQueue)
+	text += await skillQueueString(ctx, ctx.session.skillQueue)
 
 	return {
 		...bodyPhoto(reader),
@@ -94,7 +94,7 @@ menu.interact(buttonText(emojis.skill, 'action.research'), 'research', {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader(`skill.${fromCtx(ctx).skill}`).url()
+	async ctx => (await ctx.wd.reader(`skill.${fromCtx(ctx).skill}`)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))

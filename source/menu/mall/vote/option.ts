@@ -16,17 +16,18 @@ function fromCtx(ctx: Context): string {
 	return ctx.match![1]
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const qNumber = fromCtx(ctx)
-	const reader = ctx.wd.reader(qNumber)
+	const reader = await ctx.wd.reader(qNumber)
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.vote})
 
 	const parts = getParts(qNumber)
+	await ctx.wd.preload(parts)
+	const readersParts = await Promise.all(parts.map(async o => ctx.wd.reader(o)))
 
-	text += parts
-		.map(o => ctx.wd.reader(o))
+	text += readersParts
 		.map(o => format.url(format.escape(o.label()), o.url()))
 		.join(', ')
 
@@ -66,7 +67,7 @@ menu.interact(buttonText(emojis.yes, 'mall.vote'), 'vote', {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader(fromCtx(ctx)).url()
+	async ctx => (await ctx.wd.reader(fromCtx(ctx))).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production-vote'))

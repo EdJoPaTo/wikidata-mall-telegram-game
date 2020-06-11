@@ -11,7 +11,7 @@ export function createHelpMenu(i18nKey: string): MenuTemplate<Context> {
 
 	menu.url(
 		buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-		ctx => ctx.wd.reader('menu.help').url()
+		async ctx => (await ctx.wd.reader('menu.help')).url()
 	)
 
 	menu.url(buttonText(emojis.chat, 'menu.chat'), 'https://t.me/WikidataMallChat')
@@ -29,10 +29,10 @@ export function helpButtonText(): (ctx: Context) => Promise<string> {
 	return buttonText(emojis.help, 'menu.help')
 }
 
-function menuBody(i18nKey: string): (ctx: Context) => Body {
-	return ctx => {
+function menuBody(i18nKey: string): (ctx: Context) => Promise<Body> {
+	return async ctx => {
 		let text = ''
-		text += infoHeader(ctx.wd.reader('menu.help'), {titlePrefix: emojis.help})
+		text += infoHeader(await ctx.wd.reader('menu.help'), {titlePrefix: emojis.help})
 
 		text += ctx.i18n.t(i18nKey).trim()
 

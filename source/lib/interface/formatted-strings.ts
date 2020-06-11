@@ -55,28 +55,28 @@ export function labeledValue(label: string | WikidataEntityReader, value: string
 	return labelString + seperator + valueString + '\n'
 }
 
-export function moneyCostPart(ctx: Context, currentMoney: number, cost: number): string {
+export async function moneyCostPart(ctx: Context, currentMoney: number, cost: number): Promise<string> {
 	let text = ''
-	text += labeledFloat(ctx.wd.reader('other.money'), currentMoney, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('other.money'), currentMoney, emojis.currency)
 
 	if (currentMoney < cost) {
 		text += emojis.requireAttention
 	}
 
-	text += labeledFloat(ctx.wd.reader('other.cost'), cost, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('other.cost'), cost, emojis.currency)
 	text += '\n'
 	return text
 }
 
-export function mallMoneyCostPart(ctx: Context, currentMoney: number, cost: number): string {
+export async function mallMoneyCostPart(ctx: Context, currentMoney: number, cost: number): Promise<string> {
 	let text = ''
-	text += labeledFloat(ctx.wd.reader('other.money'), currentMoney, emojis.currencyMall)
+	text += labeledFloat(await ctx.wd.reader('other.money'), currentMoney, emojis.currencyMall)
 
 	if (currentMoney < cost) {
 		text += emojis.requireAttention
 	}
 
-	text += labeledFloat(ctx.wd.reader('other.cost'), cost, emojis.currencyMall)
+	text += labeledFloat(await ctx.wd.reader('other.cost'), cost, emojis.currencyMall)
 	text += '\n'
 	return text
 }

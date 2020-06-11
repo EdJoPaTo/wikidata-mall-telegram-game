@@ -1,5 +1,3 @@
-import WikidataEntityStore from 'wikidata-entity-store'
-
 import {Session, Persist} from '../types'
 
 import * as userApplicants from '../data/applicants'
@@ -8,12 +6,13 @@ import * as userShops from '../data/shops'
 import * as userSkills from '../data/skills'
 
 import {generateNotifications} from '../notification/generate'
+import {MiniWikidataStore} from '../notification/types'
 import {NotificationManager} from '../notification/manager'
 
-let notificationManager: NotificationManager | undefined
-let wdEntityStore: WikidataEntityStore | undefined
+let notificationManager: NotificationManager
+let wdEntityStore: MiniWikidataStore
 
-export async function initialize(notififyManager: NotificationManager, entityStore: WikidataEntityStore): Promise<void> {
+export async function initialize(notififyManager: NotificationManager, entityStore: MiniWikidataStore): Promise<void> {
 	notificationManager = notififyManager
 	wdEntityStore = entityStore
 
@@ -29,15 +28,16 @@ export async function initialize(notififyManager: NotificationManager, entitySto
 		const shops = allShops[user] || []
 		const skills = allSkills[user] || {}
 		const persist: Persist = {applicants, shops, skills}
-		updateNotification(user, data, persist)
+		// eslint-disable-next-line no-await-in-loop
+		await updateNotification(user, data, persist)
 	}
 }
 
-export default function updateNotification(user: number, session: Session, persist: Persist): void {
-	notificationManager!.clear(user)
+export default async function updateNotification(user: number, session: Session, persist: Persist): Promise<void> {
+	notificationManager.clear(user)
 
-	const notifications = generateNotifications(user, session, persist, wdEntityStore!)
+	const notifications = await generateNotifications(user, session, persist, wdEntityStore)
 	for (const n of notifications) {
-		notificationManager!.add(user, n)
+		notificationManager.add(user, n)
 	}
 }

@@ -1,16 +1,21 @@
-import {KeyValueStorage} from '@edjopato/datastore'
-
 import stringify from 'json-stable-stringify'
 
 import {Context, Persist} from '../types'
 
 const startTimestamp = Math.floor(Date.now() / 1000)
 
+type MaybePromise<T> = T | Promise<T>
+
+interface Store<T> {
+	get: (key: string) => MaybePromise<T | undefined>;
+	set: (ctx: string, value: T) => Promise<void>;
+}
+
 function generatePersistMiddlewareManually<Key extends keyof Persist>(
 	key: Key,
 	getIdFromCtx: (ctx: Context) => string | Promise<string>,
-	get: (ctx: string) => Promise<Persist[Key] | undefined>,
-	save: (ctx: string, value: Persist[Key]) => Promise<void>
+	get: (key: string) => Promise<Persist[Key] | undefined>,
+	save: (key: string, value: Persist[Key]) => Promise<void>
 ): (ctx: Context, next: () => Promise<void>) => Promise<void> {
 	return async (ctx: Context, next) => {
 		if (!ctx.persist) {
@@ -43,7 +48,7 @@ function generatePersistMiddlewareManually<Key extends keyof Persist>(
 }
 
 export function generatePersistMiddleware<Key extends keyof Persist>(
-	key: Key, datastore: KeyValueStorage<Persist[Key]>, getIdFunc: (ctx: Context) => string | Promise<string>
+	key: Key, datastore: Store<Persist[Key]>, getIdFunc: (ctx: Context) => string | Promise<string>
 ): (ctx: Context, next: () => Promise<void>) => Promise<void> {
 	return generatePersistMiddlewareManually(
 		key,

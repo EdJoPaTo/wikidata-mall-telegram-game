@@ -1,13 +1,11 @@
-import WikidataEntityReader from 'wikidata-entity-reader'
-import WikidataEntityStore from 'wikidata-entity-store'
-
 import {Context} from '../types'
+import {MiniWikidataStore} from '../notification/types'
 import {SkillInTraining} from '../types/skills'
 
 import {countdownHourMinute} from './formatted-time'
 import {emojis} from './emojis'
 
-export function skillQueueString(ctx: Context, skillQueue: readonly SkillInTraining[]): string {
+export async function skillQueueString(ctx: Context, skillQueue: readonly SkillInTraining[]): Promise<string> {
 	const now = Date.now() / 1000
 	if (skillQueue.length === 0) {
 		return ''
@@ -15,28 +13,27 @@ export function skillQueueString(ctx: Context, skillQueue: readonly SkillInTrain
 
 	let text = ''
 	text += '*'
-	text += ctx.wd.reader('skill.training').label()
+	text += (await ctx.wd.reader('skill.training')).label()
 	text += '*'
 	text += '\n'
 
-	text += skillQueue
-		.map(o => skillQueueEntryString(ctx, o, now))
-		.join('\n')
+	const queueEntries = await Promise.all(skillQueue.map(async o => skillQueueEntryString(ctx, o, now)))
+	text += queueEntries.join('\n')
 
 	text += '\n\n'
 	return text
 }
 
-function skillQueueEntryString(ctx: Context, skillInTraining: SkillInTraining, now: number): string {
+async function skillQueueEntryString(ctx: Context, skillInTraining: SkillInTraining, now: number): Promise<string> {
 	const {skill, category, endTimestamp} = skillInTraining
 	let text = ''
 	text += emojis[skill] || ''
-	text += ctx.wd.reader(`skill.${skill}`).label()
+	text += (await ctx.wd.reader(`skill.${skill}`)).label()
 
 	if (category) {
 		text += ' '
 		text += '('
-		text += ctx.wd.reader(category).label()
+		text += await ctx.wd.reader(category).then(r => r.label())
 		text += ')'
 	}
 
@@ -45,22 +42,22 @@ function skillQueueEntryString(ctx: Context, skillInTraining: SkillInTraining, n
 	text += emojis.countdown
 	text += countdownHourMinute(endTimestamp - now)
 	text += ' '
-	text += ctx.wd.reader('unit.hour').label()
+	text += (await ctx.wd.reader('unit.hour')).label()
 
 	return text
 }
 
-export function skillFinishedNotificationString(skillInTraining: SkillInTraining, entityStore: WikidataEntityStore, locale: string | undefined): string {
+export async function skillFinishedNotificationString(skillInTraining: SkillInTraining, entityStore: MiniWikidataStore, locale: string): Promise<string> {
 	const {skill, category} = skillInTraining
 
 	let text = ''
 	text += emojis[skill] || ''
-	text += new WikidataEntityReader(entityStore.entity(`skill.${skill}`), locale).label()
+	text += await entityStore.reader(`skill.${skill}`, locale).then(r => r.label())
 
 	if (category) {
 		text += ' '
 		text += '('
-		text += new WikidataEntityReader(entityStore.entity(category), locale).label()
+		text += await entityStore.reader(category, locale).then(r => r.label())
 		text += ')'
 	}
 

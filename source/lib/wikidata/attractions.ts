@@ -20,7 +20,7 @@ FILTER((LANG(?label)) = "en")
 
 let attractions: Record<QNumber, number> = {}
 
-export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
+export async function preload(logger: (...args: any[]) => void): Promise<void> {
 	const result = await sparqlQuerySimplified(query)
 	const resultAttractions: Attraction[] = result as any
 
@@ -32,7 +32,6 @@ export async function preload(logger: (...args: any[]) => void): Promise<string[
 		}, {})
 
 	logger(Object.keys(attractions).length)
-	return Object.keys(attractions)
 }
 
 export function all(): Record<QNumber, number> {

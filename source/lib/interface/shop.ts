@@ -10,7 +10,7 @@ import {emojis} from './emojis'
 import {formatFloat} from './format-number'
 import {percentBonusString} from './format-percent'
 
-export function incomePart(ctx: Context, shops: readonly Shop[], persist: Persist, showExplanation: boolean): string {
+export async function incomePart(ctx: Context, shops: readonly Shop[], persist: Persist, showExplanation: boolean): Promise<string> {
 	const {skills, mall} = persist
 	const magnetismLevel = currentLevel(skills, 'magnetism')
 	const factor = buyAllCostFactor(skills, shops.length)
@@ -29,18 +29,18 @@ export function incomePart(ctx: Context, shops: readonly Shop[], persist: Persis
 	let text = ''
 	text += emojis.income
 	text += '*'
-	text += ctx.wd.reader('other.income').label()
+	text += (await ctx.wd.reader('other.income')).label()
 	text += '*'
 
 	text += '\n'
 	text += formatFloat(sell)
 	text += emojis.currency
 	text += ' / '
-	text += ctx.wd.reader('unit.minute').label()
+	text += (await ctx.wd.reader('unit.minute')).label()
 
 	if (showExplanation) {
 		text += '\n'
-		text += ctx.wd.reader('other.returnOnInvestment').label()
+		text += (await ctx.wd.reader('other.returnOnInvestment')).label()
 		text += ': '
 		text += percentBonusString(income)
 

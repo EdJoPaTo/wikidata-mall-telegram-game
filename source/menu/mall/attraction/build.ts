@@ -19,18 +19,18 @@ function fromCtx(ctx: Context): string {
 	return ctx.match![1]
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {mall} = ctx.persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
 
 	const attraction = fromCtx(ctx)
-	const reader = ctx.wd.reader(attraction)
+	const reader = await ctx.wd.reader(attraction)
 
 	let text = ''
-	text += mallAttractionPart(ctx, attraction)
-	text += mallMoneyCostPart(ctx, mall.money, attractionCost(wdAttractions.getHeight(attraction)))
+	text += await mallAttractionPart(ctx, attraction)
+	text += await mallMoneyCostPart(ctx, mall.money, attractionCost(wdAttractions.getHeight(attraction)))
 
 	return {
 		...bodyPhoto(reader),
@@ -64,7 +64,7 @@ menu.interact(buttonText(emojis.construction, 'action.construction'), 'construct
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader(fromCtx(ctx)).url()
+	async ctx => (await ctx.wd.reader(fromCtx(ctx))).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.attraction'))

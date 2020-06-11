@@ -26,15 +26,15 @@ function fromCtx(ctx: Context): {shop: Shop; talent: Talent; employee?: Person} 
 	return {shop, talent, employee}
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {shop, talent, employee} = fromCtx(ctx)
 	const now = Date.now() / 1000
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
+	text += infoHeader(await ctx.wd.reader(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
 
 	if (employee) {
-		text += personMarkdown(ctx, employee, shop.id === employee.hobby, now)
+		text += await personMarkdown(ctx, employee, shop.id === employee.hobby, now)
 	} else {
 		text += emojis.noPerson
 	}
@@ -127,7 +127,7 @@ menu.chooseIntoSubmenu('a', availableApplicants, confirmEmployee, {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader(`person.talents.${fromCtx(ctx).talent}`).url()
+	async ctx => (await ctx.wd.reader(`person.talents.${fromCtx(ctx).talent}`)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-employees'))

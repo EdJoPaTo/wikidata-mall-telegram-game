@@ -50,7 +50,7 @@ OPTIONAL { ?product wdt:P18 ?image. }
 }`
 }
 
-export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
+export async function preload(logger: (...args: any[]) => void): Promise<void> {
 	const shopTypesArray = await stagedAsync(
 		sparqlQuerySimplifiedMinified,
 		toplevelShopCategories.map(o => shopTypesQuery(o))
@@ -75,10 +75,6 @@ export async function preload(logger: (...args: any[]) => void): Promise<string[
 	logger('old shops removed', amountRemoved)
 
 	logger('shops with products', Object.keys(shopsWithProducts).length)
-	return [
-		...Object.keys(shopsWithProducts),
-		...products
-	]
 }
 
 function removeNotAnymoreExistingShops(shops: string[]): number {

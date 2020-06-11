@@ -19,13 +19,13 @@ function fromCtx(ctx: Context): {shop: Shop} {
 	return {shop}
 }
 
-function talentLine(ctx: Context, shop: Shop, talent: Talent): string {
+async function talentLine(ctx: Context, shop: Shop, talent: Talent): Promise<string> {
 	const person = shop.personal[talent]
 
 	let text = ''
 	text += emojis[talent]
 	text += '*'
-	text += ctx.wd.reader(`person.talents.${talent}`).label()
+	text += (await ctx.wd.reader(`person.talents.${talent}`)).label()
 	text += '*'
 	text += '\n  '
 
@@ -38,15 +38,14 @@ function talentLine(ctx: Context, shop: Shop, talent: Talent): string {
 	return text
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {shop} = fromCtx(ctx)
 	let text = ''
-	const reader = ctx.wd.reader('menu.employee')
+	const reader = await ctx.wd.reader('menu.employee')
 	text += infoHeader(reader)
 
-	text +=	TALENTS
-		.map(o => talentLine(ctx, shop, o))
-		.join('\n')
+	const talentLines = await Promise.all(TALENTS.map(async o => talentLine(ctx, shop, o)))
+	text += talentLines.join('\n')
 
 	return {
 		...bodyPhoto(reader),
@@ -63,7 +62,7 @@ menu.chooseIntoSubmenu('t', TALENTS, employee, {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.employee').url()
+	async ctx => (await ctx.wd.reader('menu.employee')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-employees'))

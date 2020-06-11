@@ -11,7 +11,7 @@ import {personMarkdown} from '../../lib/interface/person'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const now = Date.now() / 1000
 	const {applicants, mall, shops, skills} = ctx.persist
 	if (!mall) {
@@ -23,13 +23,14 @@ function menuBody(ctx: Context): Body {
 	const personalMaxSeatsReached = applicants.list.length > personalMaxSeats
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.applicant'))
+	text += infoHeader(await ctx.wd.reader('menu.applicant'))
 
-	const applicantEntries = mall.applicants
-		.map(applicant => {
+	const applicantEntries = await Promise.all(mall.applicants
+		.map(async applicant => {
 			const hobbyIsFitting = shopIds.some(o => o === applicant.hobby)
 			return personMarkdown(ctx, applicant, hobbyIsFitting, now)
 		})
+	)
 
 	if (applicantEntries.length > 0) {
 		text += applicantEntries.join('\n\n')
@@ -38,7 +39,7 @@ function menuBody(ctx: Context): Body {
 			text += emojis.requireAttention + emojis.seat
 		}
 
-		const reader = ctx.wd.reader(mall.applicants[0].hobby)
+		const reader = await ctx.wd.reader(mall.applicants[0].hobby)
 		return {
 			...bodyPhoto(reader),
 			text, parse_mode: 'Markdown'
@@ -72,7 +73,7 @@ menu.interact(buttonText(emojis.seat, 'other.seat'), 'takeAll', {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.applicant').url()
+	async ctx => (await ctx.wd.reader('menu.applicant')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.applicants'))

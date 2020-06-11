@@ -47,11 +47,11 @@ export default function middleware(): Middleware<Context> {
 		} while (nextCalculationUntilTimestamp < now)
 
 		applicants.before(ctx.session, ctx.persist, now)
-		await mall.before(ctx.persist, ctx.wd.store, now)
+		await mall.before(ctx.persist, ctx.wd, now)
 
 		await next()
 
-		notification(ctx.from!.id, ctx.session, ctx.persist)
+		await notification(ctx.from!.id, ctx.session, ctx.persist)
 	}
 }
 

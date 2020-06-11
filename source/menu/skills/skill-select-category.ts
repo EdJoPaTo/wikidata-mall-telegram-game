@@ -23,15 +23,15 @@ function fromCtx(ctx: Context): {skill: CategorySkill} {
 	}
 }
 
-function categorySkillLine(ctx: Context, skills: Skills, skill: CategorySkill, category: string): string {
-	return labeledInt(ctx.wd.reader(category), categorySkillSpecificLevel(skills, skill, category))
+async function categorySkillLine(ctx: Context, skills: Skills, skill: CategorySkill, category: string): Promise<string> {
+	return labeledInt(await ctx.wd.reader(category), categorySkillSpecificLevel(skills, skill, category))
 		.trim()
 }
 
-function categoriesOfLevelLine(ctx: Context, level: number, categories: string[], locale: string | undefined): string {
+async function categoriesOfLevelLine(ctx: Context, level: number, categories: string[], locale: string | undefined): Promise<string> {
 	let text = ''
 	text += '*'
-	text += ctx.wd.reader('skill.level').label()
+	text += (await ctx.wd.reader('skill.level')).label()
 	text += ' '
 	text += level
 	text += '*'
@@ -39,8 +39,10 @@ function categoriesOfLevelLine(ctx: Context, level: number, categories: string[]
 	text += categories.length
 	text += ')'
 	text += ': '
-	text += categories
-		.map(o => ctx.wd.reader(o).label())
+
+	const readers = await Promise.all(categories.map(async o => ctx.wd.reader(o)))
+	text += readers
+		.map(o => o.label())
 		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
 		.slice(0, 30) // Prevent Message too long
 		.join(', ')
@@ -52,12 +54,12 @@ function categoriesOfLevelLine(ctx: Context, level: number, categories: string[]
 	return text
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {__wikibase_language_code: locale} = ctx.session
 	const {skill} = fromCtx(ctx)
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader(`skill.${skill}`), {
+	text += infoHeader(await ctx.wd.reader(`skill.${skill}`), {
 		titlePrefix: emojis.skill + (emojis[skill] || '')
 	})
 
@@ -68,21 +70,21 @@ function menuBody(ctx: Context): Body {
 		.reduce(arrayReduceGroupBy(o => categorySkillSpecificLevel(ctx.persist.skills, skill, o)), {})
 
 	if (categoriesSeenBefore.length > 0) {
-		text +=	Object.keys(seenBeforeGroupedByLevel)
+		const lines = await Promise.all(Object.keys(seenBeforeGroupedByLevel)
 			.map(o => Number(o))
-			.map(o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
-			.join('\n')
+			.map(async o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
+		)
+		text += lines.join('\n')
 		text += '\n\n'
 	}
 
-	text += format.bold(format.escape(ctx.wd.reader('menu.shop').label()))
+	text += format.bold(format.escape((await ctx.wd.reader('menu.shop')).label()))
 	text += '\n'
-	text +=	shops
-		.map(o => categorySkillLine(ctx, ctx.persist.skills, skill, o))
-		.join('\n')
+	const lines = await Promise.all(shops.map(async o => categorySkillLine(ctx, ctx.persist.skills, skill, o)))
+	text += lines.join('\n')
 	text += '\n\n'
 
-	text += skillQueueString(ctx, ctx.session.skillQueue)
+	text += await skillQueueString(ctx, ctx.session.skillQueue)
 
 	return text
 }
@@ -95,12 +97,12 @@ function shops(ctx: Context): string[] {
 
 menu.chooseIntoSubmenu('s', shops, skillMenu, {
 	columns: 2,
-	buttonText: (ctx, key) => ctx.wd.reader(key).label()
+	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label()
 })
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader(`skill.${fromCtx(ctx).skill}`).url()
+	async ctx => (await ctx.wd.reader(`skill.${fromCtx(ctx).skill}`)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))

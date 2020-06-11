@@ -17,7 +17,7 @@ import {createHelpMenu, helpButtonText} from '../help'
 
 import {menu as applicantMenu} from './applicant'
 
-function applicantEntry(ctx: Context, applicant: Person, isHobbyFitting: boolean): string {
+async function applicantEntry(ctx: Context, applicant: Person, isHobbyFitting: boolean): Promise<string> {
 	const {timeZone, __wikibase_language_code: locale} = ctx.session
 
 	let text = ''
@@ -25,7 +25,7 @@ function applicantEntry(ctx: Context, applicant: Person, isHobbyFitting: boolean
 	text += nameMarkdown(applicant.name)
 	text += '\n    '
 	text += isHobbyFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-	text += ctx.wd.reader(applicant.hobby).label()
+	text += await ctx.wd.reader(applicant.hobby).then(r => r.label())
 	text += '\n    '
 	text += emojis.retirement
 	text += humanReadableTimestamp(applicant.retirementTimestamp, locale, timeZone)
@@ -35,17 +35,17 @@ function applicantEntry(ctx: Context, applicant: Person, isHobbyFitting: boolean
 	return text
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const now = Date.now() / 1000
 
 	const maxSeats = applicantSeats(ctx.persist.skills)
 	const interval = secondsBetweenApplicants(ctx.persist.skills)
 
 	let text = ''
-	const reader = ctx.wd.reader('menu.applicant')
+	const reader = await ctx.wd.reader('menu.applicant')
 	text += infoHeader(reader)
 
-	text += applicantInfluencesPart(ctx, ctx.persist.skills, ctx.persist.applicants.list.length, !ctx.session.hideExplanationMath)
+	text += await applicantInfluencesPart(ctx, ctx.persist.skills, ctx.persist.applicants.list.length, !ctx.session.hideExplanationMath)
 
 	text += '\n'
 	if (ctx.persist.applicants.list.length > 0) {
@@ -54,20 +54,21 @@ function menuBody(ctx: Context): Body {
 		const offset = (page - 1) * 20
 
 		const shopIds = new Set(ctx.persist.shops.map(o => o.id))
-		text += ctx.persist.applicants.list
+		const applicantEntries = await Promise.all(ctx.persist.applicants.list
 			.slice(offset, offset + 20)
-			.map(o => applicantEntry(ctx, o, shopIds.has(o.hobby)))
-			.join('\n')
+			.map(async o => applicantEntry(ctx, o, shopIds.has(o.hobby)))
+		)
+		text += applicantEntries.join('\n')
 		text += '\n\n'
 	}
 
 	if (ctx.persist.applicants.list.length < maxSeats) {
 		const secondsUntilNext = (ctx.persist.applicants.timestamp + interval) - now
-		text += ctx.wd.reader('other.countdown').label()
+		text += (await ctx.wd.reader('other.countdown')).label()
 		text += ': '
 		text += formatFloat(secondsUntilNext)
 		text += ' '
-		text += ctx.wd.reader('unit.second').label()
+		text += (await ctx.wd.reader('unit.second')).label()
 		text += '\n\n'
 	}
 
@@ -100,7 +101,7 @@ menu.chooseIntoSubmenu('a', availableApplicants, applicantMenu, {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.applicant').url()
+	async ctx => (await ctx.wd.reader('menu.applicant')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.applicants'))

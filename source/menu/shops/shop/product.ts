@@ -35,7 +35,7 @@ function bonusPerson(shop: Shop, talent: Talent): string {
 	return '  ' + emojis.person + personInShopLine(shop, talent) + '\n'
 }
 
-function bonusSkill(ctx: Context, skills: Skills, skill: SimpleSkill, bonusFunc: (level: number) => number): string {
+async function bonusSkill(ctx: Context, skills: Skills, skill: SimpleSkill, bonusFunc: (level: number) => number): Promise<string> {
 	const level = currentLevel(skills, skill)
 	const bonus = bonusFunc(level)
 	if (bonus === 1) {
@@ -47,7 +47,7 @@ function bonusSkill(ctx: Context, skills: Skills, skill: SimpleSkill, bonusFunc:
 	text += emojis.skill
 	text += percentBonusString(bonus)
 	text += ' '
-	text += ctx.wd.reader(`skill.${skill}`).label()
+	text += (await ctx.wd.reader(`skill.${skill}`)).label()
 	text += ' ('
 	text += level
 	text += ')'
@@ -75,9 +75,9 @@ function itemsPurchasableButtonSuffix(ctx: Context): string {
 	return `(${itemsPurchasableCtx(ctx)})`
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {product, shop} = fromCtx(ctx)
-	const reader = ctx.wd.reader(product.id)
+	const reader = await ctx.wd.reader(product.id)
 
 	const capacity = storageCapacity(shop, ctx.persist.skills)
 	const basePrice = productBasePrice(product, ctx.persist.skills)
@@ -87,46 +87,46 @@ function menuBody(ctx: Context): Body {
 	let text = ''
 	text += infoHeader(reader)
 
-	text += labeledFloat(ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
 	text += '\n'
 
 	text += emojis.storage
 	text += labeledValue(
-		ctx.wd.reader('product.storage'),
+		await ctx.wd.reader('product.storage'),
 		`${formatInt(product.itemsInStore)} / ${formatInt(capacity)}`
 	)
 
 	text += '\n'
 	text += '*'
-	text += ctx.wd.reader('other.cost').label()
+	text += (await ctx.wd.reader('other.cost')).label()
 	text += '*'
 	text += '\n'
 
 	if (!ctx.session.hideExplanationMath) {
-		text += labeledFloat(ctx.wd.reader('product.listprice'), basePrice, emojis.currency)
+		text += labeledFloat(await ctx.wd.reader('product.listprice'), basePrice, emojis.currency)
 		const collectorFactor = productBasePriceCollectorFactor(ctx.persist.skills)
 		if (collectorFactor > 1) {
 			text += '  '
 			text += emojis.skill
 			text += percentBonusString(collectorFactor)
 			text += ' '
-			text += ctx.wd.reader('skill.collector').label()
+			text += (await ctx.wd.reader('skill.collector')).label()
 			text += '\n'
 		}
 	}
 
 	text += emojis.purchasing
-	text += labeledFloat(ctx.wd.reader('person.talents.purchasing'), purchaseCostPerItem, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('person.talents.purchasing'), purchaseCostPerItem, emojis.currency)
 	if (!ctx.session.hideExplanationMath) {
 		text += bonusPerson(shop, 'purchasing')
-		text += bonusSkill(ctx, ctx.persist.skills, 'metalScissors', purchasingCostScissorsBonus)
+		text += await bonusSkill(ctx, ctx.persist.skills, 'metalScissors', purchasingCostScissorsBonus)
 	}
 
 	text += emojis.selling
-	text += labeledFloat(ctx.wd.reader('person.talents.selling'), sellingCostPerItem, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('person.talents.selling'), sellingCostPerItem, emojis.currency)
 	if (!ctx.session.hideExplanationMath) {
 		text += bonusPerson(shop, 'selling')
-		text += bonusSkill(ctx, ctx.persist.skills, 'packaging', sellingCostPackagingBonus)
+		text += await bonusSkill(ctx, ctx.persist.skills, 'packaging', sellingCostPackagingBonus)
 	}
 
 	return {
@@ -179,8 +179,8 @@ menu.choose('buy', buyOptions, {
 })
 
 menu.url(
-	ctx => `${emojis.wikidataItem} ${ctx.wd.reader('menu.wikidataItem').label()}`,
-	ctx => ctx.wd.reader(fromCtx(ctx).product.id).url()
+	async ctx => `${emojis.wikidataItem} ${(await ctx.wd.reader('menu.wikidataItem')).label()}`,
+	async ctx => (await ctx.wd.reader(fromCtx(ctx).product.id)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.product'))

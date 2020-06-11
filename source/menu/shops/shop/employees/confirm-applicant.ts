@@ -29,15 +29,15 @@ function fromCtx(ctx: Context): {shop: Shop; talent: Talent; employee?: Person; 
 	return {shop, talent, employee, applicantId, applicant}
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {shop, talent, applicant} = fromCtx(ctx)
 	const now = Date.now() / 1000
 	const bonusWhenEmployed = personalBonusWhenEmployed(shop, talent, applicant)
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
+	text += infoHeader(await ctx.wd.reader(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
 
-	text += personMarkdown(ctx, applicant, shop.id === applicant.hobby, now)
+	text += await personMarkdown(ctx, applicant, shop.id === applicant.hobby, now)
 	text += '\n\n'
 
 	if (bonusWhenEmployed < 1) {

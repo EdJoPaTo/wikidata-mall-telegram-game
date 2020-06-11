@@ -231,11 +231,14 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const now = Date.now() / 1000
 
 	let text = ''
-	const reader = ctx.wd.reader('menu.leaderboard')
+	const reader = await ctx.wd.reader('menu.leaderboard')
 	text += infoHeader(reader, {titlePrefix: emojis.leaderboard})
 
 	const view = ctx.session.leaderboardView || DEFAULT_VIEW
-	text += infoHeader(ctx.wd.reader(viewResourceKey(view)))
+	text += infoHeader(await ctx.wd.reader(viewResourceKey(view)))
+
+	const readerMinute = await ctx.wd.reader('unit.minute')
+	const readerMeter = await ctx.wd.reader('unit.meter')
 
 	switch (view) {
 		case 'returnOnInvestment':
@@ -251,7 +254,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 			break
 
 		case 'sellPerMinute':
-			text += await generateTable(await getSellPerMinuteTable(now), ctx.from!.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.reader('unit.minute').label()}`)
+			text += await generateTable(await getSellPerMinuteTable(now), ctx.from!.id, o => `≤${formatFloat(o)}${emojis.currency} / ${readerMinute.label()}`)
 			break
 
 		case 'collector':
@@ -260,14 +263,14 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 		case 'mallProduction':
 			if (production.itemToProduce) {
-				text += infoHeader(ctx.wd.reader(production.itemToProduce))
+				text += infoHeader(await ctx.wd.reader(production.itemToProduce))
 			}
 
 			text += await generateTable(await getMallProductionTable(), mall && mall.chat.id, o => formatInt(o))
 			break
 
 		case 'mallAttraction':
-			text += await generateTable(await getMallAttractionTable(now), mall && mall.chat.id, o => `${formatFloat(o)} ${ctx.wd.reader('unit.meter').label()}`)
+			text += await generateTable(await getMallAttractionTable(now), mall && mall.chat.id, o => `${formatFloat(o)} ${readerMeter.label()}`)
 			break
 
 		default:
@@ -311,14 +314,12 @@ menu.select('view', LEADERBOARD_VIEWS, {
 	set: (ctx, key) => {
 		ctx.session.leaderboardView = key as LeaderboardView
 	},
-	buttonText: (ctx, key) => {
-		return ctx.wd.reader(viewResourceKey(key as LeaderboardView)).label()
-	}
+	buttonText: async (ctx, key) => (await ctx.wd.reader(viewResourceKey(key as LeaderboardView))).label()
 })
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.leaderboard').url()
+	async ctx => (await ctx.wd.reader('menu.leaderboard')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.leaderboard'))

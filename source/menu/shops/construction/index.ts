@@ -24,26 +24,28 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const options = await constructionOptions()
 
 	let text = ''
-	const reader = ctx.wd.reader('action.construction')
+	const reader = await ctx.wd.reader('action.construction')
 	text += infoHeader(reader, {
 		titlePrefix: emojis.construction
 	})
 
-	text += moneyCostPart(ctx, ctx.session.money, cost)
+	text += await moneyCostPart(ctx, ctx.session.money, cost)
 
-	text += options
-		.map(o => infoHeader(ctx.wd.reader(o), {
+	const readersOptions = await Promise.all(options.map(async o => ctx.wd.reader(o)))
+
+	text += readersOptions
+		.map(r => infoHeader(r, {
 			titlePrefix: emojis.shop,
-			titleSuffix: constructionSuffix(ctx.persist.skills, o)
+			titleSuffix: constructionSuffix(ctx.persist.skills, reader.qNumber())
 		}))
 		.join('')
 
 	text += emojis.countdown
-	text += ctx.wd.reader('action.change').label()
+	text += (await ctx.wd.reader('action.change')).label()
 	text += ': '
 	text += countdownHourMinute(nextConstructionChange(now) - now)
 	text += ' '
-	text += ctx.wd.reader('unit.hour').label()
+	text += (await ctx.wd.reader('unit.hour')).label()
 	text += '\n\n'
 
 	return {
@@ -62,14 +64,12 @@ async function constructionOptions(): Promise<readonly QNumber[]> {
 
 menu.chooseIntoSubmenu('s', constructionOptions, constructionOptionMenu, {
 	columns: 1,
-	buttonText: (ctx, key) => {
-		return emojis.construction + ctx.wd.reader(key).label()
-	}
+	buttonText: async (ctx, key) => emojis.construction + await ctx.wd.reader(key).then(r => r.label())
 })
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('action.construction').url()
+	async ctx => (await ctx.wd.reader('action.construction')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops-construction'))

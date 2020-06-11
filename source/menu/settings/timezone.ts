@@ -33,12 +33,12 @@ function tzInPrefix(ctx: Context): string[] {
 		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
 }
 
-function menuBudy(ctx: Context): Body {
+async function menuBudy(ctx: Context): Promise<Body> {
 	const {__wikibase_language_code: locale} = ctx.session
 	const current = ctx.session.timeZone || 'UTC'
 
 	let text = ''
-	const reader = ctx.wd.reader('menu.timezone')
+	const reader = await ctx.wd.reader('menu.timezone')
 	text += infoHeader(reader, {titlePrefix: emojis.timezone})
 
 	text += labeledValue(

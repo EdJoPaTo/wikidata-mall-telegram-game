@@ -5,7 +5,7 @@ import {Mall} from '../types/mall'
 import {generatePersistMiddleware} from './persist-middleware'
 
 console.time('load malls')
-const data = new KeyValueInMemoryFiles<Mall>('persist/malls')
+const data = new KeyValueInMemoryFiles<Mall | undefined>('persist/malls')
 console.timeEnd('load malls')
 
 export async function getAll(): Promise<Record<number, Mall>> {

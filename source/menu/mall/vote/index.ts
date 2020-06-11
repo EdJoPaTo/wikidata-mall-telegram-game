@@ -21,14 +21,14 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const votes = Object.values(currentProduction.nextItemVote).flat().length
 
 	let text = ''
-	const reader = ctx.wd.reader('mall.voting')
+	const reader = await ctx.wd.reader('mall.voting')
 	text += infoHeader(reader, {titlePrefix: emojis.production + emojis.vote})
 
 	text += emojis.countdown
-	text += labeledValue(ctx.wd.reader('other.end'), humanReadableTimestamp(currentProduction.competitionUntil, locale, timeZone))
+	text += labeledValue(await ctx.wd.reader('other.end'), humanReadableTimestamp(currentProduction.competitionUntil, locale, timeZone))
 	text += '\n'
 
-	text += labeledInt(ctx.wd.reader('mall.vote'), votes)
+	text += labeledInt(await ctx.wd.reader('mall.vote'), votes)
 
 	return {
 		...bodyPhoto(reader),
@@ -42,11 +42,12 @@ async function voteOptions(ctx: Context): Promise<Record<string, string>> {
 	const {__wikibase_language_code: locale} = ctx.session
 	const currentProduction = await mallProduction.get()
 	const possible = Object.keys(currentProduction.nextItemVote)
+	await ctx.wd.preload(possible)
+	const readers = await Promise.all(possible.map(async o => ctx.wd.reader(o)))
 
 	const result: Record<string, string> = {}
-	for (const o of possible) {
-		const r = ctx.wd.reader(o)
-		result[o] = r.label()
+	for (const r of readers) {
+		result[r.qNumber()] = r.label()
 	}
 
 	const order = sortDictKeysByStringValues(result, locale === 'wikidatanish' ? 'en' : locale)
@@ -72,7 +73,7 @@ menu.chooseIntoSubmenu('v', voteOptions, optionMenu, {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('mall.voting').url()
+	async ctx => (await ctx.wd.reader('mall.voting')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production-vote'))

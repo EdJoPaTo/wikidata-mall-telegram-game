@@ -20,11 +20,11 @@ import {menu as settings} from './settings'
 import {menu as shops} from './shops'
 import {menu as skills} from './skills'
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.menu'))
+	text += infoHeader(await ctx.wd.reader('menu.menu'))
 
-	text += labeledFloat(ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
 	text += '\n'
 
 	text += ctx.i18n.t('menu.welcome')
@@ -58,7 +58,7 @@ menu.interact(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 		text += username
 		text += ' → '
 		text += emojis.group
-		text += ctx.wd.reader('menu.chat').label()
+		text += (await ctx.wd.reader('menu.chat')).label()
 
 		await ctx.answerCbQuery(text, true)
 	}

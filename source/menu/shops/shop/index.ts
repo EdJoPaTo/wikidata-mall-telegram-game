@@ -58,10 +58,10 @@ function canAddProductTechnically(shop: Shop, skills: Skills): boolean {
 	return true
 }
 
-function storageCapacityPart(ctx: Context, shop: Shop, skills: Skills, showExplanation: boolean): string {
+async function storageCapacityPart(ctx: Context, shop: Shop, skills: Skills, showExplanation: boolean): Promise<string> {
 	let text = ''
 	text += emojis.storage
-	text += labeledInt(ctx.wd.reader('product.storageCapacity'), storageCapacity(shop, skills))
+	text += labeledInt(await ctx.wd.reader('product.storageCapacity'), storageCapacity(shop, skills))
 	if (showExplanation && shop.personal.storage) {
 		text += '  '
 		text += emojis.person
@@ -76,7 +76,7 @@ function storageCapacityPart(ctx: Context, shop: Shop, skills: Skills, showExpla
 		text += emojis.skill
 		text += percentBonusString(pressBonus)
 		text += ' '
-		text += ctx.wd.reader('skill.machinePress').label()
+		text += (await ctx.wd.reader('skill.machinePress')).label()
 		text += ' ('
 		text += pressLevel
 		text += ')'
@@ -87,7 +87,7 @@ function storageCapacityPart(ctx: Context, shop: Shop, skills: Skills, showExpla
 	return text
 }
 
-function productsPart(ctx: Context, shop: Shop, skills: Skills, showExplanation: boolean): string {
+async function productsPart(ctx: Context, shop: Shop, skills: Skills, showExplanation: boolean): Promise<string> {
 	if (shop.products.length === 0) {
 		return ''
 	}
@@ -98,7 +98,7 @@ function productsPart(ctx: Context, shop: Shop, skills: Skills, showExplanation:
 
 	let text = ''
 	text += '*'
-	text += ctx.wd.reader('other.assortment').label()
+	text += (await ctx.wd.reader('other.assortment')).label()
 	text += '*'
 	text += ' ('
 	text += shop.products.length
@@ -113,22 +113,20 @@ function productsPart(ctx: Context, shop: Shop, skills: Skills, showExplanation:
 		text += '+'
 		text += logisticsLevel
 		text += ' '
-		text += ctx.wd.reader('skill.logistics').label()
+		text += (await ctx.wd.reader('skill.logistics')).label()
 		text += ' ('
 		text += logisticsLevel
 		text += ')'
 		text += '\n'
 	}
 
-	text += shop.products
-		.map(product => labeledInt(ctx.wd.reader(product.id), product.itemsInStore, emojis.storage))
-		.map(o => o.trim())
-		.join('\n')
+	const productLines = await Promise.all(shop.products.map(async product => labeledInt(await ctx.wd.reader(product.id), product.itemsInStore, emojis.storage).trim()))
+	text += productLines.join('\n')
 	text += '\n\n'
 	return text
 }
 
-function addProductPart(ctx: Context, shop: Shop, money: number): string {
+async function addProductPart(ctx: Context, shop: Shop, money: number): Promise<string> {
 	if (!canAddProductTechnically(shop, ctx.persist.skills)) {
 		return ''
 	}
@@ -139,16 +137,16 @@ function addProductPart(ctx: Context, shop: Shop, money: number): string {
 	let text = ''
 	text += emojis.add
 	text += '*'
-	text += ctx.wd.reader('other.assortment').label()
+	text += (await ctx.wd.reader('other.assortment')).label()
 	text += '*'
 	text += '\n'
 
-	text += moneyCostPart(ctx, money, cost)
+	text += await moneyCostPart(ctx, money, cost)
 
 	return text
 }
 
-function customerIntervalPart(ctx: Context, shop: Shop, mall: Mall | undefined, showExplanation: boolean): string {
+async function customerIntervalPart(ctx: Context, shop: Shop, mall: Mall | undefined, showExplanation: boolean): Promise<string> {
 	if (shop.products.length === 0) {
 		return ''
 	}
@@ -158,14 +156,14 @@ function customerIntervalPart(ctx: Context, shop: Shop, mall: Mall | undefined, 
 
 	let text = ''
 	text += '1 '
-	text += ctx.wd.reader('other.customer').label()
+	text += (await ctx.wd.reader('other.customer')).label()
 	text += ' / '
 	text += formatFloat(customerInterval(bonus))
 	text += ' '
-	text += ctx.wd.reader('unit.second').label()
+	text += (await ctx.wd.reader('unit.second')).label()
 	if (shop.products.length > 1) {
 		text += ' / '
-		text += ctx.wd.reader('product.product').label()
+		text += (await ctx.wd.reader('product.product')).label()
 	}
 
 	if (showExplanation && mall && mall.attraction) {
@@ -173,25 +171,25 @@ function customerIntervalPart(ctx: Context, shop: Shop, mall: Mall | undefined, 
 		text += emojis.attraction
 		text += percentBonusString(bonus)
 		text += ' '
-		text += ctx.wd.reader(mall.attraction.item).label()
+		text += await ctx.wd.reader(mall.attraction.item).then(r => r.label())
 	}
 
 	text += '\n\n'
 	return text
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {shop} = fromCtx(ctx)
-	const reader = ctx.wd.reader(shop.id)
+	const reader = await ctx.wd.reader(shop.id)
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.shop})
 
-	text += customerIntervalPart(ctx, shop, ctx.persist.mall, !ctx.session.hideExplanationMath)
-	text += incomePart(ctx, [shop], ctx.persist, !ctx.session.hideExplanationMath)
-	text += storageCapacityPart(ctx, shop, ctx.persist.skills, !ctx.session.hideExplanationMath)
-	text += productsPart(ctx, shop, ctx.persist.skills, !ctx.session.hideExplanationMath)
-	text += addProductPart(ctx, shop, ctx.session.money)
+	text += await customerIntervalPart(ctx, shop, ctx.persist.mall, !ctx.session.hideExplanationMath)
+	text += await incomePart(ctx, [shop], ctx.persist, !ctx.session.hideExplanationMath)
+	text += await storageCapacityPart(ctx, shop, ctx.persist.skills, !ctx.session.hideExplanationMath)
+	text += await productsPart(ctx, shop, ctx.persist.skills, !ctx.session.hideExplanationMath)
+	text += await addProductPart(ctx, shop, ctx.session.money)
 
 	return {
 		...bodyPhoto(reader),
@@ -208,7 +206,7 @@ function userProducts(ctx: Context): string[] {
 
 menu.chooseIntoSubmenu('p', userProducts, productMenu, {
 	columns: 3,
-	buttonText: (ctx, key) => ctx.wd.reader(key).label()
+	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label()
 })
 
 menu.interact(buttonText(emojis.add, 'other.assortment'), 'addProduct', {
@@ -295,7 +293,7 @@ menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureMenu, {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader(fromCtx(ctx).shop.id).url()
+	async ctx => (await ctx.wd.reader(fromCtx(ctx).shop.id)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop'))

@@ -34,7 +34,7 @@ const entities: Record<SetName, string[]> = {
 	hobbyHalloween: []
 }
 
-export async function preload(logger: (...args: any[]) => void): Promise<string[]> {
+export async function preload(logger: (...args: any[]) => void): Promise<void> {
 	await Promise.all(
 		(Object.keys(queries) as SetName[])
 			.map(async key => loadQNumbersOfKey(logger, key))
@@ -42,7 +42,6 @@ export async function preload(logger: (...args: any[]) => void): Promise<string[
 
 	const qNumbers = Object.values(entities).flat()
 	logger('sum', qNumbers.length)
-	return qNumbers
 }
 
 async function loadQNumbersOfKey(logger: (...args: any[]) => void, key: SetName): Promise<void> {

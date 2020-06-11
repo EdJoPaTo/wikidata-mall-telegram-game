@@ -21,10 +21,10 @@ function fromCtx(ctx: Context): {shop: Shop; indexOfShop: number} {
 	return {shop, indexOfShop}
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {shop} = fromCtx(ctx)
-	const readerClose = ctx.wd.reader('action.close')
-	const readerShop = ctx.wd.reader(shop.id)
+	const readerClose = await ctx.wd.reader('action.close')
+	const readerShop = await ctx.wd.reader(shop.id)
 
 	const shopBuildable = wdShop.allShops().includes(shop.id)
 	const closureMoney = moneyForShopClosure(ctx.persist.shops.length, shop.products.length, shopBuildable)
@@ -32,7 +32,7 @@ function menuBody(ctx: Context): Body {
 	let text = ''
 	text += infoHeader(readerClose, {titlePrefix: emojis.close})
 
-	text += labeledFloat(ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
+	text += labeledFloat(await ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
 	text += '\n'
 
 	text += emojis.close
@@ -93,7 +93,7 @@ menu.interact(buttonText(emojis.yes + emojis.close, 'action.close'), 'remove', {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('action.close').url()
+	async ctx => (await ctx.wd.reader('action.close')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-closure'))

@@ -33,14 +33,14 @@ async function menuBody(ctx: Context): Promise<Body> {
 	))
 
 	let text = ''
-	const reader = ctx.wd.reader('menu.mall')
+	const reader = await ctx.wd.reader('menu.mall')
 	text += infoHeader(reader, {titlePrefix: emojis.mall + mallMoji(mall)})
 
-	text += labeledFloat(ctx.wd.reader('other.money'), mall.money, emojis.currencyMall)
+	text += labeledFloat(await ctx.wd.reader('other.money'), mall.money, emojis.currencyMall)
 	text += '\n'
 
 	text += format.bold(format.escape(
-		ctx.wd.reader('mall.participation').label()
+		(await ctx.wd.reader('mall.participation')).label()
 	))
 	text += ' '
 	text += '('
@@ -55,7 +55,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 		.join('\n')
 	text += '\n\n'
 
-	text += hintIncorrectPeopleAmount(ctx, mall)
+	text += await hintIncorrectPeopleAmount(ctx, mall)
 
 	return {
 		...bodyPhoto(reader),
@@ -117,7 +117,7 @@ menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applica
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.mall').url()
+	async ctx => (await ctx.wd.reader('menu.mall')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall'))

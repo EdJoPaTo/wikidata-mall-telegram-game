@@ -1,7 +1,5 @@
 import {markdown as format} from 'telegram-format'
 import emojiRegex from 'emoji-regex'
-import WikidataEntityReader from 'wikidata-entity-reader'
-import WikidataEntityStore from 'wikidata-entity-store'
 
 import {Context} from '../types'
 import {Mall, Attraction, ProductionPart} from '../types/mall'
@@ -9,6 +7,7 @@ import {Mall, Attraction, ProductionPart} from '../types/mall'
 import {MALL_MIN_PEOPLE, MALL_MAX_PEOPLE} from '../game-math/constants'
 import {mallMemberAmountWithinLimits, attractionCustomerBonus} from '../game-math/mall'
 
+import {MiniWikidataStore} from '../notification/types'
 import * as wdAttractions from '../wikidata/attractions'
 
 import {emojis} from './emojis'
@@ -27,7 +26,7 @@ export function mallMoji(mall: Mall): string {
 	return '??'
 }
 
-export function hintIncorrectPeopleAmount(ctx: Context, mall: Mall): string {
+export async function hintIncorrectPeopleAmount(ctx: Context, mall: Mall): Promise<string> {
 	if (mallMemberAmountWithinLimits(mall)) {
 		return ''
 	}
@@ -36,7 +35,7 @@ export function hintIncorrectPeopleAmount(ctx: Context, mall: Mall): string {
 	text += emojis.warning
 	text += mall.member.length
 	text += ' '
-	text += ctx.wd.reader('mall.participation').label()
+	text += (await ctx.wd.reader('mall.participation')).label()
 	text += ' ('
 	text += MALL_MIN_PEOPLE
 	text += ' - '
@@ -46,8 +45,8 @@ export function hintIncorrectPeopleAmount(ctx: Context, mall: Mall): string {
 	return text
 }
 
-export function mallAttractionPart(ctx: Context, attraction: string): string {
-	const attractionReader = ctx.wd.reader(attraction)
+export async function mallAttractionPart(ctx: Context, attraction: string): Promise<string> {
+	const attractionReader = await ctx.wd.reader(attraction)
 	const height = wdAttractions.getHeight(attraction)
 
 	let text = ''
@@ -56,11 +55,11 @@ export function mallAttractionPart(ctx: Context, attraction: string): string {
 	})
 
 	text += labeledValue(
-		ctx.wd.reader('other.height').label(),
-		`${formatFloat(height)} ${ctx.wd.reader('unit.meter').label()}`
+		await ctx.wd.reader('other.height'),
+		`${formatFloat(height)} ${(await ctx.wd.reader('unit.meter')).label()}`
 	)
 	text += labeledValue(
-		ctx.wd.reader('other.customer').label(),
+		(await ctx.wd.reader('other.customer')).label(),
 		percentBonusString(attractionCustomerBonus(height))
 	)
 
@@ -68,14 +67,14 @@ export function mallAttractionPart(ctx: Context, attraction: string): string {
 	return text
 }
 
-export function productionPartNotificationString(productionPart: ProductionPart, entityStore: WikidataEntityStore, locale: string | undefined): string {
-	const reader = new WikidataEntityReader(entityStore.entity(productionPart.part), locale)
+export async function productionPartNotificationString(productionPart: ProductionPart, entityStore: MiniWikidataStore, locale: string): Promise<string> {
+	const reader = await entityStore.reader(productionPart.part, locale)
 	return reader.label()
 }
 
-export function attractionDisasterNotification(attraction: Attraction, entityStore: WikidataEntityStore, locale: string | undefined): {text: string; photo?: string} {
-	const attractionReader = new WikidataEntityReader(entityStore.entity(attraction.item), locale)
-	const disasterReader = new WikidataEntityReader(entityStore.entity(attraction.disasterKind), locale)
+export async function attractionDisasterNotification(attraction: Attraction, entityStore: MiniWikidataStore, locale: string): Promise<{text: string; photo?: string}> {
+	const attractionReader = await entityStore.reader(attraction.item, locale)
+	const disasterReader = await entityStore.reader(attraction.disasterKind, locale)
 
 	let text = ''
 	text += format.bold(format.escape(

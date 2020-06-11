@@ -1,12 +1,12 @@
 import {existsSync, readFileSync} from 'fs'
 
+import {EntitySimplified} from 'wikidata-sdk-got/dist/source/wikibase-sdk-types'
 import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
-import {KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueInMemoryFile} from '@edjopato/datastore'
 import {MenuMiddleware} from 'telegraf-inline-menu'
+import {TelegrafWikibase, resourceKeysFromYaml} from 'telegraf-wikibase'
 import Telegraf, {Extra, Markup, Composer} from 'telegraf'
 import TelegrafI18n from 'telegraf-i18n'
-import TelegrafWikibase from 'telegraf-wikibase'
-import WikidataEntityStore, {EntityEntry} from 'wikidata-entity-store'
 
 import * as wikidata from './lib/wikidata'
 
@@ -56,14 +56,6 @@ const i18n = new TelegrafI18n({
 
 bot.use(i18n.middleware())
 
-console.time('wdEntityStore')
-console.timeLog('wdEntityStore', 'start')
-const wdEntityStore = new WikidataEntityStore({
-	entityStore: new KeyValueInMemoryFiles<EntityEntry>('wikidata-cache/entity-store'),
-	properties: ['labels', 'descriptions', 'claims']
-})
-console.timeEnd('wdEntityStore')
-
 const notificationManager = new NotificationManager(
 	async (chatId, notification, fireDate) => {
 		try {
@@ -86,9 +78,13 @@ const notificationManager = new NotificationManager(
 	}
 )
 
-bot.use(new TelegrafWikibase(wdEntityStore, {
+const wdCache = new KeyValueInMemoryFile<EntitySimplified>('tmp/wikidata-cache.json')
+
+const twb = new TelegrafWikibase(wdCache, {
 	contextKey: 'wd'
-}).middleware())
+})
+twb.addResourceKeys(resourceKeysFromYaml(readFileSync('wikidata-items.yaml', 'utf8')))
+bot.use(twb.middleware())
 
 bot.use(sessionMathMiddleware())
 
@@ -126,13 +122,13 @@ async function startup(): Promise<void> {
 			console.timeEnd('check-mall-groups')
 		}
 
-		await wikidata.preload(wdEntityStore)
-		await notifications.initialize(notificationManager, wdEntityStore)
+		await wikidata.preload()
+		await notifications.initialize(notificationManager, twb)
 		await bot.launch()
 		console.log(new Date(), 'Bot started as', bot.options.username)
 
-		setInterval(async () => wikidata.update(wdEntityStore), 4 * HOUR_IN_SECONDS * 1000)
-		setTimeout(async () => wikidata.update(wdEntityStore), 15 * MINUTE_IN_SECONDS * 1000)
+		setInterval(async () => wikidata.update(), 4 * HOUR_IN_SECONDS * 1000)
+		setTimeout(async () => wikidata.update(), 15 * MINUTE_IN_SECONDS * 1000)
 	} catch (error) {
 		console.error('startup failed:', error)
 	}

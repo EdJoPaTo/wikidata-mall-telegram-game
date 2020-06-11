@@ -11,20 +11,20 @@ import {percentString} from '../../lib/interface/format-percent'
 /* eslint @typescript-eslint/no-require-imports: warn */
 const localeEmoji = require('locale-emoji')
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const flag = flagString(ctx.wd.locale(), true)
 	let text = ''
-	const reader = ctx.wd.reader('menu.language')
+	const reader = await ctx.wd.reader('menu.language')
 	text += infoHeader(reader, {titlePrefix: flag})
 
 	if (ctx.wd.locale() !== 'wikidatanish') {
-		text += ctx.wd.reader('other.translation').label()
+		text += (await ctx.wd.reader('other.translation')).label()
 		text += ' '
 		text += '`'
 		text += ctx.wd.locale()
 		text += '`'
 		text += ': '
-		text += percentString(ctx.wd.localeProgress())
+		text += percentString(await ctx.wd.localeProgress())
 	}
 
 	return {
@@ -35,7 +35,7 @@ function menuBody(ctx: Context): Body {
 
 export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.toggle(ctx => ctx.wd.reader('menu.allLanguages').label(), 'all', {
+menu.toggle(async ctx => (await ctx.wd.reader('menu.allLanguages')).label(), 'all', {
 	isSet: ctx => Boolean(ctx.session.showAllLanguages),
 	set: (ctx, newState) => {
 		if (newState) {
@@ -64,8 +64,8 @@ function flagString(languageCode: string, useFallbackFlag = false): string {
 	return flag
 }
 
-function languageOptions(ctx: Context): readonly string[] {
-	const minPercentage = ctx.session.showAllLanguages ? 0 : 0.1
+async function languageOptions(ctx: Context): Promise<readonly string[]> {
+	const minPercentage = ctx.session.showAllLanguages ? 0 : undefined
 	return ctx.wd.availableLocales(minPercentage)
 }
 

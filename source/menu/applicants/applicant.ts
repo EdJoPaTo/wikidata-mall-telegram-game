@@ -25,17 +25,17 @@ function fromCtx(ctx: Context): {applicantId: number; applicant: Person; hobbyIs
 	return {applicantId, applicant, hobbyIsFitting}
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {applicant, hobbyIsFitting} = fromCtx(ctx)
 	const now = Date.now() / 1000
 
 	let text = ''
 
-	text += personMarkdown(ctx, applicant, hobbyIsFitting, now)
+	text += await personMarkdown(ctx, applicant, hobbyIsFitting, now)
 	text += '\n\n'
 
 	return {
-		...bodyPhoto(ctx.wd.reader(applicant.hobby)),
+		...bodyPhoto(await ctx.wd.reader(applicant.hobby)),
 		text, parse_mode: 'Markdown'
 	}
 }
@@ -60,9 +60,9 @@ menu.interact(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		caption += '😘'
 		caption += format.url(format.escape(ctx.from!.first_name), `tg://user?id=${ctx.from!.id}`)
 		caption += '\n\n'
-		caption += personMarkdown(ctx, applicant, false, now)
+		caption += await personMarkdown(ctx, applicant, false, now)
 
-		const photo = ctx.wd.reader(applicant.hobby).images(800)[0]
+		const photo = await ctx.wd.reader(applicant.hobby).then(r => r.images(800)[0])
 		const groupKeyboard = Markup.inlineKeyboard([
 			Markup.callbackButton(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
 		])
@@ -89,26 +89,26 @@ menu.interact(buttonText(emojis.door, 'other.door'), 'remove', {
 })
 
 menu.url(
-	ctx => {
+	async ctx => {
 		const {applicant} = fromCtx(ctx)
 		const typeEmoji = personStateEmoji(applicant)
 		const resourceKey = wdResourceKeyOfPerson(applicant)
-		return `${emojis.wikidataItem}${typeEmoji}${ctx.wd.reader(resourceKey).label()}`
+		return `${emojis.wikidataItem}${typeEmoji}${await ctx.wd.reader(resourceKey).then(r => r.label())}`
 	},
-	ctx => {
+	async ctx => {
 		const {applicant} = fromCtx(ctx)
 		const resourceKey = wdResourceKeyOfPerson(applicant)
-		return ctx.wd.reader(resourceKey).url()
+		return (await ctx.wd.reader(resourceKey)).url()
 	}
 )
 
 menu.url(
-	ctx => {
+	async ctx => {
 		const {applicant, hobbyIsFitting} = fromCtx(ctx)
 		const hobby = hobbyIsFitting ? emojis.hobbyMatch : emojis.hobbyDifferent
-		return `${emojis.wikidataItem}${hobby}${ctx.wd.reader(applicant.hobby).label()}`
+		return `${emojis.wikidataItem}${hobby}${await ctx.wd.reader(applicant.hobby).then(r => r.label())}`
 	},
-	ctx => ctx.wd.reader(fromCtx(ctx).applicant.hobby).url(),
+	async ctx => (await ctx.wd.reader(fromCtx(ctx).applicant.hobby)).url(),
 	{
 		joinLastRow: true
 	}

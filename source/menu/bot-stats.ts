@@ -21,25 +21,25 @@ import {createHelpMenu, helpButtonText} from './help'
 
 async function menuBody(ctx: Context): Promise<Body> {
 	let text = ''
-	const reader = ctx.wd.reader('stat.stats')
+	const reader = await ctx.wd.reader('stat.stats')
 	text += infoHeader(reader, {titlePrefix: emojis.stats})
 
 	text += '*'
-	text += ctx.wd.reader('menu.wikidata').label()
+	text += (await ctx.wd.reader('menu.wikidata')).label()
 	text += '*'
 	text += '\n'
 
-	text += labeledInt(ctx.wd.reader('menu.shop'), wdShops.allShops().length)
-	text += labeledInt(ctx.wd.reader('product.product'), wdShops.allProductsAmount())
-	text += labeledInt(ctx.wd.reader('stat.name.given'), wdNames.getGivenNames().length)
-	text += labeledInt(ctx.wd.reader('stat.name.family'), wdNames.getFamilyNames().length)
-	text += labeledInt(ctx.wd.reader('mall.production'), wdProduction.getProducts().length)
-	text += labeledInt(ctx.wd.reader('mall.attraction'), Object.keys(wdAttractions.all()).length)
-	text += labeledInt(ctx.wd.reader('mall.disaster'), wdSets.get('disaster').length)
+	text += labeledInt(await ctx.wd.reader('menu.shop'), wdShops.allShops().length)
+	text += labeledInt(await ctx.wd.reader('product.product'), wdShops.allProductsAmount())
+	text += labeledInt(await ctx.wd.reader('stat.name.given'), wdNames.getGivenNames().length)
+	text += labeledInt(await ctx.wd.reader('stat.name.family'), wdNames.getFamilyNames().length)
+	text += labeledInt(await ctx.wd.reader('mall.production'), wdProduction.getProducts().length)
+	text += labeledInt(await ctx.wd.reader('mall.attraction'), Object.keys(wdAttractions.all()).length)
+	text += labeledInt(await ctx.wd.reader('mall.disaster'), wdSets.get('disaster').length)
 
 	text += '\n'
 	text += '*'
-	text += ctx.wd.reader('stat.game').label()
+	text += (await ctx.wd.reader('stat.game')).label()
 	text += '*'
 	text += '\n'
 
@@ -50,22 +50,22 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const allMallsDict = await userMalls.getAll()
 	const allMalls = Object.values(allMallsDict)
 
-	text += labeledInt(ctx.wd.reader('stat.player'), userSessions.getRaw().length)
-	text += labeledInt(ctx.wd.reader('menu.mall'), allMalls.length)
-	text += labeledInt(ctx.wd.reader('menu.shop'), allShops.length)
-	text += labeledInt(ctx.wd.reader('menu.employee'), allEmployees.length)
-	text += labeledInt(ctx.wd.reader('product.product'), allProducts.length)
+	text += labeledInt(await ctx.wd.reader('stat.player'), userSessions.getRaw().length)
+	text += labeledInt(await ctx.wd.reader('menu.mall'), allMalls.length)
+	text += labeledInt(await ctx.wd.reader('menu.shop'), allShops.length)
+	text += labeledInt(await ctx.wd.reader('menu.employee'), allEmployees.length)
+	text += labeledInt(await ctx.wd.reader('product.product'), allProducts.length)
 
 	const {gameStarted, stats, timeZone, __wikibase_language_code: locale} = ctx.session
 
 	text += '\n'
 	text += '*'
-	text += ctx.wd.reader('stat.player').label()
+	text += (await ctx.wd.reader('stat.player')).label()
 	text += '*'
 	text += '\n'
 
-	text += labeledValue(ctx.wd.reader('achievement.gameStarted'), humanReadableTimestamp(gameStarted, locale, timeZone))
-	text += labeledInt(ctx.wd.reader('person.talents.purchasing'), stats.productsBought)
+	text += labeledValue(await ctx.wd.reader('achievement.gameStarted'), humanReadableTimestamp(gameStarted, locale, timeZone))
+	text += labeledInt(await ctx.wd.reader('person.talents.purchasing'), stats.productsBought)
 
 	return {
 		...bodyPhoto(reader),
@@ -78,7 +78,7 @@ export const menu = new MenuTemplate<Context>(menuBody)
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('stat.stats').url()
+	async ctx => (await ctx.wd.reader('stat.stats')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.bot-stats'))

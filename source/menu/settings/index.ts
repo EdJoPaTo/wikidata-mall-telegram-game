@@ -11,9 +11,9 @@ import {createHelpMenu, helpButtonText} from '../help'
 import {menu as languageMenu} from './languages'
 import {menu as timezoneMenu} from './timezone'
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	let text = ''
-	const reader = ctx.wd.reader('menu.settings')
+	const reader = await ctx.wd.reader('menu.settings')
 	text += infoHeader(reader, {titlePrefix: emojis.settings})
 	return {
 		...bodyPhoto(reader),
@@ -27,7 +27,7 @@ menu.submenu(buttonText(emojis.language, 'menu.language'), 'lang', languageMenu)
 
 menu.submenu(buttonText(emojis.timezone, 'menu.timezone'), 'tz', timezoneMenu)
 
-menu.toggle(ctx => ctx.wd.reader('other.math').label(), 'explanationMath', {
+menu.toggle(async ctx => (await ctx.wd.reader('other.math')).label(), 'explanationMath', {
 	isSet: ctx => {
 		return !ctx.session.hideExplanationMath
 	},
@@ -42,7 +42,7 @@ menu.toggle(ctx => ctx.wd.reader('other.math').label(), 'explanationMath', {
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.settings').url()
+	async ctx => (await ctx.wd.reader('menu.settings')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.settings'))

@@ -17,44 +17,44 @@ import {createHelpMenu, helpButtonText} from '../help'
 import {menu as skillMenu} from './skill'
 import {menu as skillSelectCategory} from './skill-select-category'
 
-function simpleSkillInfo(ctx: Context, skills: Skills, skill: SimpleSkill): {emoji: string; label: string; level: number} {
+async function simpleSkillInfo(ctx: Context, skills: Skills, skill: SimpleSkill): Promise<{emoji: string; label: string; level: number}> {
 	return {
 		emoji: emojis[skill],
-		label: ctx.wd.reader(`skill.${skill}`).label(),
+		label: (await ctx.wd.reader(`skill.${skill}`)).label(),
 		level: currentLevel(skills, skill)
 	}
 }
 
-function categorySkillInfo(ctx: Context, skills: Skills, skill: CategorySkill): {emoji: string; label: string; hours: number} {
+async function categorySkillInfo(ctx: Context, skills: Skills, skill: CategorySkill): Promise<{emoji: string; label: string; hours: number}> {
 	return {
 		emoji: emojis[skill],
-		label: ctx.wd.reader(`skill.${skill}`).label(),
+		label: (await ctx.wd.reader(`skill.${skill}`)).label(),
 		hours: categorySkillHoursInvested(skills, skill)
 	}
 }
 
-function menuBody(ctx: Context): Body {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {__wikibase_language_code: locale} = ctx.session
 
-	const hourLabel = ctx.wd.reader('unit.hour').label()
+	const hourLabel = (await ctx.wd.reader('unit.hour')).label()
 
 	let text = ''
-	const reader = ctx.wd.reader('menu.skill')
+	const reader = await ctx.wd.reader('menu.skill')
 	text += infoHeader(reader, {titlePrefix: emojis.skill})
 
-	const simpleSkillParts = SIMPLE_SKILLS
-		.map(o => simpleSkillInfo(ctx, ctx.persist.skills, o))
+	const simpleSkillInfos = await Promise.all(SIMPLE_SKILLS.map(async o => simpleSkillInfo(ctx, ctx.persist.skills, o)))
+	const simpleSkillParts = simpleSkillInfos
 		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
 		.map(o => `${o.emoji}${o.label}: ${o.level}`)
 
-	const categorySkillParts = CATEGORY_SKILLS
-		.map(o => categorySkillInfo(ctx, ctx.persist.skills, o))
+	const categorySkillInfos = await Promise.all(CATEGORY_SKILLS.map(async o => categorySkillInfo(ctx, ctx.persist.skills, o)))
+	const categorySkillParts = categorySkillInfos
 		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
 		.map(o => `${o.emoji}${o.label}: ${o.hours} ${hourLabel}`)
 
 	if (simpleSkillParts.length + categorySkillParts.length > 0) {
 		text += '*'
-		text += ctx.wd.reader('skill.level').label()
+		text += (await ctx.wd.reader('skill.level')).label()
 		text += '*'
 		text += '\n'
 
@@ -65,7 +65,7 @@ function menuBody(ctx: Context): Body {
 		text += '\n\n'
 	}
 
-	text += skillQueueString(ctx, ctx.session.skillQueue)
+	text += await skillQueueString(ctx, ctx.session.skillQueue)
 
 	return {
 		...bodyPhoto(reader),
@@ -87,11 +87,13 @@ menu.interact(buttonText(emojis.clearSkillQueue, 'skill.queue'), 'clearQueue', {
 	}
 })
 
-function skillOptions(ctx: Context, skills: readonly Skill[]): Record<string, string> {
+async function skillOptions(ctx: Context, skills: readonly Skill[]): Promise<Record<string, string>> {
 	const {__wikibase_language_code: locale} = ctx.session
+	const readers = await Promise.all(skills.map(async o => ctx.wd.reader(`skill.${o}`)))
 	const labels: Record<string, string> = {}
-	for (const key of skills) {
-		labels[key] = ctx.wd.reader(`skill.${key}`).label()
+	for (const [i, reader] of readers.entries()) {
+		const key = skills[i]
+		labels[key] = reader.label()
 	}
 
 	const orderedKeys = sortDictKeysByStringValues(labels, locale === 'wikidatanish' ? 'en' : locale)
@@ -106,17 +108,17 @@ function skillOptions(ctx: Context, skills: readonly Skill[]): Record<string, st
 	return recreateDictWithGivenKeyOrder(labels, orderedKeys)
 }
 
-menu.chooseIntoSubmenu('simple', ctx => skillOptions(ctx, SIMPLE_SKILLS), skillMenu, {
+menu.chooseIntoSubmenu('simple', async ctx => skillOptions(ctx, SIMPLE_SKILLS), skillMenu, {
 	columns: 2
 })
 
-menu.chooseIntoSubmenu('c', ctx => skillOptions(ctx, CATEGORY_SKILLS), skillSelectCategory, {
+menu.chooseIntoSubmenu('c', async ctx => skillOptions(ctx, CATEGORY_SKILLS), skillSelectCategory, {
 	columns: 2
 })
 
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	ctx => ctx.wd.reader('menu.skill').url()
+	async ctx => (await ctx.wd.reader('menu.skill')).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))

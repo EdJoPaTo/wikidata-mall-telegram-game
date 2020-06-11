@@ -13,14 +13,14 @@ import {emojis} from '../lib/interface/emojis'
 const bot = new Composer<Context>()
 
 async function replyJoinMessage(ctx: Context): Promise<void> {
-	const button = Markup.callbackButton(ctx.wd.reader('mall.participation').label(), 'join')
+	const button = Markup.callbackButton((await ctx.wd.reader('mall.participation')).label(), 'join')
 	const keyboard = Markup.inlineKeyboard([
 		button
 	])
 	let text = ''
 	text += '👋'
 	text += '\n\n'
-	text += ctx.wd.reader('menu.mall').label()
+	text += (await ctx.wd.reader('menu.mall')).label()
 
 	await ctx.reply(text, Extra.markdown().inReplyTo(ctx.message!.message_id).markup(keyboard))
 }
