@@ -32,11 +32,10 @@ async function menuBody(ctx: Context): Promise<Body> {
 	text += await moneyCostPart(ctx, ctx.session.money, cost)
 
 	const readersOptions = await Promise.all(options.map(async o => ctx.wd.reader(o)))
-
 	text += readersOptions
 		.map(r => infoHeader(r, {
 			titlePrefix: emojis.shop,
-			titleSuffix: constructionSuffix(ctx.persist.skills, reader.qNumber())
+			titleSuffix: constructionSuffix(ctx.persist.skills, r.qNumber())
 		}))
 		.join('')
 
