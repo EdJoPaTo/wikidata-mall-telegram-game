@@ -1,21 +1,26 @@
-import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {Mall} from '../types/mall'
 
 import {generatePersistMiddleware} from './persist-middleware'
 
 console.time('load malls')
-const data: KeyValueStorage<Mall> = new KeyValueInMemoryFiles<Mall>('persist/malls')
+const data = new KeyValueInMemoryFiles<Mall>('persist/malls')
 console.timeEnd('load malls')
 
 export async function getAll(): Promise<Record<number, Mall>> {
-	return data.entries()
+	const result: Record<number, Mall> = {}
+	for (const key of data.keys()) {
+		result[Number(key)] = data.get(key)!
+	}
+
+	return result
 }
 
 export async function getMallIdOfUser(userId: number): Promise<number | undefined> {
-	const dict = await data.entries()
+	const dict = await getAll()
 	for (const key of Object.keys(dict)) {
-		const mall = dict[key]
+		const mall = dict[Number(key)]
 		if (mall.member.includes(userId)) {
 			return Number(key)
 		}
@@ -33,7 +38,7 @@ export async function set(mallId: number, mall: Mall): Promise<void> {
 }
 
 export async function remove(mallId: number): Promise<void> {
-	return data.delete(String(mallId))
+	data.delete(String(mallId))
 }
 
 export function middleware(): (ctx: any, next: any) => Promise<void> {

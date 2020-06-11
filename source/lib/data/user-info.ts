@@ -1,11 +1,11 @@
-import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {Context as TelegrafContext, Middleware} from 'telegraf'
 import {User} from 'telegram-typings'
 import stringify from 'json-stable-stringify'
 
 console.time('load user info')
-const data: KeyValueStorage<User> = new KeyValueInMemoryFiles<User>('persist/user-info')
+const data = new KeyValueInMemoryFiles<User>('persist/user-info')
 console.timeEnd('load user info')
 
 export async function get(id: number): Promise<User | undefined> {
@@ -13,17 +13,22 @@ export async function get(id: number): Promise<User | undefined> {
 }
 
 export async function getAll(): Promise<Record<number, User>> {
-	return data.entries()
+	const result: Record<number, User> = {}
+	for (const key of data.keys()) {
+		result[Number(key)] = data.get(key)!
+	}
+
+	return result
 }
 
 export async function remove(userId: number): Promise<void> {
-	return data.delete(String(userId))
+	data.delete(String(userId))
 }
 
 export function middleware(): Middleware<TelegrafContext> {
 	return async (ctx, next) => {
 		if (ctx.from) {
-			const old = await data.get(String(ctx.from.id))
+			const old = data.get(String(ctx.from.id))
 			const oldString = stringify(old)
 			const current = stringify(ctx.from)
 			if (oldString !== current) {

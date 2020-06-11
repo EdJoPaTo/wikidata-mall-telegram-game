@@ -1,19 +1,24 @@
-import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {Shop} from '../types/shop'
 
 import {generatePersistMiddleware} from './persist-middleware'
 
 console.time('load user shops')
-const data: KeyValueStorage<Shop[]> = new KeyValueInMemoryFiles<Shop[]>('persist/shops')
+const data = new KeyValueInMemoryFiles<Shop[]>('persist/shops')
 console.timeEnd('load user shops')
 
 export async function getAll(): Promise<Record<number, Shop[]>> {
-	return data.entries()
+	const result: Record<number, Shop[]> = {}
+	for (const key of data.keys()) {
+		result[Number(key)] = data.get(key)!
+	}
+
+	return result
 }
 
 export async function remove(userId: number): Promise<void> {
-	return data.delete(String(userId))
+	data.delete(String(userId))
 }
 
 export function middleware(): (ctx: any, next: any) => Promise<void> {

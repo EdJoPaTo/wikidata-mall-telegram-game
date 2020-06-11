@@ -1,19 +1,24 @@
-import {KeyValueStorage, KeyValueInMemoryFiles} from '@edjopato/datastore'
+import {KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {Applicants} from '../types/people'
 
 import {generatePersistMiddleware} from './persist-middleware'
 
 console.time('load user applicants')
-const data: KeyValueStorage<Applicants> = new KeyValueInMemoryFiles<Applicants>('tmp/applicants')
+const data = new KeyValueInMemoryFiles<Applicants>('tmp/applicants')
 console.timeEnd('load user applicants')
 
 export async function getAll(): Promise<Record<number, Applicants>> {
-	return data.entries()
+	const result: Record<number, Applicants> = {}
+	for (const key of data.keys()) {
+		result[Number(key)] = data.get(key)!
+	}
+
+	return result
 }
 
 export async function remove(userId: number): Promise<void> {
-	return data.delete(String(userId))
+	data.delete(String(userId))
 }
 
 export function middleware(): (ctx: any, next: any) => Promise<void> {
