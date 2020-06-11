@@ -59,16 +59,16 @@ export interface Skills extends SimpleSkills, CategorySkills {
 }
 
 export interface SkillInTraining {
-	skill: Skill;
-	category?: QNumber;
-	endTimestamp: UnixTimestamp;
+	readonly skill: Skill;
+	readonly category?: QNumber;
+	readonly endTimestamp: UnixTimestamp;
 }
 
 export type SimpleSkill = keyof SimpleSkills
 export type CategorySkill = keyof CategorySkills
 export type Skill = SimpleSkill | CategorySkill
 
-export const SIMPLE_SKILLS: SimpleSkill[] = [
+export const SIMPLE_SKILLS: readonly SimpleSkill[] = [
 	'applicantSeats',
 	'applicantSpeed',
 	'healthCare',
@@ -79,6 +79,6 @@ export const SIMPLE_SKILLS: SimpleSkill[] = [
 	'packaging'
 ]
 
-export const CATEGORY_SKILLS: CategorySkill[] = [
+export const CATEGORY_SKILLS: readonly CategorySkill[] = [
 	'collector'
 ]

@@ -4,7 +4,7 @@ type UnixTimestamp = number
 type QNumber = string
 
 export interface Product {
-	id: QNumber;
+	readonly id: QNumber;
 	itemsInStore: number;
 	itemTimestamp: UnixTimestamp;
 }
@@ -12,10 +12,10 @@ export interface Product {
 export type Personal = Record<Talent, Person | undefined>
 
 export interface Shop {
-	id: QNumber;
-	opening: UnixTimestamp;
-	personal: Personal;
-	products: Product[];
+	readonly id: QNumber;
+	readonly opening: UnixTimestamp;
+	readonly personal: Personal;
+	readonly products: Product[];
 }
 
 export interface Construction {

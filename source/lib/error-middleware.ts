@@ -4,14 +4,14 @@ import {InlineKeyboardMarkup} from 'telegram-typings'
 export type ErrorMatchRule = RegExp | string
 
 export interface Options {
-	inlineKeyboardMarkup?: InlineKeyboardMarkup;
-	text?: string;
+	readonly inlineKeyboardMarkup?: InlineKeyboardMarkup;
+	readonly text?: string;
 }
 
 export interface TelegrafErrorPayload {
-	photo?: string;
-	media?: {
-		media: string;
+	readonly photo?: string;
+	readonly media?: {
+		readonly media: string;
 	};
 }
 

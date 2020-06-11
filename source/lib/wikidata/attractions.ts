@@ -3,8 +3,8 @@ import {sparqlQuerySimplified} from 'wikidata-sdk-got'
 type QNumber = string
 
 interface Attraction {
-	item: QNumber;
-	height: number;
+	readonly item: QNumber;
+	readonly height: number;
 }
 
 const query = `SELECT ?item ?height WHERE {

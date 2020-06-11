@@ -2,17 +2,17 @@ type QNumber = string
 type UnixTimestamp = number
 
 export interface Person {
-	name: Name;
-	type: PersonType;
-	hobby: QNumber;
+	readonly name: Name;
+	readonly type: PersonType;
+	readonly hobby: QNumber;
 	seatProtectionUntil?: UnixTimestamp;
-	retirementTimestamp: UnixTimestamp;
-	talents: Talents;
+	readonly retirementTimestamp: UnixTimestamp;
+	readonly talents: Talents;
 }
 
 export interface Name {
-	given: string;
-	family: string;
+	readonly given: string;
+	readonly family: string;
 }
 
 export type PersonType =
@@ -23,14 +23,14 @@ export type PersonType =
 	'robot' |
 	'temporary'
 
-export const PERSON_EVENT_TYPES: PersonType[] = [
+export const PERSON_EVENT_TYPES: readonly PersonType[] = [
 	'christmasAngel',
 	'halloweenPumpkin'
 ]
 
 export type Talent = 'purchasing' | 'selling' | 'storage'
-export type Talents = Record<Talent, number>
-export const TALENTS: Talent[] = ['purchasing', 'selling', 'storage']
+export type Talents = Readonly<Record<Talent, number>>
+export const TALENTS: readonly Talent[] = ['purchasing', 'selling', 'storage']
 
 export interface Applicants {
 	list: Person[];

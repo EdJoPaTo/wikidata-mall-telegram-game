@@ -1,9 +1,9 @@
 export interface QuickStats {
-	amount: number;
-	sum: number;
-	avg: number;
-	min: number;
-	max: number;
+	readonly amount: number;
+	readonly sum: number;
+	readonly avg: number;
+	readonly min: number;
+	readonly max: number;
 }
 
 export function calcQuickStats(numbers: readonly number[]): QuickStats {

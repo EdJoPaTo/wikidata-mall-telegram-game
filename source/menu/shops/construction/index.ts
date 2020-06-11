@@ -54,7 +54,7 @@ const menu = new TelegrafInlineMenu(menuText, {
 	photo: menuPhoto('action.construction')
 })
 
-async function constructionOptions(): Promise<QNumber[]> {
+async function constructionOptions(): Promise<readonly QNumber[]> {
 	const now = Date.now() / 1000
 	const construction = await getCurrentConstructions(now)
 	return construction.possibleShops

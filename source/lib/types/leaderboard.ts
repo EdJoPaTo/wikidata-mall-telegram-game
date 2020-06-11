@@ -7,7 +7,7 @@ export type LeaderboardView =
 	'returnOnInvestment' |
 	'sellPerMinute'
 
-export const LEADERBOARD_VIEWS: LeaderboardView[] = [
+export const LEADERBOARD_VIEWS: readonly LeaderboardView[] = [
 	'returnOnInvestment',
 	'matchingHobbies',
 	'assortment',

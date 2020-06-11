@@ -1,4 +1,4 @@
-const basic: Record<string, string> = {
+const basic: Readonly<Record<string, string>> = {
 	add: '➕',
 	applicantsAvailable: '📬',
 	applicantsEmpty: '📭',
@@ -60,7 +60,7 @@ const basic: Record<string, string> = {
 	yes: '👍'
 }
 
-export const emojis: Record<string, string> = {
+export const emojis: Readonly<Record<string, string>> = {
 	...basic,
 	applicantSeats: basic.seat,
 	applicantSpeed: basic.applicantsAvailable,

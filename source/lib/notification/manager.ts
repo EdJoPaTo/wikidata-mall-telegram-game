@@ -6,7 +6,7 @@ export class NotificationManager {
 	private readonly _currentJobs: Record<string | number, Job[]> = {}
 
 	constructor(
-		private readonly _sendFunc: (chatId: string | number, notification: Notification, fireDate: Date) => (Promise<void> | void)
+		private readonly _sendFunc: (chatId: string | number, notification: Notification, fireDate: Readonly<Date>) => (Promise<void> | void)
 	) {}
 
 	clear(chatId: string | number): void {
@@ -22,7 +22,8 @@ export class NotificationManager {
 			this._currentJobs[chatId] = []
 		}
 
-		const job = scheduleJob(notification.date, async fireDate =>
+		const date = new Date(notification.date.getTime())
+		const job = scheduleJob(date, async (fireDate: Readonly<Date>) =>
 			this._sendFunc(chatId, notification, fireDate)
 		)
 

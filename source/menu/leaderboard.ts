@@ -38,8 +38,8 @@ import {createHelpMenu, helpButtonText} from './help'
 const DEFAULT_VIEW: LeaderboardView = 'returnOnInvestment'
 
 interface LeaderboardEntries<T> {
-	order: string[];
-	values: Record<string, T>;
+	readonly order: readonly string[];
+	readonly values: Readonly<Record<string, T>>;
 }
 
 async function getMatchingHobbiesTable(now: number): Promise<LeaderboardEntries<number>> {

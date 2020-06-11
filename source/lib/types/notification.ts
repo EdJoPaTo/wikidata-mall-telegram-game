@@ -8,8 +8,8 @@ export type NotificationType =
 type Url = string
 
 export interface Notification {
-	type: NotificationType;
-	date: Date;
-	text: string;
-	photo?: Url;
+	readonly type: NotificationType;
+	readonly date: Readonly<Date>;
+	readonly text: string;
+	readonly photo?: Url;
 }

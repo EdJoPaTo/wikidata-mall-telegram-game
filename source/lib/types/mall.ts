@@ -17,16 +17,16 @@ export interface Mall {
 }
 
 export interface ProductionPart {
-	user: UserId;
-	part: QNumber;
-	finishTimestamp: UnixTimestamp;
+	readonly user: UserId;
+	readonly part: QNumber;
+	readonly finishTimestamp: UnixTimestamp;
 }
 
 export interface Attraction {
-	item: QNumber;
-	opening: UnixTimestamp;
-	disasterKind: QNumber;
-	disasterTimestamp: UnixTimestamp;
+	readonly item: QNumber;
+	readonly opening: UnixTimestamp;
+	readonly disasterKind: QNumber;
+	readonly disasterTimestamp: UnixTimestamp;
 }
 
 export interface MallProduction {

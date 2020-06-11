@@ -5,8 +5,8 @@ import {emojis} from './emojis'
 import {formatFloat, formatInt} from './format-number'
 
 interface InfoHeaderOptions {
-	titlePrefix?: string;
-	titleSuffix?: string;
+	readonly titlePrefix?: string;
+	readonly titleSuffix?: string;
 }
 
 export function infoHeader(wdr: WikidataEntityReader, options: InfoHeaderOptions = {}): string {
