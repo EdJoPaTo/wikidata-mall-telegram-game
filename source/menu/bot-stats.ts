@@ -1,7 +1,7 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
+import {Context} from '../lib/types'
 import {Person} from '../lib/types/people'
-import {Session} from '../lib/types'
 
 import * as userMalls from '../lib/data/malls'
 import * as userSessions from '../lib/data/user-sessions'
@@ -12,16 +12,17 @@ import * as wdProduction from '../lib/wikidata/production'
 import * as wdSets from '../lib/wikidata/sets'
 import * as wdShops from '../lib/wikidata/shops'
 
-import {buttonText, menuPhoto} from '../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {humanReadableTimestamp} from '../lib/interface/formatted-time'
 import {infoHeader, labeledValue, labeledInt} from '../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from './help'
 
-async function menuText(ctx: any): Promise<string> {
+async function menuBody(ctx: Context): Promise<Body> {
 	let text = ''
-	text += infoHeader(ctx.wd.reader('stat.stats'), {titlePrefix: emojis.stats})
+	const reader = ctx.wd.reader('stat.stats')
+	text += infoHeader(reader, {titlePrefix: emojis.stats})
 
 	text += '*'
 	text += ctx.wd.reader('menu.wikidata').label()
@@ -55,7 +56,7 @@ async function menuText(ctx: any): Promise<string> {
 	text += labeledInt(ctx.wd.reader('menu.employee'), allEmployees.length)
 	text += labeledInt(ctx.wd.reader('product.product'), allProducts.length)
 
-	const {gameStarted, stats, timeZone, __wikibase_language_code: locale} = ctx.session as Session
+	const {gameStarted, stats, timeZone, __wikibase_language_code: locale} = ctx.session
 
 	text += '\n'
 	text += '*'
@@ -66,18 +67,20 @@ async function menuText(ctx: any): Promise<string> {
 	text += labeledValue(ctx.wd.reader('achievement.gameStarted'), humanReadableTimestamp(gameStarted, locale, timeZone))
 	text += labeledInt(ctx.wd.reader('person.talents.purchasing'), stats.productsBought)
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text,
+		parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('stat.stats')
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('stat.stats').url()
+	ctx => ctx.wd.reader('stat.stats').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.bot-stats'))
 
-export default menu
+menu.manualRow(backButtons)

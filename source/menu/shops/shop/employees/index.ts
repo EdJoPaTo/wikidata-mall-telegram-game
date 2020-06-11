@@ -1,26 +1,25 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Persist} from '../../../../lib/types'
+import {Context} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
 import {TALENTS, Talent} from '../../../../lib/types/people'
 
-import {buttonText, menuPhoto} from '../../../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../../../lib/interface/menu'
 import {emojis} from '../../../../lib/interface/emojis'
 import {infoHeader} from '../../../../lib/interface/formatted-strings'
 import {personInShopLine} from '../../../../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from '../../../help'
 
-import employee from './employee'
+import {menu as employee} from './employee'
 
-function fromCtx(ctx: any): {shop: Shop} {
-	const shopType = ctx.match[1]
-	const persist = ctx.persist as Persist
-	const shop = persist.shops.filter(o => o.id === shopType)[0]
+function fromCtx(ctx: Context): {shop: Shop} {
+	const shopType = ctx.match![1]
+	const shop = ctx.persist.shops.filter(o => o.id === shopType)[0]
 	return {shop}
 }
 
-function talentLine(ctx: any, shop: Shop, talent: Talent): string {
+function talentLine(ctx: Context, shop: Shop, talent: Talent): string {
 	const person = shop.personal[talent]
 
 	let text = ''
@@ -39,32 +38,34 @@ function talentLine(ctx: any, shop: Shop, talent: Talent): string {
 	return text
 }
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const {shop} = fromCtx(ctx)
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.employee'))
+	const reader = ctx.wd.reader('menu.employee')
+	text += infoHeader(reader)
 
 	text +=	TALENTS
 		.map(o => talentLine(ctx, shop, o))
 		.join('\n')
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.employee')
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.selectSubmenu('t', TALENTS, employee, {
+menu.chooseIntoSubmenu('t', TALENTS, employee, {
 	columns: 1,
-	textFunc: buttonText((_ctx, key) => emojis[key!], (_ctx, key) => `person.talents.${key}`)
+	buttonText: buttonText((_, key) => emojis[key!], (_, key) => `person.talents.${key}`)
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('menu.employee').url()
+	ctx => ctx.wd.reader('menu.employee').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-employees'))
 
-export default menu
+menu.manualRow(backButtons)

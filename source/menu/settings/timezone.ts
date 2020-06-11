@@ -1,14 +1,14 @@
 import {listTimeZones} from 'timezone-support'
 import {markdown as format} from 'telegram-format'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 import arrayFilterUnique from 'array-filter-unique'
-import TelegrafInlineMenu from 'telegraf-inline-menu'
 
-import {Session} from '../../lib/types'
+import {Context} from '../../lib/types'
 
 import {emojis} from '../../lib/interface/emojis'
 import {humanReadableTimestamp} from '../../lib/interface/formatted-time'
 import {infoHeader, labeledValue} from '../../lib/interface/formatted-strings'
-import {menuPhoto} from '../../lib/interface/menu'
+import {backButtons, bodyPhoto} from '../../lib/interface/menu'
 
 const tzNormal = listTimeZones()
 	.map(o => o.split('/'))
@@ -18,32 +18,32 @@ const tzPrefixesRaw = tzNormal
 	.map(o => o[0])
 	.filter(arrayFilterUnique())
 
-function tzPrefixes(ctx: any): string[] {
-	const {__wikibase_language_code: locale} = ctx.session as Session
+function tzPrefixes(ctx: Context): string[] {
+	const {__wikibase_language_code: locale} = ctx.session
 	return tzPrefixesRaw
 		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
 }
 
-function tzInPrefix(ctx: any): string[] {
-	const {__wikibase_language_code: locale} = ctx.session as Session
-	const prefix = ctx.match[1]
+function tzInPrefix(ctx: Context): string[] {
+	const {__wikibase_language_code: locale} = ctx.session
+	const prefix = ctx.match![1]
 	return tzNormal
 		.filter(o => o[0] === prefix)
 		.map(o => o.slice(1).join('/'))
 		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
 }
 
-function menuText(ctx: any): string {
-	const {__wikibase_language_code: locale} = ctx.session as Session
-	const session = ctx.session as Session
-	const current = session.timeZone || 'UTC'
+function menuBudy(ctx: Context): Body {
+	const {__wikibase_language_code: locale} = ctx.session
+	const current = ctx.session.timeZone || 'UTC'
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.timezone'), {titlePrefix: emojis.timezone})
+	const reader = ctx.wd.reader('menu.timezone')
+	text += infoHeader(reader, {titlePrefix: emojis.timezone})
 
 	text += labeledValue(
 		format.escape(current),
-		humanReadableTimestamp(Date.now() / 1000, locale, session.timeZone)
+		humanReadableTimestamp(Date.now() / 1000, locale, ctx.session.timeZone)
 	)
 	text += '\n'
 
@@ -52,36 +52,24 @@ function menuText(ctx: any): string {
 		text += '\n\n'
 	}
 
-	return text
-}
-
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.timezone')
-})
-
-const specificMenu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.timezone')
-})
-
-function utcButtonText(ctx: any): string {
-	const session = ctx.session as Session
-	let text = ''
-	if (!session.timeZone) {
-		text += '✅'
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
 	}
-
-	text += 'UTC'
-	return text
 }
 
-menu.button(utcButtonText, 'utc', {
-	doFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		delete session.timeZone
+export const menu = new MenuTemplate<Context>(menuBudy)
+
+const specificMenu = new MenuTemplate<Context>(menuBudy)
+
+menu.toggle('UTC', 'utc', {
+	isSet: ctx => !ctx.session.timeZone,
+	set: ctx => {
+		delete ctx.session.timeZone
 	}
 })
 
-menu.selectSubmenu('s', tzPrefixes, specificMenu, {
+menu.chooseIntoSubmenu('s', tzPrefixes, specificMenu, {
 	columns: 2,
 	getCurrentPage,
 	setPage
@@ -89,36 +77,33 @@ menu.selectSubmenu('s', tzPrefixes, specificMenu, {
 
 specificMenu.select('s', tzInPrefix, {
 	columns: 2,
-	isSetFunc,
-	setFunc,
+	isSet: isSetFunc,
+	set: setFunc,
 	getCurrentPage,
 	setPage
 })
 
-function createTz(match: RegExpMatchArray | undefined, key: string): string {
-	const prefix = match && match[1]
+menu.manualRow(backButtons)
+specificMenu.manualRow(backButtons)
+
+function createTz(match: RegExpMatchArray | null | undefined, key: string): string {
+	const prefix = match?.[1]
 	const tz = prefix ? `${prefix}/${key}` : key
 	return tz
 }
 
-function isSetFunc(ctx: any, key: string): boolean {
-	const session = ctx.session as Session
-	return session.timeZone === createTz(ctx.match, key)
+function isSetFunc(ctx: Context, key: string): boolean {
+	return ctx.session.timeZone === createTz(ctx.match, key)
 }
 
-function setFunc(ctx: any, key: string): void {
-	const session = ctx.session as Session
-	session.timeZone = createTz(ctx.match, key)
+function setFunc(ctx: Context, key: string): void {
+	ctx.session.timeZone = createTz(ctx.match, key)
 }
 
-function getCurrentPage(ctx: any): number | undefined {
-	const session = ctx.session as Session
-	return session.page
+function getCurrentPage(ctx: Context): number | undefined {
+	return ctx.session.page
 }
 
-function setPage(ctx: any, page: number): void {
-	const session = ctx.session as Session
-	session.page = page
+function setPage(ctx: Context, page: number): void {
+	ctx.session.page = page
 }
-
-export default menu

@@ -1,11 +1,12 @@
 import {existsSync, readFileSync} from 'fs'
 
+import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
 import {KeyValueInMemoryFiles} from '@edjopato/datastore'
-import Telegraf, {Extra, Markup} from 'telegraf'
+import {MenuMiddleware} from 'telegraf-inline-menu'
+import Telegraf, {Extra, Markup, Composer} from 'telegraf'
 import TelegrafI18n from 'telegraf-i18n'
 import TelegrafWikibase from 'telegraf-wikibase'
 import WikidataEntityStore, {EntityEntry} from 'wikidata-entity-store'
-import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
 
 import * as wikidata from './lib/wikidata'
 
@@ -28,7 +29,7 @@ import {NotificationManager} from './lib/notification/manager'
 
 import fallback from './fallback'
 import mall from './mall'
-import menu from './menu'
+import {menu} from './menu'
 
 const tokenFilePath = existsSync('/run/secrets') ? '/run/secrets/bot-token.txt' : 'bot-token.txt'
 const token = readFileSync(tokenFilePath, 'utf8').trim()
@@ -91,10 +92,15 @@ bot.use(new TelegrafWikibase(wdEntityStore, {
 
 bot.use(sessionMathMiddleware())
 
-bot.use(Telegraf.privateChat(menu.init({
-	backButtonText: (ctx: any) => `🔙 ${ctx.i18n.t('menu.back')}`,
-	mainMenuButtonText: (ctx: any) => `🔝 ${ctx.wd.reader('menu.menu').label()}`
-})))
+const privateChatBot = new Composer<Context>()
+
+const menuMiddleware = new MenuMiddleware<Context>('/', menu)
+privateChatBot.command('start', async ctx => menuMiddleware.replyToContext(ctx))
+privateChatBot.command('settings', async ctx => menuMiddleware.replyToContext(ctx, '/settings/'))
+privateChatBot.command(['lang', 'language'], async ctx => menuMiddleware.replyToContext(ctx, '/settings/lang/'))
+privateChatBot.use(menuMiddleware.middleware())
+
+bot.use(Composer.privateChat(privateChatBot.middleware()))
 
 bot.use(Telegraf.groupChat(mall.middleware()))
 

@@ -1,48 +1,43 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
-import WikidataEntityReader from 'wikidata-entity-reader'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../../../lib/types'
+import {Context} from '../../../lib/types'
 import {Shop} from '../../../lib/types/shop'
 
 import {moneyForShopClosure} from '../../../lib/game-math/shop-cost'
 
 import * as wdShop from '../../../lib/wikidata/shops'
 
-import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {buttonText, backButtons, bodyPhoto} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
 import {formatFloat, formatInt} from '../../../lib/interface/format-number'
 import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from '../../help'
-import {replyMenu} from '..'
 
-function fromCtx(ctx: any): {shop: Shop; indexOfShop: number} {
-	const persist = ctx.persist as Persist
-	const shopType = ctx.match[1]
-	const indexOfShop = persist.shops.map(o => o.id).indexOf(shopType)
-	const shop = persist.shops[indexOfShop]
+function fromCtx(ctx: Context): {shop: Shop; indexOfShop: number} {
+	const shopType = ctx.match![1]
+	const indexOfShop = ctx.persist.shops.map(o => o.id).indexOf(shopType)
+	const shop = ctx.persist.shops[indexOfShop]
 	return {shop, indexOfShop}
 }
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const {shop} = fromCtx(ctx)
-	const reader = ctx.wd.reader('action.close') as WikidataEntityReader
-
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
+	const readerClose = ctx.wd.reader('action.close')
+	const readerShop = ctx.wd.reader(shop.id)
 
 	const shopBuildable = wdShop.allShops().includes(shop.id)
-	const closureMoney = moneyForShopClosure(persist.shops.length, shop.products.length, shopBuildable)
+	const closureMoney = moneyForShopClosure(ctx.persist.shops.length, shop.products.length, shopBuildable)
 
 	let text = ''
-	text += infoHeader(reader, {titlePrefix: emojis.close})
+	text += infoHeader(readerClose, {titlePrefix: emojis.close})
 
-	text += labeledFloat(ctx.wd.reader('other.money'), session.money, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
 	text += '\n'
 
 	text += emojis.close
 	text += '*'
-	text += ctx.wd.reader(shop.id).label()
+	text += readerShop.label()
 	text += '*'
 	text += '\n'
 	text += '+'
@@ -62,7 +57,7 @@ function menuText(ctx: any): string {
 		warnings.push(`${formatInt(itemsInStore)}${emojis.storage}`)
 	}
 
-	const matchingSkillsInQueue = session.skillQueue.filter(o => o.category === shop.id).length
+	const matchingSkillsInQueue = ctx.session.skillQueue.filter(o => o.category === shop.id).length
 	if (matchingSkillsInQueue > 0) {
 		warnings.push(`${formatInt(matchingSkillsInQueue)}${emojis.skill}`)
 	}
@@ -74,34 +69,33 @@ function menuText(ctx: any): string {
 		text += '\n\n'
 	}
 
-	return text
+	return {
+		...bodyPhoto(readerShop),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(ctx => fromCtx(ctx).shop.id)
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.simpleButton(buttonText(emojis.yes + emojis.close, 'action.close'), 'remove', {
-	doFunc: async (ctx: any) => {
+menu.interact(buttonText(emojis.yes + emojis.close, 'action.close'), 'remove', {
+	do: async ctx => {
 		const {shop} = fromCtx(ctx)
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
 
 		const isBuildable = wdShop.allShops().includes(shop.id)
-		const reward = moneyForShopClosure(persist.shops.length, shop.products.length, isBuildable)
+		const reward = moneyForShopClosure(ctx.persist.shops.length, shop.products.length, isBuildable)
 
-		persist.shops = persist.shops.filter(o => o.id !== shop.id)
-		session.money += reward
+		ctx.persist.shops = ctx.persist.shops.filter(o => o.id !== shop.id)
+		ctx.session.money += reward
 
-		await replyMenu.middleware()(ctx, async () => {/* next does nothing */})
+		return '../..'
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('action.close').url()
+	ctx => ctx.wd.reader('action.close').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-closure'))
 
-export default menu
+menu.manualRow(backButtons)

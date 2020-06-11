@@ -1,6 +1,10 @@
+import {createBackMainMenuButtons} from 'telegraf-inline-menu'
+import {MediaBody} from 'telegraf-inline-menu/dist/source/body'
+
 import {Context} from '../types'
 
 import {emojis} from './emojis'
+import WikidataEntityReader from 'wikidata-entity-reader/dist/source'
 
 type ConstOrPromise<T> = T | Promise<T>
 type Func<T> = (ctx: Context, key?: string) => ConstOrPromise<T>
@@ -11,9 +15,9 @@ export interface ButtonTextOptions {
 	readonly suffix?: ConstOrContextFunc<string>;
 }
 
-export function buttonText(emoji: ConstOrContextFunc<string>, resourceKey: ConstOrContextFunc<string>, options: ButtonTextOptions = {}): (ctx: any, key?: string) => Promise<string> {
+export function buttonText(emoji: ConstOrContextFunc<string>, resourceKey: ConstOrContextFunc<string>, options: ButtonTextOptions = {}): (ctx: Context, key?: string) => Promise<string> {
 	const {requireAttention, suffix} = options
-	return async (ctx: Context, key) => {
+	return async (ctx, key) => {
 		const requireAttentionString = requireAttention && await requireAttention(ctx, key) ? emojis.requireAttention : ''
 		const emojiString = typeof emoji === 'function' ? await emoji(ctx, key) : emoji
 		const resourceKeyString = typeof resourceKey === 'function' ? await resourceKey(ctx, key) : resourceKey
@@ -23,14 +27,19 @@ export function buttonText(emoji: ConstOrContextFunc<string>, resourceKey: Const
 	}
 }
 
-export function menuPhoto(qNumberOrResourceKey: ConstOrContextFunc<string | undefined>): (ctx: any) => Promise<string> {
-	return async (ctx: Context) => {
-		const asString = typeof qNumberOrResourceKey === 'function' ? await qNumberOrResourceKey(ctx) : qNumberOrResourceKey
-		if (!asString) {
-			return ''
-		}
+export function bodyPhoto(reader: WikidataEntityReader): MediaBody | Record<string, unknown> {
+	const url: string | undefined = reader.images(800)[0]
+	if (!url) {
+		return {}
+	}
 
-		const reader = ctx.wd.reader(asString)
-		return reader.images(800)[0]
+	return {
+		media: url,
+		type: 'photo'
 	}
 }
+
+export const backButtons = createBackMainMenuButtons<Context>(
+	ctx => `🔙 ${ctx.i18n.t('menu.back')}`,
+	ctx => `🔝 ${ctx.wd.reader('menu.menu').label()}`
+)

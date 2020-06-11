@@ -1,12 +1,12 @@
 import {markdown as format} from 'telegram-format'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 import {User} from 'telegram-typings'
-import TelegrafInlineMenu from 'telegraf-inline-menu'
 
 import {sortDictKeysByNumericValues} from '../lib/js-helper/dictionary'
 
+import {Context} from '../lib/types'
 import {LeaderboardView, LEADERBOARD_VIEWS} from '../lib/types/leaderboard'
 import {Mall} from '../lib/types/mall'
-import {Session, Persist} from '../lib/types'
 import {Skills} from '../lib/types/skills'
 
 import {WEEK_IN_SECONDS} from '../lib/math/timestamp-constants'
@@ -26,11 +26,11 @@ import {returnOnInvestment, maxSellPerMinute} from '../lib/game-math/shop-cost'
 
 import {getAttractionHeight} from '../lib/game-logic/mall-attraction'
 
+import {buttonText, backButtons, bodyPhoto} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {formatFloat, formatInt} from '../lib/interface/format-number'
 import {infoHeader} from '../lib/interface/formatted-strings'
 import {mallMoji} from '../lib/interface/mall'
-import {menuPhoto, buttonText} from '../lib/interface/menu'
 import {percentBonusString} from '../lib/interface/format-percent'
 
 import {createHelpMenu, helpButtonText} from './help'
@@ -225,37 +225,37 @@ async function generateTable<T>(entries: LeaderboardEntries<T>, forPlayerId: num
 		.join('\n')
 }
 
-async function menuText(ctx: any): Promise<string> {
-	const session = ctx.session as Session
-	const {mall} = ctx.persist as Persist
+async function menuBody(ctx: Context): Promise<Body> {
+	const {mall} = ctx.persist
 	const production = await mallProduction.get()
 	const now = Date.now() / 1000
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.leaderboard'), {titlePrefix: emojis.leaderboard})
+	const reader = ctx.wd.reader('menu.leaderboard')
+	text += infoHeader(reader, {titlePrefix: emojis.leaderboard})
 
-	const view = session.leaderboardView || DEFAULT_VIEW
+	const view = ctx.session.leaderboardView || DEFAULT_VIEW
 	text += infoHeader(ctx.wd.reader(viewResourceKey(view)))
 
 	switch (view) {
 		case 'returnOnInvestment':
-			text += await generateTable(await getROITable(now), ctx.from.id, percentBonusString)
+			text += await generateTable(await getROITable(now), ctx.from!.id, percentBonusString)
 			break
 
 		case 'matchingHobbies':
-			text += await generateTable(await getMatchingHobbiesTable(now), ctx.from.id, o => String(o))
+			text += await generateTable(await getMatchingHobbiesTable(now), ctx.from!.id, o => String(o))
 			break
 
 		case 'assortment':
-			text += await generateTable(await getAssortmentTable(now), ctx.from.id, o => formatInt(o))
+			text += await generateTable(await getAssortmentTable(now), ctx.from!.id, o => formatInt(o))
 			break
 
 		case 'sellPerMinute':
-			text += await generateTable(await getSellPerMinuteTable(now), ctx.from.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.reader('unit.minute').label()}`)
+			text += await generateTable(await getSellPerMinuteTable(now), ctx.from!.id, o => `≤${formatFloat(o)}${emojis.currency} / ${ctx.wd.reader('unit.minute').label()}`)
 			break
 
 		case 'collector':
-			text += await generateTable(await getCollectorTable(), ctx.from.id, percentBonusString)
+			text += await generateTable(await getCollectorTable(), ctx.from!.id, percentBonusString)
 			break
 
 		case 'mallProduction':
@@ -274,12 +274,13 @@ async function menuText(ctx: any): Promise<string> {
 			throw new Error(`unknown leaderboard view: ${view}`)
 	}
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.leaderboard')
-})
+export const menu = new MenuTemplate(menuBody)
 
 function viewResourceKey(view: LeaderboardView): string {
 	switch (view) {
@@ -304,24 +305,22 @@ function viewResourceKey(view: LeaderboardView): string {
 
 menu.select('view', LEADERBOARD_VIEWS, {
 	columns: 2,
-	isSetFunc: (ctx: any, key) => {
-		const session = ctx.session as Session
-		return session.leaderboardView === key || (key === DEFAULT_VIEW && !session.leaderboardView)
+	isSet: (ctx, key) => {
+		return ctx.session.leaderboardView === key || (key === DEFAULT_VIEW && !ctx.session.leaderboardView)
 	},
-	setFunc: (ctx: any, key) => {
-		const session = ctx.session as Session
-		session.leaderboardView = key as LeaderboardView
+	set: (ctx, key) => {
+		ctx.session.leaderboardView = key as LeaderboardView
 	},
-	textFunc: (ctx: any, key) => {
+	buttonText: (ctx, key) => {
 		return ctx.wd.reader(viewResourceKey(key as LeaderboardView)).label()
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('menu.leaderboard').url()
+	ctx => ctx.wd.reader('menu.leaderboard').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.leaderboard'))
 
-export default menu
+menu.manualRow(backButtons)

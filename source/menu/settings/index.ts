@@ -1,51 +1,50 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session} from '../../lib/types'
+import {Context} from '../../lib/types'
 
-import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
 
 import {createHelpMenu, helpButtonText} from '../help'
 
-import languageMenu from './languages'
-import timezoneMenu from './timezone'
+import {menu as languageMenu} from './languages'
+import {menu as timezoneMenu} from './timezone'
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.settings'), {titlePrefix: emojis.settings})
-	return text
+	const reader = ctx.wd.reader('menu.settings')
+	text += infoHeader(reader, {titlePrefix: emojis.settings})
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.settings')
-})
-menu.setCommand('settings')
+export const menu = new MenuTemplate<Context>(menuBody)
 
 menu.submenu(buttonText(emojis.language, 'menu.language'), 'lang', languageMenu)
 
 menu.submenu(buttonText(emojis.timezone, 'menu.timezone'), 'tz', timezoneMenu)
 
-menu.toggle((ctx: any) => ctx.wd.reader('other.math').label(), 'explanationMath', {
-	isSetFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		return !session.hideExplanationMath
+menu.toggle(ctx => ctx.wd.reader('other.math').label(), 'explanationMath', {
+	isSet: ctx => {
+		return !ctx.session.hideExplanationMath
 	},
-	setFunc: (ctx: any, newState) => {
-		const session = ctx.session as Session
+	set: (ctx, newState) => {
 		if (newState) {
-			delete session.hideExplanationMath
+			delete ctx.session.hideExplanationMath
 		} else {
-			session.hideExplanationMath = true
+			ctx.session.hideExplanationMath = true
 		}
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('menu.settings').url()
+	ctx => ctx.wd.reader('menu.settings').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.settings'))
 
-export default menu
+menu.manualRow(backButtons)

@@ -1,19 +1,19 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Persist} from '../../lib/types'
+import {Context} from '../../lib/types'
 
 import {applicantSeats} from '../../lib/game-math/applicant'
 
-import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
 import {personMarkdown} from '../../lib/interface/person'
 
 import {helpButtonText, createHelpMenu} from '../help'
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const now = Date.now() / 1000
-	const {applicants, mall, shops, skills} = ctx.persist as Persist
+	const {applicants, mall, shops, skills} = ctx.persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
@@ -37,49 +37,44 @@ function menuText(ctx: any): string {
 			text += '\n\n'
 			text += emojis.requireAttention + emojis.seat
 		}
-	} else {
-		text += emojis.noPerson
+
+		const reader = ctx.wd.reader(mall.applicants[0].hobby)
+		return {
+			...bodyPhoto(reader),
+			text, parse_mode: 'Markdown'
+		}
 	}
 
-	text += '\n\n'
-
-	return text
+	text += emojis.noPerson
+	return {text, parse_mode: 'Markdown'}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto((ctx: any) => {
-		const {mall} = ctx.persist as Persist
-		if (!mall || mall.applicants.length === 0) {
-			return undefined
-		}
+export const menu = new MenuTemplate<Context>(menuBody)
 
-		return mall.applicants[0].hobby
-	})
-})
-
-menu.button(buttonText(emojis.seat, 'other.seat'), 'takeAll', {
-	hide: (ctx: any) => {
-		const {applicants, mall, skills} = ctx.persist as Persist
+menu.interact(buttonText(emojis.seat, 'other.seat'), 'takeAll', {
+	hide: ctx => {
+		const {applicants, mall, skills} = ctx.persist
 		const maxSeats = applicantSeats(skills)
 		const maxSeatsReached = applicants.list.length > maxSeats
 		return !mall || mall.applicants.length === 0 || maxSeatsReached
 	},
-	doFunc: (ctx: any) => {
-		const {applicants, mall} = ctx.persist as Persist
+	do: ctx => {
+		const {applicants, mall} = ctx.persist
 		if (!mall) {
 			throw new Error('You are not part of a mall')
 		}
 
 		applicants.list.push(...mall.applicants)
 		mall.applicants = []
+		return '.'
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('menu.applicant').url()
+	ctx => ctx.wd.reader('menu.applicant').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.applicants'))
 
-export default menu
+menu.manualRow(backButtons)

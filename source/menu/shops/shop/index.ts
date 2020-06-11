@@ -1,8 +1,7 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
-import WikidataEntityReader from 'wikidata-entity-reader'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
 import {Mall} from '../../../lib/types/mall'
-import {Session, Persist} from '../../../lib/types'
+import {Context} from '../../../lib/types'
 import {Shop, Product} from '../../../lib/types/shop'
 import {Skills} from '../../../lib/types/skills'
 import {TALENTS} from '../../../lib/types/people'
@@ -20,7 +19,7 @@ import * as wdShop from '../../../lib/wikidata/shops'
 
 import {getAttractionHeight} from '../../../lib/game-logic/mall-attraction'
 
-import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
 import {formatFloat} from '../../../lib/interface/format-number'
 import {incomePart} from '../../../lib/interface/shop'
@@ -30,15 +29,14 @@ import {personInShopLine} from '../../../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from '../../help'
 
-import closureMenu from './shop-closure'
-import employeeMenu from './employees'
-import productMenu from './product'
+import {menu as closureMenu} from './shop-closure'
+import {menu as employeeMenu} from './employees'
+import {menu as productMenu} from './product'
 
-function fromCtx(ctx: any): {shop: Shop; indexOfShop: number} {
-	const persist = ctx.persist as Persist
-	const shopType = ctx.match[1]
-	const indexOfShop = persist.shops.map(o => o.id).indexOf(shopType)
-	const shop = persist.shops[indexOfShop]
+function fromCtx(ctx: Context): {shop: Shop; indexOfShop: number} {
+	const shopType = ctx.match![1]
+	const indexOfShop = ctx.persist.shops.map(o => o.id).indexOf(shopType)
+	const shop = ctx.persist.shops[indexOfShop]
 	return {shop, indexOfShop}
 }
 
@@ -60,7 +58,7 @@ function canAddProductTechnically(shop: Shop, skills: Skills): boolean {
 	return true
 }
 
-function storageCapacityPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boolean): string {
+function storageCapacityPart(ctx: Context, shop: Shop, skills: Skills, showExplanation: boolean): string {
 	let text = ''
 	text += emojis.storage
 	text += labeledInt(ctx.wd.reader('product.storageCapacity'), storageCapacity(shop, skills))
@@ -89,7 +87,7 @@ function storageCapacityPart(ctx: any, shop: Shop, skills: Skills, showExplanati
 	return text
 }
 
-function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boolean): string {
+function productsPart(ctx: Context, shop: Shop, skills: Skills, showExplanation: boolean): string {
 	if (shop.products.length === 0) {
 		return ''
 	}
@@ -130,14 +128,12 @@ function productsPart(ctx: any, shop: Shop, skills: Skills, showExplanation: boo
 	return text
 }
 
-function addProductPart(ctx: any, shop: Shop, money: number): string {
-	const persist = ctx.persist as Persist
-
-	if (!canAddProductTechnically(shop, persist.skills)) {
+function addProductPart(ctx: Context, shop: Shop, money: number): string {
+	if (!canAddProductTechnically(shop, ctx.persist.skills)) {
 		return ''
 	}
 
-	const indexOfShop = persist.shops.map(o => o.id).indexOf(shop.id)
+	const indexOfShop = ctx.persist.shops.map(o => o.id).indexOf(shop.id)
 	const cost = addProductToShopCost(indexOfShop, shop.products.length)
 
 	let text = ''
@@ -152,7 +148,7 @@ function addProductPart(ctx: any, shop: Shop, money: number): string {
 	return text
 }
 
-function customerIntervalPart(ctx: any, shop: Shop, mall: Mall | undefined, showExplanation: boolean): string {
+function customerIntervalPart(ctx: Context, shop: Shop, mall: Mall | undefined, showExplanation: boolean): string {
 	if (shop.products.length === 0) {
 		return ''
 	}
@@ -184,60 +180,55 @@ function customerIntervalPart(ctx: any, shop: Shop, mall: Mall | undefined, show
 	return text
 }
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const {shop} = fromCtx(ctx)
-	const reader = ctx.wd.reader(shop.id) as WikidataEntityReader
-
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
+	const reader = ctx.wd.reader(shop.id)
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.shop})
 
-	text += customerIntervalPart(ctx, shop, persist.mall, !session.hideExplanationMath)
-	text += incomePart(ctx, [shop], persist, !session.hideExplanationMath)
-	text += storageCapacityPart(ctx, shop, persist.skills, !session.hideExplanationMath)
-	text += productsPart(ctx, shop, persist.skills, !session.hideExplanationMath)
-	text += addProductPart(ctx, shop, session.money)
+	text += customerIntervalPart(ctx, shop, ctx.persist.mall, !ctx.session.hideExplanationMath)
+	text += incomePart(ctx, [shop], ctx.persist, !ctx.session.hideExplanationMath)
+	text += storageCapacityPart(ctx, shop, ctx.persist.skills, !ctx.session.hideExplanationMath)
+	text += productsPart(ctx, shop, ctx.persist.skills, !ctx.session.hideExplanationMath)
+	text += addProductPart(ctx, shop, ctx.session.money)
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(ctx => fromCtx(ctx).shop.id)
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-function userProducts(ctx: any): string[] {
+function userProducts(ctx: Context): string[] {
 	const {shop} = fromCtx(ctx)
 	return shop.products.map(o => o.id)
 }
 
-menu.selectSubmenu('p', userProducts, productMenu, {
+menu.chooseIntoSubmenu('p', userProducts, productMenu, {
 	columns: 3,
-	textFunc: (ctx: any, key) => ctx.wd.reader(key).label()
+	buttonText: (ctx, key) => ctx.wd.reader(key).label()
 })
 
-menu.button(buttonText(emojis.add, 'other.assortment'), 'addProduct', {
-	hide: (ctx: any) => {
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
+menu.interact(buttonText(emojis.add, 'other.assortment'), 'addProduct', {
+	hide: ctx => {
 		const {shop, indexOfShop} = fromCtx(ctx)
 
-		if (!canAddProductTechnically(shop, persist.skills)) {
+		if (!canAddProductTechnically(shop, ctx.persist.skills)) {
 			return true
 		}
 
-		return addProductToShopCost(indexOfShop, shop.products.length) > session.money
+		return addProductToShopCost(indexOfShop, shop.products.length) > ctx.session.money
 	},
-	doFunc: (ctx: any) => {
+	do: ctx => {
 		const {shop, indexOfShop} = fromCtx(ctx)
-		const session = ctx.session as Session
 		const now = Math.floor(Date.now() / 1000)
 
 		const cost = addProductToShopCost(indexOfShop, shop.products.length)
-		if (session.money < cost) {
+		if (ctx.session.money < cost) {
 			// Fishy
-			return
+			return '.'
 		}
 
 		const pickedProductId = randomUnusedEntry(
@@ -251,38 +242,33 @@ menu.button(buttonText(emojis.add, 'other.assortment'), 'addProduct', {
 			itemTimestamp: now
 		}
 
-		session.money -= cost
+		ctx.session.money -= cost
 		shop.products.push(pickedProduct)
+		return '.'
 	}
 })
 
-function buyAllAdditionalCostString(ctx: any): string {
-	const persist = ctx.persist as Persist
-	const factor = buyAllCostFactor(persist.skills, 1)
+function buyAllAdditionalCostString(ctx: Context): string {
+	const factor = buyAllCostFactor(ctx.persist.skills, 1)
 	const content = percentBonusString(factor) + emojis.currency
 	return `(${content})`
 }
 
-menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: buyAllAdditionalCostString}), 'buy-all', {
-	hide: (ctx: any) => {
+menu.interact(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: buyAllAdditionalCostString}), 'buy-all', {
+	hide: ctx => {
 		const {shop} = fromCtx(ctx)
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
-
-		return !magnetEnabled([shop], persist.skills, session.money)
+		return !magnetEnabled([shop], ctx.persist.skills, ctx.session.money)
 	},
-	doFunc: (ctx: any) => {
+	do: ctx => {
 		const {shop} = fromCtx(ctx)
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
 		const now = Math.floor(Date.now() / 1000)
 
-		const cost = buyAllCost([shop], persist.skills)
-		const storage = storageCapacity(shop, persist.skills)
+		const cost = buyAllCost([shop], ctx.persist.skills)
+		const storage = storageCapacity(shop, ctx.persist.skills)
 
-		if (cost > session.money) {
+		if (cost > ctx.session.money) {
 			// What?
-			return
+			return '.'
 		}
 
 		for (const product of shop.products) {
@@ -290,11 +276,12 @@ menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: b
 			product.itemTimestamp = now
 		}
 
-		session.money -= cost
+		ctx.session.money -= cost
+		return '.'
 	}
 })
 
-function employeesRequireAttention(ctx: any): boolean {
+function employeesRequireAttention(ctx: Context): boolean {
 	const {shop} = fromCtx(ctx)
 	return TALENTS.length - allEmployees(shop.personal).length > 0
 }
@@ -303,17 +290,14 @@ menu.submenu(buttonText(emojis.person, 'menu.employee', {requireAttention: emplo
 
 menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureMenu, {
 	joinLastRow: true,
-	hide: (ctx: any) => {
-		const persist = ctx.persist as Persist
-		return persist.shops.length <= 1
-	}
+	hide: ctx => ctx.persist.shops.length <= 1
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader(fromCtx(ctx).shop.id).url()
+	ctx => ctx.wd.reader(fromCtx(ctx).shop.id).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop'))
 
-export default menu
+menu.manualRow(backButtons)

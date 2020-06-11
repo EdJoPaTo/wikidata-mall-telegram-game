@@ -1,6 +1,6 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../../lib/types'
+import {Context} from '../../lib/types'
 import {Skill} from '../../lib/types/skills'
 
 import {currentLevel, skillUpgradeEndTimestamp, isSimpleSkill, categorySkillSpecificLevel, canAddToSkillQueue, entriesInSkillQueue, levelAfterSkillQueue} from '../../lib/game-math/skill'
@@ -10,14 +10,14 @@ import {addSkillToQueue} from '../../lib/game-logic/skills'
 import {countdownHourMinute} from '../../lib/interface/formatted-time'
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../../lib/interface/menu'
+import {buttonText, backButtons, bodyPhoto} from '../../lib/interface/menu'
 import {skillQueueString} from '../../lib/interface/skill'
 
 import {createHelpMenu, helpButtonText} from '../help'
 
-function fromCtx(ctx: any): {skill: Skill; category?: string} {
-	const skill = ctx.match[1]
-	const category = ctx.match[2]
+function fromCtx(ctx: Context): {skill: Skill; category?: string} {
+	const skill = ctx.match![1] as Skill
+	const category = ctx.match?.[2]
 
 	return {
 		skill,
@@ -25,17 +25,16 @@ function fromCtx(ctx: any): {skill: Skill; category?: string} {
 	}
 }
 
-function menuText(ctx: any): string {
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
+function menuBody(ctx: Context): Body {
 	const {skill, category} = fromCtx(ctx)
 
-	const level = isSimpleSkill(skill) ? currentLevel(persist.skills, skill) : categorySkillSpecificLevel(persist.skills, skill, category!)
-	const inQueue = entriesInSkillQueue(session.skillQueue, skill, category)
-	const afterQueueLevel = levelAfterSkillQueue(persist.skills, session.skillQueue, skill, category)
+	const level = isSimpleSkill(skill) ? currentLevel(ctx.persist.skills, skill) : categorySkillSpecificLevel(ctx.persist.skills, skill, category!)
+	const inQueue = entriesInSkillQueue(ctx.session.skillQueue, skill, category)
+	const afterQueueLevel = levelAfterSkillQueue(ctx.persist.skills, ctx.session.skillQueue, skill, category)
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader(`skill.${skill}`), {
+	const reader = ctx.wd.reader(`skill.${skill}`)
+	text += infoHeader(reader, {
 		titlePrefix: emojis.skill + (emojis[skill] || '')
 	})
 
@@ -60,44 +59,44 @@ function menuText(ctx: any): string {
 	text += '\n'
 
 	text += '\n'
-	text += skillQueueString(ctx, session.skillQueue)
+	text += skillQueueString(ctx, ctx.session.skillQueue)
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(ctx => `skill.${fromCtx(ctx).skill}`)
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.button(buttonText(emojis.skill, 'action.research'), 'research', {
-	hide: (ctx: any) => {
-		const {skillQueue} = ctx.session as Session
+menu.interact(buttonText(emojis.skill, 'action.research'), 'research', {
+	hide: ctx => {
+		const {skillQueue} = ctx.session
 		const now = Date.now() / 1000
 		return !canAddToSkillQueue(skillQueue, now)
 	},
-	doFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
+	do: ctx => {
 		const now = Math.floor(Date.now() / 1000)
 
-		if (!session.skillQueue) {
-			session.skillQueue = []
+		if (!ctx.session.skillQueue) {
+			ctx.session.skillQueue = []
 		}
 
-		if (!canAddToSkillQueue(session.skillQueue, now)) {
+		if (!canAddToSkillQueue(ctx.session.skillQueue, now)) {
 			return
 		}
 
 		const {skill, category} = fromCtx(ctx)
-		addSkillToQueue(session.skillQueue, persist.skills, skill, category, now)
+		addSkillToQueue(ctx.session.skillQueue, ctx.persist.skills, skill, category, now)
+		return '.'
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader(`skill.${fromCtx(ctx).skill}`).url()
+	ctx => ctx.wd.reader(`skill.${fromCtx(ctx).skill}`).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))
 
-export default menu
+menu.manualRow(backButtons)

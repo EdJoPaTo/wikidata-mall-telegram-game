@@ -1,10 +1,10 @@
 import {markdown as format} from 'telegram-format'
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
 import {MINUTE_IN_SECONDS} from '../../lib/math/timestamp-constants'
 
 import {ProductionPart} from '../../lib/types/mall'
-import {Persist, Session} from '../../lib/types'
+import {Context} from '../../lib/types'
 
 import {productionReward, productionSeconds} from '../../lib/game-math/mall'
 
@@ -13,7 +13,7 @@ import * as userInfo from '../../lib/data/user-info'
 
 import {getParts} from '../../lib/wikidata/production'
 
-import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {buttonText, backButtons, bodyPhoto} from '../../lib/interface/menu'
 import {countdownMinuteSecond, humanReadableTimestamp} from '../../lib/interface/formatted-time'
 import {emojis} from '../../lib/interface/emojis'
 import {formatFloat, formatInt} from '../../lib/interface/format-number'
@@ -21,11 +21,11 @@ import {infoHeader, labeledValue, labeledInt} from '../../lib/interface/formatte
 
 import {helpButtonText, createHelpMenu} from '../help'
 
-async function partLine(ctx: any, part: ProductionPart, now: number): Promise<string> {
+async function partLine(ctx: Context, part: ProductionPart, now: number): Promise<string> {
 	const finished = part.finishTimestamp < now
 	const user = await userInfo.get(part.user)
 	const name = format.escape(user ? user.first_name : '??')
-	const isMe = ctx.from.id === part.user
+	const isMe = ctx.from!.id === part.user
 
 	let text = ''
 	text += format.bold(format.escape(ctx.wd.reader(part.part).label()))
@@ -43,10 +43,10 @@ async function partLine(ctx: any, part: ProductionPart, now: number): Promise<st
 	return text
 }
 
-async function menuText(ctx: any): Promise<string> {
+async function menuBody(ctx: Context): Promise<Body> {
 	const now = Date.now() / 1000
-	const {hideExplanationMath, timeZone, __wikibase_language_code: locale} = ctx.session as Session
-	const {mall} = ctx.persist as Persist
+	const {hideExplanationMath, timeZone, __wikibase_language_code: locale} = ctx.session
+	const {mall} = ctx.persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
@@ -70,7 +70,8 @@ async function menuText(ctx: any): Promise<string> {
 	text += labeledValue(ctx.wd.reader('other.end'), humanReadableTimestamp(competitionUntil, locale, timeZone))
 	text += '\n'
 
-	text += infoHeader(ctx.wd.reader(itemToProduce), {titlePrefix: emojis.production})
+	const reader = ctx.wd.reader(itemToProduce)
+	text += infoHeader(reader, {titlePrefix: emojis.production})
 
 	text += labeledValue(
 		ctx.wd.reader('mall.productionReward'),
@@ -110,24 +111,22 @@ async function menuText(ctx: any): Promise<string> {
 		.map(o => `${format.bold(format.escape(o))}\n  ${emojis.noPerson}`)
 		.join('\n')
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(async () => {
-		const {itemToProduce} = await mallProduction.get()
-		return itemToProduce
-	})
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
+async function currentlyNotTakenParts(ctx: Context): Promise<string[]> {
 	const now = Date.now() / 1000
-	const {mall} = ctx.persist as Persist
+	const {mall} = ctx.persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
 
-	if (mall.production.some(o => o.user === ctx.from.id && o.finishTimestamp > now)) {
+	if (mall.production.some(o => o.user === ctx.from!.id && o.finishTimestamp > now)) {
 		// Currently producing something
 		return []
 	}
@@ -140,24 +139,24 @@ async function currentlyNotTakenParts(ctx: any): Promise<string[]> {
 	return notTakenParts
 }
 
-menu.select('take', currentlyNotTakenParts, {
+menu.choose('take', currentlyNotTakenParts, {
 	columns: 2,
-	textFunc: (ctx: any, key) => ctx.wd.reader(key).label(),
-	setFunc: (ctx: any, key) => {
+	buttonText: (ctx, key) => ctx.wd.reader(key).label(),
+	do: (ctx, key) => {
 		const now = Date.now() / 1000
-		const {mall} = ctx.persist as Persist
+		const {mall} = ctx.persist
 		if (!mall) {
 			throw new Error('You are not part of a mall')
 		}
 
-		if (mall.production.some(o => o.user === ctx.from.id && o.finishTimestamp > now)) {
+		if (mall.production.some(o => o.user === ctx.from!.id && o.finishTimestamp > now)) {
 			// Currently producing something
-			return
+			return '.'
 		}
 
 		if (mall.production.some(o => o.part === key)) {
 			// Someone already took this part
-			return
+			return '.'
 		}
 
 		const currentlyBeeingProduced = mall.production.filter(o => o.finishTimestamp > now)
@@ -165,20 +164,22 @@ menu.select('take', currentlyNotTakenParts, {
 
 		mall.production.push({
 			part: key,
-			user: ctx.from.id,
+			user: ctx.from!.id,
 			finishTimestamp
 		})
+
+		return '.'
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'mall.production'),
-	(ctx: any) => ctx.wd.reader('mall.production').url()
+	ctx => ctx.wd.reader('mall.production').url()
 )
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, async () => (await mallProduction.get()).itemToProduce || ''),
-	async (ctx: any) => ctx.wd.reader((await mallProduction.get()).itemToProduce).url(),
+	async ctx => ctx.wd.reader((await mallProduction.get()).itemToProduce!).url(),
 	{
 		joinLastRow: true
 	}
@@ -186,4 +187,4 @@ menu.urlButton(
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production'))
 
-export default menu
+menu.manualRow(backButtons)

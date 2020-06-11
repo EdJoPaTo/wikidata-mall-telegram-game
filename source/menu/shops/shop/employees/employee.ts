@@ -1,12 +1,12 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Persist} from '../../../../lib/types'
+import {Context} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
 import {Talent, Person} from '../../../../lib/types/people'
 
 import {personalBonusWhenEmployed} from '../../../../lib/game-math/personal'
 
-import {buttonText} from '../../../../lib/interface/menu'
+import {buttonText, backButtons} from '../../../../lib/interface/menu'
 import {emojis} from '../../../../lib/interface/emojis'
 import {infoHeader} from '../../../../lib/interface/formatted-strings'
 import {percentBonusString} from '../../../../lib/interface/format-percent'
@@ -14,20 +14,19 @@ import {personMarkdown, personStateEmoji} from '../../../../lib/interface/person
 
 import {createHelpMenu, helpButtonText} from '../../../help'
 
-import confirmEmployee from './confirm-applicant'
+import {menu as confirmEmployee} from './confirm-applicant'
 
-function fromCtx(ctx: any): {shop: Shop; talent: Talent; employee?: Person} {
-	const shopType = ctx.match[1]
-	const talent = ctx.match[2] as Talent
+function fromCtx(ctx: Context): {shop: Shop; talent: Talent; employee?: Person} {
+	const shopType = ctx.match![1]
+	const talent = ctx.match![2] as Talent
 
-	const persist = ctx.persist as Persist
-	const shop = persist.shops.filter(o => o.id === shopType)[0]
+	const shop = ctx.persist.shops.filter(o => o.id === shopType)[0]
 	const employee = shop.personal[talent]
 
 	return {shop, talent, employee}
 }
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const {shop, talent, employee} = fromCtx(ctx)
 	const now = Date.now() / 1000
 
@@ -40,12 +39,12 @@ function menuText(ctx: any): string {
 		text += emojis.noPerson
 	}
 
-	return text
+	return {text, parse_mode: 'Markdown'}
 }
 
-const menu = new TelegrafInlineMenu(menuText)
+export const menu = new MenuTemplate<Context>(menuBody)
 
-function hideWhenNoApplicantOrEmploymentProtected(ctx: any): boolean {
+function hideWhenNoApplicantOrEmploymentProtected(ctx: Context): boolean {
 	const now = Date.now() / 1000
 	const {employee} = fromCtx(ctx)
 	if (!employee) {
@@ -55,18 +54,19 @@ function hideWhenNoApplicantOrEmploymentProtected(ctx: any): boolean {
 	return Boolean(employee.seatProtectionUntil && employee.seatProtectionUntil > now)
 }
 
-menu.button(buttonText(emojis.employmentTermination, 'action.employmentTermination'), 'remove', {
+menu.interact(buttonText(emojis.employmentTermination, 'action.employmentTermination'), 'remove', {
 	hide: ctx => !fromCtx(ctx).employee,
-	doFunc: (ctx: any) => {
+	do: ctx => {
 		const {shop, talent} = fromCtx(ctx)
 		delete shop.personal[talent]
+		return '.'
 	}
 })
 
-menu.button(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
+menu.interact(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
 	hide: hideWhenNoApplicantOrEmploymentProtected,
-	doFunc: (ctx: any) => {
-		const {applicants} = ctx.persist as Persist
+	do: ctx => {
+		const {applicants} = ctx.persist
 		const {shop, talent} = fromCtx(ctx)
 
 		const person = shop.personal[talent]
@@ -77,12 +77,13 @@ menu.button(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
 
 		applicants.list.push(person)
 		delete shop.personal[talent]
+		return '.'
 	}
 })
 
-function availableApplicants(ctx: any): string[] {
+function availableApplicants(ctx: Context): string[] {
 	const now = Date.now() / 1000
-	const {applicants} = ctx.persist as Persist
+	const {applicants} = ctx.persist
 	const {employee, shop, talent} = fromCtx(ctx)
 	if (employee && employee.seatProtectionUntil && employee.seatProtectionUntil > now) {
 		return []
@@ -103,15 +104,10 @@ function availableApplicants(ctx: any): string[] {
 	return indiciesOfInterest.map(o => String(o))
 }
 
-menu.selectSubmenu('a', availableApplicants, confirmEmployee, {
+menu.chooseIntoSubmenu('a', availableApplicants, confirmEmployee, {
 	columns: 1,
-	prefixFunc: (ctx: any, key) => {
-		const {applicants} = ctx.persist as Persist
-		const applicant = applicants.list[Number(key)]
-		return personStateEmoji(applicant)
-	},
-	textFunc: (ctx: any, key) => {
-		const {applicants} = ctx.persist as Persist
+	buttonText: (ctx, key) => {
+		const {applicants} = ctx.persist
 		const {shop, talent} = fromCtx(ctx)
 		const applicant = applicants.list[Number(key)]
 
@@ -123,15 +119,17 @@ menu.selectSubmenu('a', availableApplicants, confirmEmployee, {
 		const isHobby = applicant.hobby === shop.id
 		const hobbyString = isHobby ? emojis.hobbyMatch + ' ' : ''
 
-		return `${name.given} ${name.family} (${hobbyString}${bonusString})`
+		const stateEmoji = personStateEmoji(applicant)
+
+		return `${stateEmoji} ${name.given} ${name.family} (${hobbyString}${bonusString})`
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader(`person.talents.${fromCtx(ctx).talent}`).url()
+	ctx => ctx.wd.reader(`person.talents.${fromCtx(ctx).talent}`).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop-employees'))
 
-export default menu
+menu.manualRow(backButtons)

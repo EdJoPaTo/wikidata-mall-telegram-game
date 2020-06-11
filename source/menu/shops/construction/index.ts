@@ -1,12 +1,12 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../../../lib/types'
+import {Context} from '../../../lib/types'
 
 import {costForAdditionalShop} from '../../../lib/game-math/shop-cost'
 
 import {getCurrentConstructions, nextConstructionChange} from '../../../lib/game-logic/shop-construction'
 
-import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../../lib/interface/menu'
 import {constructionSuffix} from '../../../lib/interface/shop-construction'
 import {countdownHourMinute} from '../../../lib/interface/formatted-time'
 import {emojis} from '../../../lib/interface/emojis'
@@ -14,28 +14,27 @@ import {infoHeader, moneyCostPart} from '../../../lib/interface/formatted-string
 
 import {createHelpMenu, helpButtonText} from '../../help'
 
-import constructionOptionMenu from './option'
+import {menu as constructionOptionMenu} from './option'
 
 type QNumber = string
 
-async function menuText(ctx: any): Promise<string> {
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
+async function menuBody(ctx: Context): Promise<Body> {
 	const now = Date.now() / 1000
-	const cost = costForAdditionalShop(persist.shops.length)
+	const cost = costForAdditionalShop(ctx.persist.shops.length)
 	const options = await constructionOptions()
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('action.construction'), {
+	const reader = ctx.wd.reader('action.construction')
+	text += infoHeader(reader, {
 		titlePrefix: emojis.construction
 	})
 
-	text += moneyCostPart(ctx, session.money, cost)
+	text += moneyCostPart(ctx, ctx.session.money, cost)
 
 	text += options
 		.map(o => infoHeader(ctx.wd.reader(o), {
 			titlePrefix: emojis.shop,
-			titleSuffix: constructionSuffix(persist.skills, o)
+			titleSuffix: constructionSuffix(ctx.persist.skills, o)
 		}))
 		.join('')
 
@@ -47,12 +46,13 @@ async function menuText(ctx: any): Promise<string> {
 	text += ctx.wd.reader('unit.hour').label()
 	text += '\n\n'
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('action.construction')
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
 async function constructionOptions(): Promise<readonly QNumber[]> {
 	const now = Date.now() / 1000
@@ -60,19 +60,18 @@ async function constructionOptions(): Promise<readonly QNumber[]> {
 	return construction.possibleShops
 }
 
-menu.selectSubmenu('s', constructionOptions, constructionOptionMenu, {
+menu.chooseIntoSubmenu('s', constructionOptions, constructionOptionMenu, {
 	columns: 1,
-	prefixFunc: () => emojis.construction,
-	textFunc: (ctx: any, key) => {
-		return ctx.wd.reader(key).label()
+	buttonText: (ctx, key) => {
+		return emojis.construction + ctx.wd.reader(key).label()
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('action.construction').url()
+	ctx => ctx.wd.reader('action.construction').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops-construction'))
 
-export default menu
+menu.manualRow(backButtons)

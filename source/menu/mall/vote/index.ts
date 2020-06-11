@@ -1,28 +1,28 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
-import WikidataEntityReader from 'wikidata-entity-reader'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
 import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../../lib/js-helper/dictionary'
 
-import {Session} from '../../../lib/types'
+import {Context} from '../../../lib/types'
 
 import * as mallProduction from '../../../lib/data/mall-production'
 
-import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
 import {humanReadableTimestamp} from '../../../lib/interface/formatted-time'
 import {infoHeader, labeledInt, labeledValue} from '../../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../../help'
 
-import optionMenu from './option'
+import {menu as optionMenu} from './option'
 
-async function menuText(ctx: any): Promise<string> {
-	const {timeZone, __wikibase_language_code: locale} = ctx.session as Session
+async function menuBody(ctx: Context): Promise<Body> {
+	const {timeZone, __wikibase_language_code: locale} = ctx.session
 	const currentProduction = await mallProduction.get()
 	const votes = Object.values(currentProduction.nextItemVote).flat().length
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('mall.voting'), {titlePrefix: emojis.production + emojis.vote})
+	const reader = ctx.wd.reader('mall.voting')
+	text += infoHeader(reader, {titlePrefix: emojis.production + emojis.vote})
 
 	text += emojis.countdown
 	text += labeledValue(ctx.wd.reader('other.end'), humanReadableTimestamp(currentProduction.competitionUntil, locale, timeZone))
@@ -30,53 +30,51 @@ async function menuText(ctx: any): Promise<string> {
 
 	text += labeledInt(ctx.wd.reader('mall.vote'), votes)
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('mall.voting')
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-async function voteOptions(ctx: any): Promise<Record<string, string>> {
-	const {__wikibase_language_code: locale} = ctx.session as Session
+async function voteOptions(ctx: Context): Promise<Record<string, string>> {
+	const {__wikibase_language_code: locale} = ctx.session
 	const currentProduction = await mallProduction.get()
 	const possible = Object.keys(currentProduction.nextItemVote)
 
 	const result: Record<string, string> = {}
 	for (const o of possible) {
-		const r = ctx.wd.reader(o) as WikidataEntityReader
+		const r = ctx.wd.reader(o)
 		result[o] = r.label()
 	}
 
 	const order = sortDictKeysByStringValues(result, locale === 'wikidatanish' ? 'en' : locale)
+
+	for (const o of possible) {
+		const voters = currentProduction.nextItemVote[o]
+		const userVoted = voters.includes(ctx.from!.id)
+		const prefix = userVoted ? emojis.yes : emojis.vote
+		result[o] = prefix + ' ' + result[o]
+	}
+
 	return recreateDictWithGivenKeyOrder(result, order)
 }
 
-menu.selectSubmenu('v', voteOptions, optionMenu, {
+menu.chooseIntoSubmenu('v', voteOptions, optionMenu, {
 	columns: 1,
 	maxRows: 6,
-	setPage: (ctx: any, page) => {
-		const session = ctx.session as Session
-		session.page = page
+	setPage: (ctx, page) => {
+		ctx.session.page = page
 	},
-	getCurrentPage: (ctx: any) => {
-		const session = ctx.session as Session
-		return session.page
-	},
-	prefixFunc: async (ctx: any, key) => {
-		const currentProduction = await mallProduction.get()
-		const voters = currentProduction.nextItemVote[key]
-		const userVoted = voters.includes(ctx.from.id)
-
-		return userVoted ? emojis.yes : emojis.vote
-	}
+	getCurrentPage: ctx => ctx.session.page
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('mall.voting').url()
+	ctx => ctx.wd.reader('mall.voting').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production-vote'))
 
-export default menu
+menu.manualRow(backButtons)

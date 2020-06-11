@@ -1,75 +1,67 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
+import {Context} from '../lib/types'
 import {Talent, TALENTS} from '../lib/types/people'
 
+import {buttonText, bodyPhoto, backButtons} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader} from '../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../lib/interface/menu'
 import {shopEmployeeOverview, employeeStatsPart} from '../lib/interface/person'
 
 import {createHelpMenu, helpButtonText} from './help'
 
-function menuText(ctx: any): string {
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
-
-	const talentSelection = session.employeeViewTalent
+function menuBody(ctx: Context): Body {
+	const talentSelection = ctx.session.employeeViewTalent
 	const talents = talentSelection ? [talentSelection] : TALENTS
 
-	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.employee'), {titlePrefix: emojis.person})
+	const reader = ctx.wd.reader('menu.employee')
 
-	text += persist.shops
+	let text = ''
+	text += infoHeader(reader, {titlePrefix: emojis.person})
+
+	text += ctx.persist.shops
 		.map(o => shopEmployeeOverview(ctx, o, talents))
 		.join('\n\n')
 	text += '\n\n'
 
-	text += employeeStatsPart(ctx, persist.shops, talents)
+	text += employeeStatsPart(ctx, ctx.persist.shops, talents)
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.employee')
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.toggle((ctx: any) => ctx.wd.reader('menu.allLanguages').label(), 'all', {
-	isSetFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		return !session.employeeViewTalent
-	},
-	setFunc: (ctx: any, newState) => {
-		const session = ctx.session as Session
+menu.toggle(ctx => ctx.wd.reader('menu.allLanguages').label(), 'all', {
+	isSet: ctx => !ctx.session.employeeViewTalent,
+	set: (ctx, newState) => {
 		if (newState) {
-			delete session.employeeViewTalent
+			delete ctx.session.employeeViewTalent
 		} else {
-			session.employeeViewTalent = 'purchasing'
+			ctx.session.employeeViewTalent = 'purchasing'
 		}
 	}
 })
 
 menu.select('talent', TALENTS, {
-	isSetFunc: (ctx: any, key) => {
-		const session = ctx.session as Session
-		return session.employeeViewTalent === key
+	isSet: (ctx, key) => ctx.session.employeeViewTalent === key,
+	set: (ctx, key) => {
+		ctx.session.employeeViewTalent = key as Talent
 	},
-	setFunc: (ctx: any, key) => {
-		const session = ctx.session as Session
-		session.employeeViewTalent = key as Talent
-	},
-	textFunc: (ctx: any, key) => {
-		const label: string = ctx.wd.reader(`person.talents.${key}`).label()
+	buttonText: (ctx, key) => {
+		const label = ctx.wd.reader(`person.talents.${key}`).label()
 		const emoji = emojis[key]
 		return emoji + label
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('menu.employee').url()
+	ctx => ctx.wd.reader('menu.employee').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.employees'))
 
-export default menu
+menu.manualRow(backButtons)

@@ -1,6 +1,6 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../../lib/types'
+import {Context} from '../../lib/types'
 import {Skills, CategorySkill, SimpleSkill, SIMPLE_SKILLS, CATEGORY_SKILLS, Skill} from '../../lib/types/skills'
 
 import {sortDictKeysByStringValues, recreateDictWithGivenKeyOrder} from '../../lib/js-helper/dictionary'
@@ -9,15 +9,15 @@ import {currentLevel, categorySkillHoursInvested} from '../../lib/game-math/skil
 
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../lib/interface/menu'
 import {skillQueueString} from '../../lib/interface/skill'
 
 import {createHelpMenu, helpButtonText} from '../help'
 
-import skillMenu from './skill'
-import skillSelectCategory from './skill-select-category'
+import {menu as skillMenu} from './skill'
+import {menu as skillSelectCategory} from './skill-select-category'
 
-function simpleSkillInfo(ctx: any, skills: Skills, skill: SimpleSkill): {emoji: string; label: string; level: number} {
+function simpleSkillInfo(ctx: Context, skills: Skills, skill: SimpleSkill): {emoji: string; label: string; level: number} {
 	return {
 		emoji: emojis[skill],
 		label: ctx.wd.reader(`skill.${skill}`).label(),
@@ -25,7 +25,7 @@ function simpleSkillInfo(ctx: any, skills: Skills, skill: SimpleSkill): {emoji: 
 	}
 }
 
-function categorySkillInfo(ctx: any, skills: Skills, skill: CategorySkill): {emoji: string; label: string; hours: number} {
+function categorySkillInfo(ctx: Context, skills: Skills, skill: CategorySkill): {emoji: string; label: string; hours: number} {
 	return {
 		emoji: emojis[skill],
 		label: ctx.wd.reader(`skill.${skill}`).label(),
@@ -33,23 +33,22 @@ function categorySkillInfo(ctx: any, skills: Skills, skill: CategorySkill): {emo
 	}
 }
 
-function menuText(ctx: any): string {
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
-	const {__wikibase_language_code: locale} = session
+function menuBody(ctx: Context): Body {
+	const {__wikibase_language_code: locale} = ctx.session
 
 	const hourLabel = ctx.wd.reader('unit.hour').label()
 
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.skill'), {titlePrefix: emojis.skill})
+	const reader = ctx.wd.reader('menu.skill')
+	text += infoHeader(reader, {titlePrefix: emojis.skill})
 
 	const simpleSkillParts = SIMPLE_SKILLS
-		.map(o => simpleSkillInfo(ctx, persist.skills, o))
+		.map(o => simpleSkillInfo(ctx, ctx.persist.skills, o))
 		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
 		.map(o => `${o.emoji}${o.label}: ${o.level}`)
 
 	const categorySkillParts = CATEGORY_SKILLS
-		.map(o => categorySkillInfo(ctx, persist.skills, o))
+		.map(o => categorySkillInfo(ctx, ctx.persist.skills, o))
 		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
 		.map(o => `${o.emoji}${o.label}: ${o.hours} ${hourLabel}`)
 
@@ -66,53 +65,60 @@ function menuText(ctx: any): string {
 		text += '\n\n'
 	}
 
-	text += skillQueueString(ctx, session.skillQueue)
+	text += skillQueueString(ctx, ctx.session.skillQueue)
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.skill')
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.button(buttonText(emojis.clearSkillQueue, 'skill.queue'), 'clearQueue', {
-	hide: (ctx: any) => {
-		const {skillQueue} = ctx.session as Session
+menu.interact(buttonText(emojis.clearSkillQueue, 'skill.queue'), 'clearQueue', {
+	hide: ctx => {
+		const {skillQueue} = ctx.session
 		return skillQueue.length <= 1
 	},
-	doFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		session.skillQueue = session.skillQueue
+	do: ctx => {
+		ctx.session.skillQueue = ctx.session.skillQueue
 			.filter((_, i) => i === 0)
+		return '.'
 	}
 })
 
-function skillOptions(ctx: any, skills: readonly Skill[]): Record<string, string> {
-	const {__wikibase_language_code: locale} = ctx.session as Session
+function skillOptions(ctx: Context, skills: readonly Skill[]): Record<string, string> {
+	const {__wikibase_language_code: locale} = ctx.session
 	const labels: Record<string, string> = {}
 	for (const key of skills) {
 		labels[key] = ctx.wd.reader(`skill.${key}`).label()
 	}
 
 	const orderedKeys = sortDictKeysByStringValues(labels, locale === 'wikidatanish' ? 'en' : locale)
+
+	for (const key of skills) {
+		const emoji = emojis[key]
+		if (emoji) {
+			labels[key] = emoji + ' ' + labels[key]
+		}
+	}
+
 	return recreateDictWithGivenKeyOrder(labels, orderedKeys)
 }
 
-menu.selectSubmenu('simple', ctx => skillOptions(ctx, SIMPLE_SKILLS), skillMenu, {
-	columns: 2,
-	prefixFunc: (_, key) => emojis[key] || ''
+menu.chooseIntoSubmenu('simple', ctx => skillOptions(ctx, SIMPLE_SKILLS), skillMenu, {
+	columns: 2
 })
 
-menu.selectSubmenu('c', ctx => skillOptions(ctx, CATEGORY_SKILLS), skillSelectCategory, {
-	columns: 2,
-	prefixFunc: (_, key) => emojis[key] || ''
+menu.chooseIntoSubmenu('c', ctx => skillOptions(ctx, CATEGORY_SKILLS), skillSelectCategory, {
+	columns: 2
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('menu.skill').url()
+	ctx => ctx.wd.reader('menu.skill').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.skills'))
 
-export default menu
+menu.manualRow(backButtons)

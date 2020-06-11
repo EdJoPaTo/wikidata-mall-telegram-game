@@ -1,6 +1,6 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Persist} from '../../../lib/types'
+import {Context} from '../../../lib/types'
 
 import {attractionCost} from '../../../lib/game-math/mall'
 
@@ -8,47 +8,48 @@ import * as wdAttractions from '../../../lib/wikidata/attractions'
 
 import {createAttraction} from '../../../lib/game-logic/mall-attraction'
 
-import {buttonText, menuPhoto} from '../../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
 import {mallAttractionPart} from '../../../lib/interface/mall'
 import {mallMoneyCostPart} from '../../../lib/interface/formatted-strings'
 
 import {helpButtonText, createHelpMenu} from '../../help'
 
-function fromCtx(ctx: any): string {
-	return ctx.match[1]
+function fromCtx(ctx: Context): string {
+	return ctx.match![1]
 }
 
-function menuText(ctx: any): string {
-	const {mall} = ctx.persist as Persist
+function menuBody(ctx: Context): Body {
+	const {mall} = ctx.persist
 	if (!mall) {
 		throw new Error('You are not part of a mall')
 	}
 
 	const attraction = fromCtx(ctx)
+	const reader = ctx.wd.reader(attraction)
 
 	let text = ''
 	text += mallAttractionPart(ctx, attraction)
 	text += mallMoneyCostPart(ctx, mall.money, attractionCost(wdAttractions.getHeight(attraction)))
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(ctx => fromCtx(ctx))
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.button(buttonText(emojis.construction, 'action.construction'), 'construct', {
-	setParentMenuAfter: true,
-	hide: (ctx: any) => {
+menu.interact(buttonText(emojis.construction, 'action.construction'), 'construct', {
+	hide: ctx => {
 		const attraction = fromCtx(ctx)
-		const {mall} = ctx.persist as Persist
+		const {mall} = ctx.persist
 		const cost = attractionCost(wdAttractions.getHeight(attraction))
 		return Boolean(!mall || mall.money < cost)
 	},
-	doFunc: (ctx: any) => {
+	do: ctx => {
 		const now = Date.now() / 1000
-		const {mall} = ctx.persist as Persist
+		const {mall} = ctx.persist
 		const attraction = fromCtx(ctx)
 		const cost = attractionCost(wdAttractions.getHeight(attraction))
 		if (!mall || mall.money < cost) {
@@ -57,14 +58,15 @@ menu.button(buttonText(emojis.construction, 'action.construction'), 'construct',
 
 		mall.attraction = createAttraction(attraction, now)
 		mall.money -= cost
+		return '..'
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader(fromCtx(ctx)).url()
+	ctx => ctx.wd.reader(fromCtx(ctx)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.attraction'))
 
-export default menu
+menu.manualRow(backButtons)

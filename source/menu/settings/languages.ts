@@ -1,20 +1,21 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session} from '../../lib/types'
+import {Context} from '../../lib/types'
 
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
-import {menuPhoto} from '../../lib/interface/menu'
+import {bodyPhoto, backButtons} from '../../lib/interface/menu'
 import {percentString} from '../../lib/interface/format-percent'
 
 /* eslint @typescript-eslint/no-var-requires: warn */
 /* eslint @typescript-eslint/no-require-imports: warn */
 const localeEmoji = require('locale-emoji')
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const flag = flagString(ctx.wd.locale(), true)
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.language'), {titlePrefix: flag})
+	const reader = ctx.wd.reader('menu.language')
+	text += infoHeader(reader, {titlePrefix: flag})
 
 	if (ctx.wd.locale() !== 'wikidatanish') {
 		text += ctx.wd.reader('other.translation').label()
@@ -26,34 +27,31 @@ function menuText(ctx: any): string {
 		text += percentString(ctx.wd.localeProgress())
 	}
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.language')
-})
-menu.setCommand('language')
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.toggle((ctx: any) => ctx.wd.reader('menu.allLanguages').label(), 'all', {
-	isSetFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		return Boolean(session.showAllLanguages)
-	},
-	setFunc: (ctx: any, newState) => {
-		const session = ctx.session as Session
+menu.toggle(ctx => ctx.wd.reader('menu.allLanguages').label(), 'all', {
+	isSet: ctx => Boolean(ctx.session.showAllLanguages),
+	set: (ctx, newState) => {
 		if (newState) {
-			session.showAllLanguages = newState
+			ctx.session.showAllLanguages = newState
 		} else {
-			delete session.showAllLanguages
+			delete ctx.session.showAllLanguages
 		}
 	}
 })
 
-menu.button(`${emojis.language} Wikidatanish`, 'wikidata', {
-	doFunc: (ctx: any) => {
+menu.interact(`${emojis.language} Wikidatanish`, 'wikidata', {
+	do: ctx => {
 		// Keep last set i18n locale
 		// ctx.i18n.locale(key)
 		ctx.wd.locale('wikidatanish')
+		return '.'
 	}
 })
 
@@ -66,31 +64,28 @@ function flagString(languageCode: string, useFallbackFlag = false): string {
 	return flag
 }
 
-function languageOptions(ctx: any): string[] {
-	const session = ctx.session as Session
-	const minPercentage = session.showAllLanguages ? 0 : 0.1
+function languageOptions(ctx: Context): readonly string[] {
+	const minPercentage = ctx.session.showAllLanguages ? 0 : 0.1
 	return ctx.wd.availableLocales(minPercentage)
 }
 
 menu.select('lang', languageOptions, {
 	columns: 3,
-	textFunc: (_ctx, key) => {
+	buttonText: (_, key) => {
 		const flag = flagString(key)
 		return `${flag} ${key}`
 	},
-	isSetFunc: (ctx: any, key) => key === ctx.wd.locale(),
-	setFunc: (ctx: any, key) => {
+	isSet: (ctx, key) => key === ctx.wd.locale(),
+	set: (ctx, key) => {
 		ctx.i18n.locale(key)
 		ctx.wd.locale(key)
 	},
-	getCurrentPage: (ctx: any) => {
-		const session = ctx.session as Session
-		return session.page
+	getCurrentPage: ctx => {
+		return ctx.session.page
 	},
-	setPage: (ctx: any, page) => {
-		const session = ctx.session as Session
-		session.page = page
+	setPage: (ctx, page) => {
+		ctx.session.page = page
 	}
 })
 
-export default menu
+menu.manualRow(backButtons)

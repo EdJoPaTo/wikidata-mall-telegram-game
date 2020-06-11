@@ -1,27 +1,26 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Persist} from '../../../../lib/types'
+import {Context} from '../../../../lib/types'
 import {Shop} from '../../../../lib/types/shop'
 import {Talent, Person} from '../../../../lib/types/people'
 
 import {EMPLOYMENT_PROTECTION_SECONDS} from '../../../../lib/game-math/constants'
 import {personalBonusWhenEmployed} from '../../../../lib/game-math/personal'
 
-import {buttonText} from '../../../../lib/interface/menu'
+import {buttonText, backButtons} from '../../../../lib/interface/menu'
 import {emojis} from '../../../../lib/interface/emojis'
 import {infoHeader} from '../../../../lib/interface/formatted-strings'
 import {percentBonusString} from '../../../../lib/interface/format-percent'
 import {personMarkdown} from '../../../../lib/interface/person'
 
-function fromCtx(ctx: any): {shop: Shop; talent: Talent; employee?: Person; applicantId: number; applicant: Person} {
-	const shopType = ctx.match[1]
-	const talent = ctx.match[2] as Talent
-	const applicantId = Number(ctx.match[3])
+function fromCtx(ctx: Context): {shop: Shop; talent: Talent; employee?: Person; applicantId: number; applicant: Person} {
+	const shopType = ctx.match![1]
+	const talent = ctx.match![2] as Talent
+	const applicantId = Number(ctx.match![3])
 
-	const persist = ctx.persist as Persist
-	const shop = persist.shops.filter(o => o.id === shopType)[0]
+	const shop = ctx.persist.shops.filter(o => o.id === shopType)[0]
 	const employee = shop.personal[talent]
-	const applicant = persist.applicants.list[applicantId]
+	const applicant = ctx.persist.applicants.list[applicantId]
 
 	if (!applicant) {
 		throw new Error('These aren\'t the applicants you are looking for')
@@ -30,7 +29,7 @@ function fromCtx(ctx: any): {shop: Shop; talent: Talent; employee?: Person; appl
 	return {shop, talent, employee, applicantId, applicant}
 }
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const {shop, talent, applicant} = fromCtx(ctx)
 	const now = Date.now() / 1000
 	const bonusWhenEmployed = personalBonusWhenEmployed(shop, talent, applicant)
@@ -47,21 +46,20 @@ function menuText(ctx: any): string {
 		text += percentBonusString(bonusWhenEmployed)
 	}
 
-	return text
+	return {text, parse_mode: 'Markdown'}
 }
 
-const menu = new TelegrafInlineMenu(menuText)
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.button(buttonText(emojis.yes + emojis.recruitment, 'action.recruitment'), 'recruit', {
-	setParentMenuAfter: true,
-	hide: (ctx: any) => {
+menu.interact(buttonText(emojis.yes + emojis.recruitment, 'action.recruitment'), 'recruit', {
+	hide: ctx => {
 		const {shop, talent, applicant} = fromCtx(ctx)
 		const bonusWhenEmployed = personalBonusWhenEmployed(shop, talent, applicant)
 		return bonusWhenEmployed < 1
 	},
-	doFunc: (ctx: any) => {
+	do: ctx => {
 		const now = Math.floor(Date.now() / 1000)
-		const {applicants} = ctx.persist as Persist
+		const {applicants} = ctx.persist
 		const {shop, talent, employee, applicantId, applicant} = fromCtx(ctx)
 
 		if (employee) {
@@ -75,7 +73,8 @@ menu.button(buttonText(emojis.yes + emojis.recruitment, 'action.recruitment'), '
 		shop.personal[talent] = applicant
 		applicants.list.splice(applicantId, 1)
 		applicants.timestamp = now
+		return '..'
 	}
 })
 
-export default menu
+menu.manualRow(backButtons)

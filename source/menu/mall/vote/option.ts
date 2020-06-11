@@ -1,23 +1,24 @@
 import {markdown as format} from 'telegram-format'
-import TelegrafInlineMenu from 'telegraf-inline-menu'
-import WikidataEntityReader from 'wikidata-entity-reader'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
 import {getParts} from '../../../lib/wikidata/production'
 import * as mallProduction from '../../../lib/data/mall-production'
 
+import {Context} from '../../../lib/types'
+
 import {emojis} from '../../../lib/interface/emojis'
 import {infoHeader} from '../../../lib/interface/formatted-strings'
-import {menuPhoto, buttonText} from '../../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../../lib/interface/menu'
 
 import {helpButtonText, createHelpMenu} from '../../help'
 
-function fromCtx(ctx: any): string {
-	return ctx.match[1]
+function fromCtx(ctx: Context): string {
+	return ctx.match![1]
 }
 
-function menuText(ctx: any): string {
+function menuBody(ctx: Context): Body {
 	const qNumber = fromCtx(ctx)
-	const reader = ctx.wd.reader(qNumber) as WikidataEntityReader
+	const reader = ctx.wd.reader(qNumber)
 
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.vote})
@@ -25,47 +26,49 @@ function menuText(ctx: any): string {
 	const parts = getParts(qNumber)
 
 	text += parts
-		.map(o => ctx.wd.reader(o) as WikidataEntityReader)
+		.map(o => ctx.wd.reader(o))
 		.map(o => format.url(format.escape(o.label()), o.url()))
 		.join(', ')
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto(fromCtx)
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.button(buttonText(emojis.yes, 'mall.vote'), 'vote', {
-	hide: async (ctx: any) => {
+menu.interact(buttonText(emojis.yes, 'mall.vote'), 'vote', {
+	hide: async ctx => {
 		const qNumber = fromCtx(ctx)
 		const currentProduction = await mallProduction.get()
 		const voters = currentProduction.nextItemVote[qNumber]
-		return !voters || voters.includes(ctx.from.id)
+		return !voters || voters.includes(ctx.from!.id)
 	},
-	doFunc: async (ctx: any) => {
+	do: async ctx => {
 		const qNumber = fromCtx(ctx)
 
 		const currentProduction = await mallProduction.get()
 		for (const o of Object.keys(currentProduction.nextItemVote)) {
 			currentProduction.nextItemVote[o] = currentProduction.nextItemVote[o]
-				.filter(o => o !== ctx.from.id)
+				.filter(o => o !== ctx.from!.id)
 		}
 
 		if (!currentProduction.nextItemVote[qNumber]) {
 			throw new Error('You cant vote for something not on the list')
 		}
 
-		currentProduction.nextItemVote[qNumber].push(ctx.from.id)
+		currentProduction.nextItemVote[qNumber].push(ctx.from!.id)
 		await mallProduction.set(currentProduction)
+		return '.'
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader(fromCtx(ctx)).url()
+	ctx => ctx.wd.reader(fromCtx(ctx)).url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.mall-production-vote'))
 
-export default menu
+menu.manualRow(backButtons)

@@ -1,13 +1,13 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../../lib/types'
+import {Context} from '../../lib/types'
 import {Shop} from '../../lib/types/shop'
 import {Skills} from '../../lib/types/skills'
 
 import {buyAllCost, buyAllCostFactor, magnetEnabled} from '../../lib/game-math/shop-cost'
 import {storageCapacity, storageFilledPercentage} from '../../lib/game-math/shop-capacity'
 
-import {buttonText, menuPhoto} from '../../lib/interface/menu'
+import {buttonText, bodyPhoto, backButtons} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
 import {incomePart} from '../../lib/interface/shop'
 import {infoHeader, labeledFloat} from '../../lib/interface/formatted-strings'
@@ -15,10 +15,10 @@ import {percentBonusString, percentString} from '../../lib/interface/format-perc
 
 import {createHelpMenu, helpButtonText} from '../help'
 
-import constructionMenu from './construction'
-import shopMenu from './shop'
+import {menu as constructionMenu} from './construction'
+import {menu as shopMenu} from './shop'
 
-function shopLine(ctx: any, shop: Shop, skills: Skills): string {
+function shopLine(ctx: Context, shop: Shop, skills: Skills): string {
 	const percentageFilled = storageFilledPercentage(shop, skills)
 
 	let text = ''
@@ -30,92 +30,81 @@ function shopLine(ctx: any, shop: Shop, skills: Skills): string {
 	return text
 }
 
-function menuText(ctx: any): string {
-	const session = ctx.session as Session
-	const persist = ctx.persist as Persist
-
+function menuBody(ctx: Context): Body {
 	let text = ''
-	text += infoHeader(ctx.wd.reader('menu.shop'), {
+	const reader = ctx.wd.reader('menu.shop')
+	text += infoHeader(reader, {
 		titlePrefix: emojis.shop,
-		titleSuffix: `(${persist.shops.length})`
+		titleSuffix: `(${ctx.persist.shops.length})`
 	})
 
-	text += labeledFloat(ctx.wd.reader('other.money'), session.money, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
 	text += '\n'
 
-	text += incomePart(ctx, persist.shops, persist, !session.hideExplanationMath)
+	text += incomePart(ctx, ctx.persist.shops, ctx.persist, !ctx.session.hideExplanationMath)
 
-	if (persist.shops.length > 0) {
-		text += persist.shops
-			.map(o => shopLine(ctx, o, persist.skills))
+	if (ctx.persist.shops.length > 0) {
+		text += ctx.persist.shops
+			.map(o => shopLine(ctx, o, ctx.persist.skills))
 			.join('\n')
 		text += '\n\n'
 	}
 
-	return text
+	return {
+		...bodyPhoto(reader),
+		text, parse_mode: 'Markdown'
+	}
 }
 
-const menu = new TelegrafInlineMenu(menuText, {
-	photo: menuPhoto('menu.shop')
-})
+export const menu = new MenuTemplate<Context>(menuBody)
 
-function buyAllAdditionalCostString(ctx: any): string {
-	const persist = ctx.persist as Persist
-	const factor = buyAllCostFactor(persist.skills, persist.shops.length)
+function buyAllAdditionalCostString(ctx: Context): string {
+	const factor = buyAllCostFactor(ctx.persist.skills, ctx.persist.shops.length)
 	const content = percentBonusString(factor) + emojis.currency
 	return `(${content})`
 }
 
-function userShops(ctx: any): string[] {
-	const persist = ctx.persist as Persist
-	return persist.shops.map(o => o.id)
+function userShops(ctx: Context): string[] {
+	return ctx.persist.shops.map(o => o.id)
 }
 
-menu.selectSubmenu('s', userShops, shopMenu, {
+menu.chooseIntoSubmenu('s', userShops, shopMenu, {
 	columns: 2,
-	textFunc: (ctx: any, key) => ctx.wd.reader(key).label()
+	buttonText: (ctx, key) => ctx.wd.reader(key).label()
 })
 
 menu.submenu(buttonText(emojis.construction, 'action.construction'), 'build', constructionMenu)
 
-menu.button(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: buyAllAdditionalCostString}), 'buy-all', {
-	hide: (ctx: any) => {
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
-
-		return persist.shops.length < 2 || !magnetEnabled(persist.shops, persist.skills, session.money)
-	},
-	doFunc: (ctx: any) => {
-		const session = ctx.session as Session
-		const persist = ctx.persist as Persist
+menu.interact(buttonText(emojis.magnetism, 'person.talents.purchasing', {suffix: buyAllAdditionalCostString}), 'buy-all', {
+	hide: ctx => ctx.persist.shops.length < 2 || !magnetEnabled(ctx.persist.shops, ctx.persist.skills, ctx.session.money),
+	do: ctx => {
 		const now = Math.floor(Date.now() / 1000)
 
-		const cost = buyAllCost(persist.shops, persist.skills)
+		const cost = buyAllCost(ctx.persist.shops, ctx.persist.skills)
 
-		if (cost > session.money) {
+		if (cost > ctx.session.money) {
 			// What?
-			return
+			return '.'
 		}
 
-		for (const shop of persist.shops) {
-			const storage = storageCapacity(shop, persist.skills)
+		for (const shop of ctx.persist.shops) {
+			const storage = storageCapacity(shop, ctx.persist.skills)
 			for (const product of shop.products) {
 				product.itemsInStore = storage
 				product.itemTimestamp = now
 			}
 		}
 
-		session.money -= cost
+		ctx.session.money -= cost
+		return '.'
 	}
 })
 
-menu.urlButton(
+menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
-	(ctx: any) => ctx.wd.reader('menu.shop').url()
+	ctx => ctx.wd.reader('menu.shop').url()
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops'))
 
-export default menu
-
-export const replyMenu = menu.replyMenuMiddleware()
+menu.manualRow(backButtons)

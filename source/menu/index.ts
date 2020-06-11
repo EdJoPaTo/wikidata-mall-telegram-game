@@ -1,32 +1,30 @@
-import TelegrafInlineMenu from 'telegraf-inline-menu'
+import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
-import {Session, Persist} from '../lib/types'
+import {Context} from '../lib/types'
 
 import {canAddToSkillQueue} from '../lib/game-math/skill'
 import {storageFilledPercentage} from '../lib/game-math/shop-capacity'
 
 import {applicantButtonEmoji} from '../lib/interface/applicants'
-import {buttonText} from '../lib/interface/menu'
+import {buttonText, backButtons} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader, labeledFloat} from '../lib/interface/formatted-strings'
 import {mallMoji} from '../lib/interface/mall'
 
-import applicants from './applicants'
-import botStats from './bot-stats'
-import employees from './employees'
-import leaderboard from './leaderboard'
-import mall from './mall'
-import settings from './settings'
-import shops from './shops'
-import skills from './skills'
+import {menu as applicants} from './applicants'
+import {menu as botStats} from './bot-stats'
+import {menu as employees} from './employees'
+import {menu as leaderboard} from './leaderboard'
+import {menu as mall} from './mall'
+import {menu as settings} from './settings'
+import {menu as shops} from './shops'
+import {menu as skills} from './skills'
 
-function menuText(ctx: any): string {
-	const session = ctx.session as Session
-
+function menuBody(ctx: Context): Body {
 	let text = ''
 	text += infoHeader(ctx.wd.reader('menu.menu'))
 
-	text += labeledFloat(ctx.wd.reader('other.money'), session.money, emojis.currency)
+	text += labeledFloat(ctx.wd.reader('other.money'), ctx.session.money, emojis.currency)
 	text += '\n'
 
 	text += ctx.i18n.t('menu.welcome')
@@ -34,85 +32,67 @@ function menuText(ctx: any): string {
 	text += emojis.warning
 	text += ctx.i18n.t('menu.wikidataContentWarning')
 
-	return text
+	return {text, parse_mode: 'Markdown'}
 }
 
-const menu = new TelegrafInlineMenu(menuText)
-menu.setCommand('start')
+export const menu = new MenuTemplate<Context>(menuBody)
 
-function shopsRequireAttention(ctx: any): boolean {
-	const {shops, skills} = ctx.persist as Persist
+function shopsRequireAttention(ctx: Context): boolean {
+	const {shops, skills} = ctx.persist
 	return shops.some(o => storageFilledPercentage(o, skills) === 0)
 }
 
-function shopsButtonSuffix(ctx: any): string {
-	const {shops} = ctx.persist as Persist
+function shopsButtonSuffix(ctx: Context): string {
+	const {shops} = ctx.persist
 	return `(${shops.length})`
 }
 
 menu.submenu(buttonText(emojis.shop, 'menu.shop', {requireAttention: shopsRequireAttention, suffix: shopsButtonSuffix}), 'shops', shops)
 
-menu.simpleButton(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
-	hide: (ctx: any) => {
-		const persist = ctx.persist as Persist
-		return Boolean(persist.mall)
-	},
-	doFunc: async ctx => {
-		const {username} = (ctx as any).botInfo
+menu.interact(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
+	hide: ctx => Boolean(ctx.persist.mall),
+	do: async ctx => {
+		const {username} = ctx.botInfo!
 		let text = ''
 		text += '@'
 		text += username
 		text += ' → '
 		text += emojis.group
-		text += (ctx as any).wd.reader('menu.chat').label()
+		text += ctx.wd.reader('menu.chat').label()
 
 		await ctx.answerCbQuery(text, true)
 	}
 })
 
-function mallButtonEmojis(ctx: any): string {
-	const {mall} = ctx.persist as Persist
+function mallButtonEmojis(ctx: Context): string {
+	const {mall} = ctx.persist
 	return emojis.mall + String(mall && mallMoji(mall))
 }
 
 menu.submenu(buttonText(mallButtonEmojis, 'menu.mall'), 'mall', mall, {
-	hide: (ctx: any) => {
-		const persist = ctx.persist as Persist
-		return !persist.mall
-	}
+	hide: ctx => !ctx.persist.mall
 })
 
-function applicantEmoji(ctx: any): string {
-	const {applicants} = ctx.persist as Persist
-	return applicantButtonEmoji(applicants.list)
+function applicantEmoji(ctx: Context): string {
+	return applicantButtonEmoji(ctx.persist.applicants.list)
 }
 
 menu.submenu(buttonText(applicantEmoji, 'menu.applicant'), 'applicants', applicants, {
-	hide: (ctx: any) => {
-		const persist = ctx.persist as Persist
-		return persist.shops.length === 0
-	}
+	hide: ctx => ctx.persist.shops.length === 0
 })
 
 menu.submenu(buttonText(emojis.person, 'menu.employee'), 'employees', employees, {
 	joinLastRow: true,
-	hide: (ctx: any) => {
-		const persist = ctx.persist as Persist
-		return persist.shops.length === 0
-	}
+	hide: ctx => ctx.persist.shops.length === 0
 })
 
-function skillRequireAttention(ctx: any): boolean {
-	const {skillQueue} = ctx.session as Session
+function skillRequireAttention(ctx: Context): boolean {
 	const now = Date.now() / 1000
-	return canAddToSkillQueue(skillQueue, now)
+	return canAddToSkillQueue(ctx.session.skillQueue, now)
 }
 
 menu.submenu(buttonText(emojis.skill, 'menu.skill', {requireAttention: skillRequireAttention}), 'skill', skills, {
-	hide: (ctx: any) => {
-		const persist = ctx.persist as Persist
-		return persist.shops.length === 0
-	}
+	hide: ctx => ctx.persist.shops.length === 0
 })
 
 menu.submenu(buttonText(emojis.leaderboard, 'menu.leaderboard'), 'leaderboard', leaderboard, {
@@ -125,12 +105,12 @@ menu.submenu(buttonText(emojis.stats, 'stat.stats'), 'botStats', botStats, {
 	joinLastRow: true
 })
 
-menu.urlButton(buttonText(emojis.chat, 'menu.chat'), 'https://t.me/WikidataMallChat')
+menu.url(buttonText(emojis.chat, 'menu.chat'), 'https://t.me/WikidataMallChat')
 
-menu.urlButton(buttonText(emojis.github, 'other.github'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game', {
+menu.url(buttonText(emojis.github, 'other.github'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game', {
 	joinLastRow: true
 })
 
-menu.urlButton(buttonText(emojis.github, 'other.changelog'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game/releases')
+menu.url(buttonText(emojis.github, 'other.changelog'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game/releases')
 
-export default menu
+menu.manualRow(backButtons)
