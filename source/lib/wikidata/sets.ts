@@ -1,5 +1,5 @@
-import randomItem from 'random-item'
 import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
+import randomItem from 'random-item'
 
 type SetName =
 	'alienHobby' |

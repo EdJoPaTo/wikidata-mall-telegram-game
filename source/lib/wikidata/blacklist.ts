@@ -1,4 +1,4 @@
-import * as wdGot from 'wikidata-sdk-got'
+import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 import arrayFilterUnique from 'array-filter-unique'
 
 const BLACKLIST_BASICS_TOPLEVEL = [
@@ -16,7 +16,7 @@ async function loadFromToplevel(toplevel: readonly string[]): Promise<string[]> 
 		.join('UNION')
 	query += '}'
 
-	const result = await wdGot.sparqlQuerySimplifiedMinified(query)
+	const result = await sparqlQuerySimplifiedMinified(query)
 	return (result as string[])
 		.filter(arrayFilterUnique())
 }

@@ -1,5 +1,5 @@
+import {sparqlQuerySimplifiedMinified} from 'wikidata-sdk-got'
 import randomItem from 'random-item'
-import * as wdkGot from 'wikidata-sdk-got'
 
 const cache = new Map()
 
@@ -37,7 +37,7 @@ LIMIT 5000`
 
 async function instancesOfLabels(logger: (...args: any[]) => void, category: string): Promise<string[]> {
 	const query = buildQuery(category)
-	const results = await wdkGot.sparqlQuerySimplifiedMinified(query, {cache}) as string[]
+	const results = await sparqlQuerySimplifiedMinified(query, {cache}) as string[]
 	const sorted = results
 		.sort((a, b) => a.localeCompare(b))
 
