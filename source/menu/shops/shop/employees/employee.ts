@@ -85,7 +85,7 @@ function availableApplicants(ctx: Context): string[] {
 	const now = Date.now() / 1000
 	const {applicants} = ctx.persist
 	const {employee, shop, talent} = fromCtx(ctx)
-	if (employee && employee.seatProtectionUntil && employee.seatProtectionUntil > now) {
+	if (employee?.seatProtectionUntil && employee.seatProtectionUntil > now) {
 		return []
 	}
 

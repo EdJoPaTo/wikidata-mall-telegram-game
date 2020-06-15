@@ -17,7 +17,7 @@ export async function incomePart(ctx: Context, shops: readonly Shop[], persist: 
 	const income = returnOnInvestment(shops, skills)
 	const magnetIncome = returnOnInvestment(shops, skills, factor)
 
-	const mallAttractionHeight = getAttractionHeight(mall && mall.attraction)
+	const mallAttractionHeight = getAttractionHeight(mall?.attraction)
 	const sell = shops
 		.map(o => currentSellPerMinute(o, skills, mallAttractionHeight))
 		.reduce((a, b) => a + b, 0)

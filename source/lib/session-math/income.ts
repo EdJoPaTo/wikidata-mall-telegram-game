@@ -18,7 +18,7 @@ export function incomeLoop(session: Session, persist: Persist, now: number): voi
 function incomeProduct(session: Session, persist: Persist, shop: Shop, product: Product, now: number): void {
 	const secondsAgo = now - product.itemTimestamp
 
-	const attractionHeight = getAttractionHeight(persist.mall && persist.mall.attraction)
+	const attractionHeight = getAttractionHeight(persist.mall?.attraction)
 	const attractionBonus = attractionCustomerBonus(attractionHeight)
 	const sellInterval = customerInterval(attractionBonus)
 

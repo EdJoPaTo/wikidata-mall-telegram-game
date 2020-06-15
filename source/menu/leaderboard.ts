@@ -119,7 +119,7 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 		/* eslint no-await-in-loop: warn */
 		const mallId = await userMalls.getMallIdOfUser(playerId)
 		const mall = mallId === undefined ? undefined : await userMalls.get(mallId)
-		const attractionHeight = getAttractionHeight(mall && mall.attraction)
+		const attractionHeight = getAttractionHeight(mall?.attraction)
 
 		const shops = allUserShops[playerId]
 		const skills: Skills = allUserSkills[playerId] || {}
@@ -266,11 +266,11 @@ async function menuBody(ctx: Context): Promise<Body> {
 				text += infoHeader(await ctx.wd.reader(production.itemToProduce))
 			}
 
-			text += await generateTable(await getMallProductionTable(), mall && mall.chat.id, o => formatInt(o))
+			text += await generateTable(await getMallProductionTable(), mall?.chat.id, o => formatInt(o))
 			break
 
 		case 'mallAttraction':
-			text += await generateTable(await getMallAttractionTable(now), mall && mall.chat.id, o => `${formatFloat(o)} ${readerMeter.label()}`)
+			text += await generateTable(await getMallAttractionTable(now), mall?.chat.id, o => `${formatFloat(o)} ${readerMeter.label()}`)
 			break
 
 		default:

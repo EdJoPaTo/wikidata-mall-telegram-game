@@ -151,7 +151,7 @@ async function customerIntervalPart(ctx: Context, shop: Shop, mall: Mall | undef
 		return ''
 	}
 
-	const height = getAttractionHeight(mall && mall.attraction)
+	const height = getAttractionHeight(mall?.attraction)
 	const bonus = attractionCustomerBonus(height)
 
 	let text = ''

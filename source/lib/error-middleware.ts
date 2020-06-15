@@ -73,7 +73,7 @@ export class ErrorMiddleware {
 					'wrong file identifier/HTTP URL specified'
 				)) {
 					// Some problem with the url
-					const url = payload.photo || (payload.media && payload.media.media)
+					const url = payload.photo ?? payload.media?.media
 					console.warn('Telegram url fail', ...getUpdateContext(ctx), error.message, url || payload)
 					if (url) {
 						text += 'Problem with this url: '
@@ -126,5 +126,5 @@ function isMatch(message: string, ...rules: ErrorMatchRule[]): boolean {
 }
 
 function getTelegrafErrorPayload(error: any): TelegrafErrorPayload | undefined {
-	return error && error.on && error.on.payload
+	return error?.on?.payload
 }

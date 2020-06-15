@@ -30,7 +30,7 @@ export async function generateNotifications(userId: number, session: Session, pe
 }
 
 async function generateProductsEmpty(shops: readonly Shop[], mall: Mall | undefined, entityStore: MiniWikidataStore, locale: string): Promise<readonly Notification[]> {
-	const attractionHeight = getAttractionHeight(mall && mall.attraction)
+	const attractionHeight = getAttractionHeight(mall?.attraction)
 	const bonus = attractionCustomerBonus(attractionHeight)
 	const all = await Promise.all(shops.map(async s => generateProductsEmptyShop(s, bonus, entityStore, locale)))
 	return all.flat()

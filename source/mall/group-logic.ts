@@ -109,7 +109,7 @@ bot.on('migrate_from_chat_id', async ctx => {
 	return replyJoinMessage(ctx)
 })
 
-bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.username), async (ctx, next) => {
+bot.use(Composer.optional(ctx => Boolean(ctx.chat?.username), async (ctx, next) => {
 	await ctx.reply(ctx.i18n.t('mall.groupPrivate'))
 	return next()
 }))
@@ -139,7 +139,7 @@ bot.action('join', async ctx => {
 	const mallId = ctx.chat!.id
 
 	let mallData = await userMalls.get(mallId)
-	if (mallData && mallData.member.includes(ctx.from!.id)) {
+	if (mallData?.member.includes(ctx.from!.id)) {
 		return ctx.answerCbQuery('🥰')
 	}
 
