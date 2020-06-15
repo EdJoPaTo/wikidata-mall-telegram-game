@@ -43,7 +43,7 @@ async function categoriesOfLevelLine(ctx: Context, level: number, categories: st
 	const readers = await Promise.all(categories.map(async o => ctx.wd.reader(o)))
 	text += readers
 		.map(o => o.label())
-		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
+		.sort((a, b) => a.localeCompare(b, locale === 'wikidatan' ? 'en' : locale))
 		.slice(0, 30) // Prevent Message too long
 		.join(', ')
 

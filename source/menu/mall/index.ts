@@ -50,7 +50,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	text += memberInfos
 		.map(o => o ? o.first_name : '??')
 		.map(o => format.escape(o))
-		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
+		.sort((a, b) => a.localeCompare(b, locale === 'wikidatan' ? 'en' : locale))
 		.map(o => `  ${o}`)
 		.join('\n')
 	text += '\n\n'

@@ -44,12 +44,12 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 	const simpleSkillInfos = await Promise.all(SIMPLE_SKILLS.map(async o => simpleSkillInfo(ctx, ctx.persist.skills, o)))
 	const simpleSkillParts = simpleSkillInfos
-		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
+		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatan' ? 'en' : locale))
 		.map(o => `${o.emoji}${o.label}: ${o.level}`)
 
 	const categorySkillInfos = await Promise.all(CATEGORY_SKILLS.map(async o => categorySkillInfo(ctx, ctx.persist.skills, o)))
 	const categorySkillParts = categorySkillInfos
-		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatanish' ? 'en' : locale))
+		.sort((a, b) => a.label.localeCompare(b.label, locale === 'wikidatan' ? 'en' : locale))
 		.map(o => `${o.emoji}${o.label}: ${o.hours} ${hourLabel}`)
 
 	if (simpleSkillParts.length + categorySkillParts.length > 0) {
@@ -96,7 +96,7 @@ async function skillOptions(ctx: Context, skills: readonly Skill[]): Promise<Rec
 		labels[key] = reader.label()
 	}
 
-	const orderedKeys = sortDictKeysByStringValues(labels, locale === 'wikidatanish' ? 'en' : locale)
+	const orderedKeys = sortDictKeysByStringValues(labels, locale === 'wikidatan' ? 'en' : locale)
 
 	for (const key of skills) {
 		const emoji = emojis[key]

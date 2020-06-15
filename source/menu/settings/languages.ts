@@ -4,7 +4,7 @@ import {Context} from '../../lib/types'
 
 import {emojis} from '../../lib/interface/emojis'
 import {infoHeader} from '../../lib/interface/formatted-strings'
-import {bodyPhoto, backButtons} from '../../lib/interface/menu'
+import {bodyPhoto, backButtons, buttonText} from '../../lib/interface/menu'
 import {percentString} from '../../lib/interface/format-percent'
 
 /* eslint @typescript-eslint/no-var-requires: warn */
@@ -17,7 +17,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const reader = await ctx.wd.reader('menu.language')
 	text += infoHeader(reader, {titlePrefix: flag})
 
-	if (ctx.wd.locale() !== 'wikidatanish') {
+	if (ctx.wd.locale() !== 'wikidatan') {
 		text += (await ctx.wd.reader('other.translation')).label()
 		text += ' '
 		text += '`'
@@ -46,11 +46,11 @@ menu.toggle(async ctx => (await ctx.wd.reader('menu.allLanguages')).label(), 'al
 	}
 })
 
-menu.interact(`${emojis.language} Wikidatanish`, 'wikidata', {
+menu.interact(buttonText(emojis.language, 'menu.wikidatan'), 'wikidata', {
 	do: ctx => {
 		// Keep last set i18n locale
 		// ctx.i18n.locale(key)
-		ctx.wd.locale('wikidatanish')
+		ctx.wd.locale('wikidatan')
 		return '.'
 	}
 })

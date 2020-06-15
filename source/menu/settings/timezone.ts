@@ -21,7 +21,7 @@ const tzPrefixesRaw = tzNormal
 function tzPrefixes(ctx: Context): string[] {
 	const {__wikibase_language_code: locale} = ctx.session
 	return tzPrefixesRaw
-		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
+		.sort((a, b) => a.localeCompare(b, locale === 'wikidatan' ? 'en' : locale))
 }
 
 function tzInPrefix(ctx: Context): string[] {
@@ -30,7 +30,7 @@ function tzInPrefix(ctx: Context): string[] {
 	return tzNormal
 		.filter(o => o[0] === prefix)
 		.map(o => o.slice(1).join('/'))
-		.sort((a, b) => a.localeCompare(b, locale === 'wikidatanish' ? 'en' : locale))
+		.sort((a, b) => a.localeCompare(b, locale === 'wikidatan' ? 'en' : locale))
 }
 
 async function menuBudy(ctx: Context): Promise<Body> {

@@ -50,7 +50,7 @@ async function voteOptions(ctx: Context): Promise<Record<string, string>> {
 		result[r.qNumber()] = r.label()
 	}
 
-	const order = sortDictKeysByStringValues(result, locale === 'wikidatanish' ? 'en' : locale)
+	const order = sortDictKeysByStringValues(result, locale === 'wikidatan' ? 'en' : locale)
 
 	for (const o of possible) {
 		const voters = currentProduction.nextItemVote[o]
