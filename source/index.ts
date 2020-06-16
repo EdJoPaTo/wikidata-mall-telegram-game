@@ -35,7 +35,9 @@ const tokenFilePath = existsSync('/run/secrets') ? '/run/secrets/bot-token.txt' 
 const token = readFileSync(tokenFilePath, 'utf8').trim()
 const bot = new Telegraf<Context>(token)
 
-bot.use(generateUpdateMiddleware())
+if (process.env.NODE_ENV !== 'production') {
+	bot.use(generateUpdateMiddleware())
+}
 
 bot.use(new ErrorMiddleware({
 	text: 'You should join the Chat Group and report this error. Let us make this bot even better together. ☺️',
@@ -82,6 +84,7 @@ const wdCache = new KeyValueInMemoryFile<EntitySimplified>('tmp/wikidata-cache.j
 
 const twb = new TelegrafWikibase(wdCache, {
 	contextKey: 'wd',
+	logQueriedEntityIds: process.env.NODE_ENV !== 'production',
 	userAgent: 'github.com/EdJoPaTo/wikidata-mall-telegram-game'
 })
 twb.addResourceKeys(resourceKeysFromYaml(readFileSync('wikidata-items.yaml', 'utf8')))
