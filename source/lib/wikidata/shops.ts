@@ -64,8 +64,13 @@ export async function preload(logger: (...args: any[]) => void): Promise<void> {
 		.filter(o => !blacklist.basicIncludes(o))
 	logger('shopTypes without blacklisted ones', shopTypes.length)
 
+	let i = 0
 	const products = await stagedAsync(
-		loadProducts,
+		async shopType => {
+			const result = await loadProducts(shopType)
+			logger('loaded products', (100 * ++i / shopTypes.length).toFixed(1) + '%', 'shopType', shopType, result.length)
+			return result
+		},
 		shopTypes
 	)
 
