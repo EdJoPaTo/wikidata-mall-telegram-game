@@ -120,6 +120,7 @@ async function productsPart(ctx: Context, shop: Shop, skills: Skills, showExplan
 		text += '\n'
 	}
 
+	await ctx.wd.preload(shop.products.map(o => o.id))
 	const productLines = await Promise.all(shop.products.map(async product => labeledInt(await ctx.wd.reader(product.id), product.itemsInStore, emojis.storage).trim()))
 	text += productLines.join('\n')
 	text += '\n\n'

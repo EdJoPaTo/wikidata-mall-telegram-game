@@ -53,6 +53,8 @@ async function menuBody(ctx: Context): Promise<Body> {
 		const page = Math.min(ctx.session.page || 1, maxPages)
 		const offset = (page - 1) * 20
 
+		await ctx.wd.preload(ctx.persist.applicants.list.map(o => o.hobby))
+
 		const shopIds = new Set(ctx.persist.shops.map(o => o.id))
 		const applicantEntries = await Promise.all(ctx.persist.applicants.list
 			.slice(offset, offset + 20)

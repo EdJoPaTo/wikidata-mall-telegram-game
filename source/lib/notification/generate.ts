@@ -18,6 +18,11 @@ import {MiniWikidataStore} from './types'
 export async function generateNotifications(userId: number, session: Session, persist: Persist, entityStore: MiniWikidataStore): Promise<readonly Notification[]> {
 	const locale = session.__wikibase_language_code ?? 'en'
 
+	await entityStore.preload([
+		...persist.shops.map(o => o.id),
+		...(persist.mall?.production.map(o => o.part) ?? [])
+	])
+
 	const partials = await Promise.all([
 		generateProductsEmpty(persist.shops, persist.mall, entityStore, locale),
 		generateShopsPersonalRetirement(persist.shops, entityStore, locale),
