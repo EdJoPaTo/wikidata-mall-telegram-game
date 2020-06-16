@@ -86,7 +86,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 	text += await skillQueueString(ctx, ctx.session.skillQueue)
 
-	return text
+	return {text, parse_mode: 'Markdown'}
 }
 
 export const menu = new MenuTemplate<Context>(menuBody)
