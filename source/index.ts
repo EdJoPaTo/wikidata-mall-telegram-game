@@ -82,9 +82,10 @@ const notificationManager = new NotificationManager(
 
 const wdCache = new TtlKeyValueInMemoryFile<EntitySimplified>('tmp/wikidata-cache.json')
 
-const twb = new TelegrafWikibase(wdCache, {
+const twb = new TelegrafWikibase({
 	contextKey: 'wd',
 	logQueriedEntityIds: process.env.NODE_ENV !== 'production',
+	store: wdCache,
 	userAgent: 'github.com/EdJoPaTo/wikidata-mall-telegram-game'
 })
 twb.addResourceKeys(resourceKeysFromYaml(readFileSync('wikidata-items.yaml', 'utf8')))
