@@ -2,9 +2,9 @@ import {existsSync, readFileSync} from 'fs'
 
 import {EntitySimplified} from 'wikidata-sdk-got/dist/source/wikibase-sdk-types'
 import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
-import {KeyValueInMemoryFile} from '@edjopato/datastore'
 import {MenuMiddleware} from 'telegraf-inline-menu'
 import {TelegrafWikibase, resourceKeysFromYaml} from 'telegraf-wikibase'
+import {TtlKeyValueInMemoryFile} from '@edjopato/datastore'
 import Telegraf, {Extra, Markup, Composer} from 'telegraf'
 import TelegrafI18n from 'telegraf-i18n'
 
@@ -80,7 +80,7 @@ const notificationManager = new NotificationManager(
 	}
 )
 
-const wdCache = new KeyValueInMemoryFile<EntitySimplified>('tmp/wikidata-cache.json')
+const wdCache = new TtlKeyValueInMemoryFile<EntitySimplified>('tmp/wikidata-cache.json')
 
 const twb = new TelegrafWikibase(wdCache, {
 	contextKey: 'wd',
