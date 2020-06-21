@@ -69,6 +69,8 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const seenBeforeGroupedByLevel = categoriesSeenBefore
 		.reduce(arrayReduceGroupBy(o => categorySkillSpecificLevel(ctx.persist.skills, skill, o)), {})
 
+	await ctx.wd.preload([...shops, ...categoriesSeenBefore])
+
 	if (categoriesSeenBefore.length > 0) {
 		const lines = await Promise.all(Object.keys(seenBeforeGroupedByLevel)
 			.map(o => Number(o))
