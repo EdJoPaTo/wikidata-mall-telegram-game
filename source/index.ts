@@ -127,6 +127,10 @@ async function startup(): Promise<void> {
 			console.timeEnd('check-mall-groups')
 		}
 
+		await twb.startRegularResourceKeyUpdate(error => {
+			console.error('TelegrafWikibase', 'regular update failed', error)
+		})
+
 		await wikidata.preload()
 		await notifications.initialize(notificationManager, twb)
 		await bot.launch()
