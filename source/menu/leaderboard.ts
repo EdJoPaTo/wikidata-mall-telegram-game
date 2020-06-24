@@ -313,6 +313,7 @@ menu.select('view', LEADERBOARD_VIEWS, {
 	},
 	set: (ctx, key) => {
 		ctx.session.leaderboardView = key as LeaderboardView
+		return true
 	},
 	buttonText: async (ctx, key) => (await ctx.wd.reader(viewResourceKey(key as LeaderboardView))).label()
 })

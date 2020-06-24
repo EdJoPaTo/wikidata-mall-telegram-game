@@ -43,6 +43,8 @@ menu.toggle(async ctx => (await ctx.wd.reader('menu.allLanguages')).label(), 'al
 		} else {
 			delete ctx.session.showAllLanguages
 		}
+
+		return true
 	}
 })
 
@@ -79,6 +81,7 @@ menu.select('lang', languageOptions, {
 	set: (ctx, key) => {
 		ctx.i18n.locale(key)
 		ctx.wd.locale(key)
+		return true
 	},
 	getCurrentPage: ctx => {
 		return ctx.session.page

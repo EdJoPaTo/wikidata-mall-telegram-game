@@ -53,7 +53,7 @@ menu.interact(buttonText(emojis.construction, 'action.construction'), 'construct
 		const attraction = fromCtx(ctx)
 		const cost = attractionCost(wdAttractions.getHeight(attraction))
 		if (!mall || mall.money < cost) {
-			return
+			return '.'
 		}
 
 		mall.attraction = createAttraction(attraction, now)

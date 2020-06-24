@@ -61,6 +61,7 @@ menu.interact(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 		text += (await ctx.wd.reader('menu.chat')).label()
 
 		await ctx.answerCbQuery(text, true)
+		return false
 	}
 })
 

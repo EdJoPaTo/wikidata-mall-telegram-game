@@ -69,12 +69,7 @@ menu.interact(buttonText(emojis.seat, 'action.demotion'), 'toApplicants', {
 		const {applicants} = ctx.persist
 		const {shop, talent} = fromCtx(ctx)
 
-		const person = shop.personal[talent]
-		if (!person) {
-			// What?
-			return
-		}
-
+		const person = shop.personal[talent]!
 		applicants.list.push(person)
 		delete shop.personal[talent]
 		return '.'

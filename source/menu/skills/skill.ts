@@ -82,10 +82,6 @@ menu.interact(buttonText(emojis.skill, 'action.research'), 'research', {
 			ctx.session.skillQueue = []
 		}
 
-		if (!canAddToSkillQueue(ctx.session.skillQueue, now)) {
-			return
-		}
-
 		const {skill, category} = fromCtx(ctx)
 		addSkillToQueue(ctx.session.skillQueue, ctx.persist.skills, skill, category, now)
 		return '.'

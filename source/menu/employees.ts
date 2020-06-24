@@ -41,6 +41,8 @@ menu.toggle(async ctx => (await ctx.wd.reader('menu.allLanguages')).label(), 'al
 		} else {
 			ctx.session.employeeViewTalent = 'purchasing'
 		}
+
+		return true
 	}
 })
 
@@ -48,6 +50,7 @@ menu.select('talent', TALENTS, {
 	isSet: (ctx, key) => ctx.session.employeeViewTalent === key,
 	set: (ctx, key) => {
 		ctx.session.employeeViewTalent = key as Talent
+		return true
 	},
 	buttonText: async (ctx, key) => {
 		const label = (await ctx.wd.reader(`person.talents.${key}`)).label()

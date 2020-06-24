@@ -66,6 +66,7 @@ menu.toggle('UTC', 'utc', {
 	isSet: ctx => !ctx.session.timeZone,
 	set: ctx => {
 		delete ctx.session.timeZone
+		return true
 	}
 })
 
@@ -96,8 +97,9 @@ function isSetFunc(ctx: Context, key: string): boolean {
 	return ctx.session.timeZone === createTz(ctx.match, key)
 }
 
-function setFunc(ctx: Context, key: string): void {
+function setFunc(ctx: Context, key: string): true {
 	ctx.session.timeZone = createTz(ctx.match, key)
+	return true
 }
 
 function getCurrentPage(ctx: Context): number | undefined {

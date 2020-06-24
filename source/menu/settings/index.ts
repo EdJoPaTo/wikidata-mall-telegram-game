@@ -37,6 +37,8 @@ menu.toggle(async ctx => (await ctx.wd.reader('other.math')).label(), 'explanati
 		} else {
 			ctx.session.hideExplanationMath = true
 		}
+
+		return true
 	}
 })
 
