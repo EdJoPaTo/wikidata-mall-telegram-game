@@ -1,6 +1,5 @@
 import * as attractions from './attractions'
 import * as blacklist from './blacklist'
-import * as name from './name'
 import * as production from './production'
 import * as sets from './sets'
 import * as shops from './shops'
@@ -9,7 +8,6 @@ type Logger = (...args: any[]) => void
 
 export async function preload(): Promise<void> {
 	console.time('wikidata preload')
-	await preloadSpecific('name', async logger => name.preload(logger))
 	await preloadSpecific('blacklist', async () => blacklist.preload())
 	await preloadSpecific('attractions', async logger => attractions.preload(logger))
 	await preloadSpecific('production', async logger => production.preload(logger))

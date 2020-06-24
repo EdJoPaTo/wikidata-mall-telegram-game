@@ -48,6 +48,7 @@
 		"telegram-typings": "^3.6.1",
 		"timezone-support": "^2.0.2",
 		"wikidata-entity-reader": "^2.0.0",
+		"wikidata-person-names": "^1.0.0",
 		"wikidata-sdk-got": "^2.0.1"
 	},
 	"devDependencies": {

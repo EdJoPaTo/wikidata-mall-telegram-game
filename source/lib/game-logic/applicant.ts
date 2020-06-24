@@ -1,9 +1,9 @@
+import {UNISEX, FAMILY} from 'wikidata-person-names'
 import randomItem from 'random-item'
 
-import {Person, PersonType, Name, PERSON_EVENT_TYPES} from '../types/people'
+import {Person, PersonType, PERSON_EVENT_TYPES} from '../types/people'
 import {Skills} from '../types/skills'
 
-import * as wdName from '../wikidata/name'
 import * as wdSets from '../wikidata/sets'
 import * as wdShops from '../wikidata/shops'
 
@@ -21,8 +21,13 @@ export function createApplicant(skills: Skills, now: number, retirementRandom = 
 }
 
 function createSpecificApplicant(type: PersonType, skills: Skills, retirementRandom: number, now: number): Person {
+	const name = {
+		given: randomItem(UNISEX),
+		family: randomItem(FAMILY)
+	}
+
 	return {
-		name: nameForType(type),
+		name,
 		type,
 		hobby: hobbyForType(type),
 		retirementTimestamp: retirementTimestampForType(type, skills, retirementRandom, now),
@@ -62,12 +67,6 @@ function typeFromRandom(random: number, now: number): PersonType {
 	}
 
 	return 'refined'
-}
-
-function nameForType(type: PersonType): Name {
-	switch (type) {
-		default: return wdName.randomName()
-	}
 }
 
 function hobbyForType(type: PersonType): string {

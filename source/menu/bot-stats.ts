@@ -1,4 +1,5 @@
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
+import {UNISEX, FAMILY} from 'wikidata-person-names'
 
 import {Context} from '../lib/types'
 import {Person} from '../lib/types/people'
@@ -7,7 +8,6 @@ import * as userMalls from '../lib/data/malls'
 import * as userSessions from '../lib/data/user-sessions'
 import * as userShops from '../lib/data/shops'
 import * as wdAttractions from '../lib/wikidata/attractions'
-import * as wdNames from '../lib/wikidata/name'
 import * as wdProduction from '../lib/wikidata/production'
 import * as wdSets from '../lib/wikidata/sets'
 import * as wdShops from '../lib/wikidata/shops'
@@ -31,8 +31,8 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 	text += labeledInt(await ctx.wd.reader('menu.shop'), wdShops.allShops().length)
 	text += labeledInt(await ctx.wd.reader('product.product'), wdShops.allProductsAmount())
-	text += labeledInt(await ctx.wd.reader('stat.name.given'), wdNames.getGivenNames().length)
-	text += labeledInt(await ctx.wd.reader('stat.name.family'), wdNames.getFamilyNames().length)
+	text += labeledInt(await ctx.wd.reader('stat.name.given'), UNISEX.length)
+	text += labeledInt(await ctx.wd.reader('stat.name.family'), FAMILY.length)
 	text += labeledInt(await ctx.wd.reader('mall.production'), wdProduction.getProducts().length)
 	text += labeledInt(await ctx.wd.reader('mall.attraction'), Object.keys(wdAttractions.all()).length)
 	text += labeledInt(await ctx.wd.reader('mall.disaster'), wdSets.get('disaster').length)
