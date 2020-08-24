@@ -29,11 +29,11 @@ function tzInPrefix(ctx: Context): string[] {
 	const prefix = ctx.match![1]
 	return tzNormal
 		.filter(o => o[0] === prefix)
-		.map(o => o.slice(1).join('/'))
+		.map(o => o.slice(1).join(':'))
 		.sort((a, b) => a.localeCompare(b, locale === 'wikidatan' ? 'en' : locale))
 }
 
-async function menuBudy(ctx: Context): Promise<Body> {
+async function menuBody(ctx: Context): Promise<Body> {
 	const {__wikibase_language_code: locale} = ctx.session
 	const current = ctx.session.timeZone || 'UTC'
 
@@ -58,9 +58,9 @@ async function menuBudy(ctx: Context): Promise<Body> {
 	}
 }
 
-export const menu = new MenuTemplate<Context>(menuBudy)
+export const menu = new MenuTemplate<Context>(menuBody)
 
-const specificMenu = new MenuTemplate<Context>(menuBudy)
+const specificMenu = new MenuTemplate<Context>(menuBody)
 
 menu.toggle('UTC', 'utc', {
 	isSet: ctx => !ctx.session.timeZone,
@@ -84,12 +84,14 @@ specificMenu.select('s', tzInPrefix, {
 	setPage
 })
 
-menu.manualRow(backButtons)
 specificMenu.manualRow(backButtons)
 
-function createTz(match: RegExpMatchArray | null | undefined, key: string): string {
-	const prefix = match?.[1]
-	const tz = prefix ? `${prefix}/${key}` : key
+menu.manualRow(backButtons)
+
+function createTz(match: RegExpMatchArray | undefined | null, key: string): string {
+	const region = match?.[1]
+	const area = key.replace(/:/g, '/')
+	const tz = region ? `${region}/${area}` : area
 	return tz
 }
 
