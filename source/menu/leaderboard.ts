@@ -116,8 +116,9 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 
 	const values: Record<string, number> = {}
 	for (const playerId of playerIds) {
-		/* eslint no-await-in-loop: warn */
+		// eslint-disable-next-line no-await-in-loop
 		const mallId = await userMalls.getMallIdOfUser(playerId)
+		// eslint-disable-next-line no-await-in-loop
 		const mall = mallId === undefined ? undefined : await userMalls.get(mallId)
 		const attractionHeight = getAttractionHeight(mall?.attraction)
 

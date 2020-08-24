@@ -15,7 +15,7 @@ import {menu as employee} from './employee'
 
 function fromCtx(ctx: Context): {shop: Shop} {
 	const shopType = ctx.match![1]
-	const shop = ctx.persist.shops.filter(o => o.id === shopType)[0]
+	const shop = ctx.persist.shops.find(o => o.id === shopType)!
 	return {shop}
 }
 

@@ -7,8 +7,6 @@ import {infoHeader} from '../../lib/interface/formatted-strings'
 import {bodyPhoto, backButtons, buttonText} from '../../lib/interface/menu'
 import {percentString} from '../../lib/interface/format-percent'
 
-/* eslint @typescript-eslint/no-var-requires: warn */
-/* eslint @typescript-eslint/no-require-imports: warn */
 const localeEmoji = require('locale-emoji')
 
 async function menuBody(ctx: Context): Promise<Body> {

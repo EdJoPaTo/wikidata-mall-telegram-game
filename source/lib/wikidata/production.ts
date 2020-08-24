@@ -56,6 +56,7 @@ async function preloadCategory(category: string): Promise<Record<string, string[
 	const query = buildQuery(category)
 	const result = await sparqlQuerySimplified(query) as ReadonlyArray<Record<string, string>>
 
+	// eslint-disable-next-line unicorn/no-fn-reference-in-iterator
 	const reduced = result.reduce(reduceRowsIntoKeyValue, {})
 	const filteredKeys = filterDictKeysByValues(reduced, (_, v) => v.length >= 3)
 	const filtered = recreateDictWithGivenKeyOrder(reduced, filteredKeys)

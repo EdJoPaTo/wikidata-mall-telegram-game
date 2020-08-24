@@ -20,7 +20,7 @@ function fromCtx(ctx: Context): {shop: Shop; talent: Talent; employee?: Person} 
 	const shopType = ctx.match![1]
 	const talent = ctx.match![2] as Talent
 
-	const shop = ctx.persist.shops.filter(o => o.id === shopType)[0]
+	const shop = ctx.persist.shops.find(o => o.id === shopType)!
 	const employee = shop.personal[talent]
 
 	return {shop, talent, employee}

@@ -17,13 +17,9 @@ import {percentBonusString} from './format-percent'
 
 export function mallMoji(mall: Mall): string {
 	const regex = emojiRegex()
-	let match
-	while ((match = regex.exec(String(mall.chat.title)))) {
-		const emoji = match[0]
-		return emoji
-	}
-
-	return '??'
+	const match = regex.exec(String(mall.chat.title))
+	const emoji = match ? match[0] : '??'
+	return emoji
 }
 
 export async function hintIncorrectPeopleAmount(ctx: Context, mall: Mall): Promise<string> {

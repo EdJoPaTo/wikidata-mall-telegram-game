@@ -21,8 +21,8 @@ import {createHelpMenu, helpButtonText} from '../../help'
 function fromCtx(ctx: Context): {shop: Shop; product: Product} {
 	const shopType = ctx.match![1]
 	const productId = ctx.match![2]
-	const shop = ctx.persist.shops.filter(o => o.id === shopType)[0]
-	const product = shop.products.filter(o => o.id === productId)[0]
+	const shop = ctx.persist.shops.find(o => o.id === shopType)!
+	const product = shop.products.find(o => o.id === productId)!
 	return {shop, product}
 }
 

@@ -1,4 +1,4 @@
-/* eslint ava/use-test: off */
+// eslint-disable-next-line ava/use-test
 import {ExecutionContext} from 'ava'
 
 interface Macro<InputType extends any[], ReturnType> {

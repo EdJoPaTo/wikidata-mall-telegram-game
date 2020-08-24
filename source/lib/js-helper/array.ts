@@ -1,4 +1,4 @@
-import randomItem = require('random-item')
+import randomItem from 'random-item'
 
 export function randomUnusedEntry<T>(all: readonly T[], used: readonly T[] = []): T {
 	const possible = all
