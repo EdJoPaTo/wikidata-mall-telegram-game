@@ -14,6 +14,7 @@ export interface Session {
 	leaderboardView?: LeaderboardView;
 	money: number;
 	page?: number;
+	hideAllSkillsSeenBefore?: true;
 	showAllLanguages?: true;
 	skillQueue: SkillInTraining[];
 	stats: Stats;

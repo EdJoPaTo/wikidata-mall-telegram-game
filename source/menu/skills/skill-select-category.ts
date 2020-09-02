@@ -64,20 +64,25 @@ async function menuBody(ctx: Context): Promise<Body> {
 	})
 
 	const shops = ctx.persist.shops.map(o => o.id)
-	const categoriesSeenBefore = Object.keys(ctx.persist.skills[skill] || {})
-		.filter(o => !shops.includes(o))
-	const seenBeforeGroupedByLevel = categoriesSeenBefore
-		.reduce(arrayReduceGroupBy(o => categorySkillSpecificLevel(ctx.persist.skills, skill, o)), {})
 
-	await ctx.wd.preload([...shops, ...categoriesSeenBefore])
+	if (ctx.session.hideAllSkillsSeenBefore) {
+		await ctx.wd.preload(shops)
+	} else {
+		const categoriesSeenBefore = Object.keys(ctx.persist.skills[skill] || {})
+			.filter(o => !shops.includes(o))
+		const seenBeforeGroupedByLevel = categoriesSeenBefore
+			.reduce(arrayReduceGroupBy(o => categorySkillSpecificLevel(ctx.persist.skills, skill, o)), {})
 
-	if (categoriesSeenBefore.length > 0) {
-		const lines = await Promise.all(Object.keys(seenBeforeGroupedByLevel)
-			.map(o => Number(o))
-			.map(async o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
-		)
-		text += lines.join('\n')
-		text += '\n\n'
+		await ctx.wd.preload([...shops, ...categoriesSeenBefore])
+
+		if (categoriesSeenBefore.length > 0) {
+			const lines = await Promise.all(Object.keys(seenBeforeGroupedByLevel)
+				.map(o => Number(o))
+				.map(async o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
+			)
+			text += lines.join('\n')
+			text += '\n\n'
+		}
 	}
 
 	text += format.bold(format.escape((await ctx.wd.reader('menu.shop')).label()))
@@ -96,6 +101,19 @@ export const menu = new MenuTemplate<Context>(menuBody)
 function shops(ctx: Context): string[] {
 	return ctx.persist.shops.map(o => o.id)
 }
+
+menu.toggle(async ctx => (await ctx.wd.reader('other.whole')).label(), 'all', {
+	isSet: ctx => !ctx.session.hideAllSkillsSeenBefore,
+	set: (ctx, newState) => {
+		if (newState) {
+			delete ctx.session.hideAllSkillsSeenBefore
+		} else {
+			ctx.session.hideAllSkillsSeenBefore = true
+		}
+
+		return true
+	}
+})
 
 menu.chooseIntoSubmenu('s', shops, skillMenu, {
 	columns: 2,
