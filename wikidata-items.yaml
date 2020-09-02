@@ -1,6 +1,5 @@
 menu:
   achievement: Q618779
-  allLanguages: Q16868672
   applicant: Q54875338
   chat: Q287198
   employee: Q703534
@@ -90,6 +89,7 @@ other:
   returnOnInvestment: Q939134
   seat: Q2207370
   translation: Q7553
+  whole: Q16868672
 unit:
   day: Q573
   hour: Q25235

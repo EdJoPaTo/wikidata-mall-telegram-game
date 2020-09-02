@@ -33,7 +33,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 export const menu = new MenuTemplate<Context>(menuBody)
 
-menu.toggle(async ctx => (await ctx.wd.reader('menu.allLanguages')).label(), 'all', {
+menu.toggle(async ctx => (await ctx.wd.reader('other.whole')).label(), 'all', {
 	isSet: ctx => !ctx.session.employeeViewTalent,
 	set: (ctx, newState) => {
 		if (newState) {
