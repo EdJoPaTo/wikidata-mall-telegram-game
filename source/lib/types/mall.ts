@@ -1,4 +1,4 @@
-import {Chat} from 'telegram-typings'
+import {Chat} from 'typegram'
 
 import {Person} from './people'
 
@@ -10,7 +10,7 @@ type UserId = number
 export interface Mall {
 	applicants: Person[];
 	attraction?: Attraction;
-	chat: Chat;
+	chat: Chat.SupergroupChat;
 	member: UserId[];
 	money: number;
 	production: ProductionPart[];

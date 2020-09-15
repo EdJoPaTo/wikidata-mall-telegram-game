@@ -1,3 +1,4 @@
+import {Chat} from 'typegram'
 import {Composer, Extra, Markup} from 'telegraf'
 import stringify from 'json-stable-stringify'
 
@@ -68,14 +69,17 @@ bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'),
 
 bot.use(async (ctx, next) => {
 	// Update title
-	const mallId = ctx.chat!.id
-	const mall = await userMalls.get(mallId)
-	if (mall && ctx.chat) {
-		const stored = stringify(mall.chat)
-		const current = stringify(ctx.chat)
-		if (stored !== current) {
-			mall.chat = ctx.chat
-			await userMalls.set(mallId, mall)
+	if (ctx.chat && ctx.chat.type === 'supergroup') {
+		const chat = ctx.chat as Chat.SupergroupChat
+		const mallId = chat.id
+		const mall = await userMalls.get(mallId)
+		if (mall) {
+			const stored = stringify(mall.chat)
+			const current = stringify(chat)
+			if (stored !== current) {
+				mall.chat = chat
+				await userMalls.set(mallId, mall)
+			}
 		}
 	}
 
@@ -158,7 +162,7 @@ bot.action('join', async ctx => {
 			member: [],
 			money: 0,
 			production: [],
-			chat: ctx.chat!
+			chat: ctx.chat as Chat.SupergroupChat
 		}
 	}
 

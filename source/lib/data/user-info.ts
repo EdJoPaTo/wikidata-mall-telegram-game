@@ -1,7 +1,7 @@
 import {KeyValueInMemoryFiles} from '@edjopato/datastore'
 
 import {Context as TelegrafContext, Middleware} from 'telegraf'
-import {User} from 'telegram-typings'
+import {User} from 'typegram'
 import stringify from 'json-stable-stringify'
 
 console.time('load user info')

@@ -1,6 +1,6 @@
 import {markdown as format} from 'telegram-format'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
-import {User} from 'telegram-typings'
+import {User} from 'typegram'
 
 import {sortDictKeysByNumericValues} from '../lib/js-helper/dictionary'
 

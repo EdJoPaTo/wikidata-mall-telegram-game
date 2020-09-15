@@ -1,4 +1,4 @@
-import {Chat, ChatMember} from 'telegram-typings'
+import {Chat, ChatMember} from 'typegram'
 import {Telegram} from 'telegraf'
 
 import {sequentialAsync} from '../js-helper/async'
@@ -61,10 +61,14 @@ async function tryLeave(telegram: Telegram, chatId: number): Promise<void> {
 	}
 }
 
-async function tryGetChat(telegram: Telegram, chatId: number): Promise<Chat | undefined> {
+async function tryGetChat(telegram: Telegram, chatId: number): Promise<Chat.SupergroupChat | undefined> {
 	try {
 		const result = await telegram.getChat(chatId)
-		return result
+		if (result.type !== 'supergroup') {
+			throw new Error('unexpected chat found. Chat is not a supergroup. Chat is a ' + result.type)
+		}
+
+		return result as Chat.SupergroupChat
 	} catch (error) {
 		console.log('get chat error', chatId, error.message)
 		return undefined
@@ -74,7 +78,7 @@ async function tryGetChat(telegram: Telegram, chatId: number): Promise<Chat | un
 async function tryGetChatMember(telegram: Telegram, chatId: number, userId: number): Promise<ChatMember | undefined> {
 	try {
 		const result = await telegram.getChatMember(chatId, userId)
-		return result
+		return result as ChatMember
 	} catch (error) {
 		console.log('get chat member error', chatId, userId, error.message)
 		return undefined

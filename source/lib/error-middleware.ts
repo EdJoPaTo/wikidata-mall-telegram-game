@@ -1,5 +1,5 @@
 import {Context as TelegrafContext, Middleware, Extra} from 'telegraf'
-import {InlineKeyboardMarkup} from 'telegram-typings'
+import {InlineKeyboardMarkup} from 'typegram'
 
 export type ErrorMatchRule = RegExp | string
 

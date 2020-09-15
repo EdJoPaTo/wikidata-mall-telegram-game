@@ -3,9 +3,9 @@ import {existsSync, readFileSync} from 'fs'
 import {EntitySimplified} from 'wikidata-sdk-got/dist/source/wikibase-sdk-types'
 import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
 import {MenuMiddleware} from 'telegraf-inline-menu'
+import {Telegraf, Composer} from 'telegraf'
 import {TelegrafWikibase, resourceKeysFromYaml} from 'telegraf-wikibase'
 import {TtlKeyValueInMemoryFile} from '@edjopato/datastore'
-import Telegraf, {Extra, Markup, Composer} from 'telegraf'
 import TelegrafI18n from 'telegraf-i18n'
 
 import * as wikidata from './lib/wikidata'
@@ -41,10 +41,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 bot.use(new ErrorMiddleware({
 	text: 'You should join the Chat Group and report this error. Let us make this bot even better together. ☺️',
-	inlineKeyboardMarkup: Markup.inlineKeyboard([
-		Markup.urlButton(emojis.chat + 'Join Chat', 'https://t.me/WikidataMallChat'),
-		Markup.urlButton(emojis.github + 'GitHub Issues', 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game/issues')
-	], {columns: 1})
+	inlineKeyboardMarkup: {
+		inline_keyboard: [
+			[{text: emojis.chat + 'Join Chat', url: 'https://t.me/WikidataMallChat'}],
+			[{text: emojis.github + 'GitHub Issues', url: 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game/issues'}]
+		]
+	}
 }).middleware())
 
 bot.use(data.middleware())
@@ -63,11 +65,9 @@ const notificationManager = new NotificationManager(
 		try {
 			const text = notificationText(notification, fireDate)
 			if (notification.photo) {
-				await bot.telegram.sendPhoto(chatId, notification.photo, new Extra({
-					caption: text
-				}).markdown() as any)
+				await bot.telegram.sendPhoto(chatId, notification.photo, {parse_mode: 'Markdown', caption: text})
 			} else {
-				await bot.telegram.sendMessage(chatId, text, Extra.markdown() as any)
+				await bot.telegram.sendMessage(chatId, text, {parse_mode: 'Markdown'})
 			}
 		} catch (error) {
 			const {message} = error as Error

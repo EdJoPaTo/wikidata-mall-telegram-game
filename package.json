@@ -45,7 +45,6 @@
 		"telegraf-session-local": "^2.0.0",
 		"telegraf-wikibase": "^0.9.0",
 		"telegram-format": "^2.0.0",
-		"telegram-typings": "^3.6.1",
 		"timezone-support": "^2.0.2",
 		"wikidata-entity-reader": "^2.0.0",
 		"wikidata-person-names": "^1.0.0",
@@ -62,6 +61,7 @@
 		"del-cli": "^3.0.0",
 		"nyc": "^15.0.0",
 		"ts-node": "^9.0.0",
+		"typegram": "^2.2.2",
 		"typescript": "^4.0.2",
 		"xo": "^0.33.0"
 	},
