@@ -19,6 +19,11 @@ async function menuBody(ctx: Context): Promise<Body> {
 	let text = ''
 	text += infoHeader(reader, {titlePrefix: emojis.person})
 
+	const allHobbies = ctx.persist.shops
+		.flatMap(shop => TALENTS.map(talent => shop.personal[talent]?.hobby))
+		.filter((o): o is string => Boolean(o))
+	await ctx.wd.preload(allHobbies)
+
 	const shopEmployeePart = await Promise.all(ctx.persist.shops.map(async shop => shopEmployeeOverview(ctx, shop, talents)))
 	text += shopEmployeePart.join('\n\n')
 	text += '\n\n'
