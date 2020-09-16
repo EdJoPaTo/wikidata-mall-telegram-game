@@ -16,7 +16,6 @@ import {Context} from './lib/types'
 import data from './lib/data'
 
 import {fixMallDataForAllMalls} from './lib/game-logic/mall-fix-data'
-import {removeOld} from './lib/game-logic/remove-old'
 
 import * as notifications from './lib/session-math/notification'
 import sessionMathMiddleware from './lib/session-math'
@@ -120,8 +119,6 @@ async function startup(): Promise<void> {
 			{command: 'language', description: 'set your language'},
 			{command: 'settings', description: 'open settings'}
 		])
-
-		await removeOld()
 
 		if (process.env.NODE_ENV === 'production') {
 			console.time('check-mall-groups')
