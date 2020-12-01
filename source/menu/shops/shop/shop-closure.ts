@@ -15,9 +15,9 @@ import {infoHeader, labeledFloat} from '../../../lib/interface/formatted-strings
 import {createHelpMenu, helpButtonText} from '../../help'
 
 function fromCtx(ctx: Context): {shop: Shop; indexOfShop: number} {
-	const shopType = ctx.match![1]
+	const shopType = ctx.match![1]!
 	const indexOfShop = ctx.persist.shops.map(o => o.id).indexOf(shopType)
-	const shop = ctx.persist.shops[indexOfShop]
+	const shop = ctx.persist.shops[indexOfShop]!
 	return {shop, indexOfShop}
 }
 

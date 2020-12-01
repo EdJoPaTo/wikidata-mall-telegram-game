@@ -1,4 +1,4 @@
-import gaussian, {Gaussian} from 'gaussian'
+import gaussian from 'gaussian'
 
 import {Talents, PersonType} from '../types/people'
 
@@ -6,7 +6,7 @@ import {randomTalents, randomTalentsDistinct} from '../game-math/applicant'
 
 // Gaussian takes sigma^2, everyone else takes sigma (standardDeviation)
 // -> use sigma and square it on startup
-const distribution: Record<string, Gaussian> = {
+const distribution = {
 	alienOther: gaussian(1.4, 0.1 ** 2),
 	alienSell: gaussian(6, 0.5 ** 2),
 	eventGood: gaussian(1.4, 0.1 ** 2),
@@ -24,8 +24,8 @@ export function talentsForType(type: PersonType): Talents {
 }
 
 /* DEBUG
-for (const name of Object.keys(distribution)) {
-	debugDistribution(name, distribution[name])
+for (const [name, dist] of Object.entries(distribution)) {
+	debugDistribution(name, dist)
 }
 
 function debugDistribution(name: string, distribution: Gaussian): void {

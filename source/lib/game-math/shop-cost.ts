@@ -65,11 +65,11 @@ export function returnOnInvestment(shops: readonly Shop[], skills: Skills, purch
 	const relevantShops = shops.filter(o => o.products.length > 0)
 
 	const cost = relevantShops
-		.map(shop => purchasingCost(shop, shop.products[0], skills))
+		.map(shop => purchasingCost(shop, shop.products[0]!, skills))
 		.reduce((a, b) => a + b, 0)
 
 	const income = relevantShops
-		.map(shop => sellingCost(shop, shop.products[0], skills))
+		.map(shop => sellingCost(shop, shop.products[0]!, skills))
 		.reduce((a, b) => a + b, 0)
 
 	const costWithFactor = cost * purchaseFactor

@@ -51,7 +51,7 @@
 		"wikidata-sdk-got": "^2.0.1"
 	},
 	"devDependencies": {
-		"@sindresorhus/tsconfig": "^0.7.0",
+		"@sindresorhus/tsconfig": "^0.8.0",
 		"@types/emoji-regex": "^8.0.0",
 		"@types/gaussian": "^1.1.1",
 		"@types/json-stable-stringify": "^1.0.32",
@@ -62,7 +62,7 @@
 		"nyc": "^15.0.0",
 		"ts-node": "^9.0.0",
 		"typegram": "^2.2.2",
-		"typescript": "^4.0.2",
+		"typescript": "^4.1.2",
 		"xo": "^0.33.0"
 	},
 	"nyc": {

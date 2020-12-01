@@ -16,7 +16,7 @@ import {mallMoneyCostPart} from '../../../lib/interface/formatted-strings'
 import {helpButtonText, createHelpMenu} from '../../help'
 
 function fromCtx(ctx: Context): string {
-	return ctx.match![1]
+	return ctx.match![1]!
 }
 
 async function menuBody(ctx: Context): Promise<Body> {

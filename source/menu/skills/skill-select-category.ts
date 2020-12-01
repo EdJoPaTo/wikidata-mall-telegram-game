@@ -76,9 +76,8 @@ async function menuBody(ctx: Context): Promise<Body> {
 		await ctx.wd.preload([...shops, ...categoriesSeenBefore])
 
 		if (categoriesSeenBefore.length > 0) {
-			const lines = await Promise.all(Object.keys(seenBeforeGroupedByLevel)
-				.map(o => Number(o))
-				.map(async o => categoriesOfLevelLine(ctx, o, seenBeforeGroupedByLevel[o], locale))
+			const lines = await Promise.all(Object.entries(seenBeforeGroupedByLevel)
+				.map(async ([level, group]) => categoriesOfLevelLine(ctx, Number(level), group, locale))
 			)
 			text += lines.join('\n')
 			text += '\n\n'

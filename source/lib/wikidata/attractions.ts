@@ -26,7 +26,7 @@ export async function preload(logger: (...args: any[]) => void): Promise<void> {
 
 	attractions = resultAttractions
 		.reduce((coll: Record<QNumber, number>, add) => {
-			const current = coll[add.item] === undefined ? -Infinity : coll[add.item]
+			const current = coll[add.item] === undefined ? -Infinity : coll[add.item]!
 			coll[add.item] = Math.max(current, add.height)
 			return coll
 		}, {})
@@ -39,11 +39,11 @@ export function all(): Record<QNumber, number> {
 }
 
 export function allHeightSortedArray(): readonly Attraction[] {
-	return Object.keys(attractions)
-		.map(o => ({item: o, height: attractions[o]}))
+	return Object.entries(attractions)
+		.map(([item, height]) => ({item, height}))
 		.sort((a, b) => a.height - b.height)
 }
 
 export function getHeight(qNumber: QNumber): number {
-	return attractions[qNumber]
+	return attractions[qNumber] ?? Number.NaN
 }

@@ -18,7 +18,7 @@ import {percentBonusString} from './format-percent'
 export function mallMoji(mall: Mall): string {
 	const regex = emojiRegex()
 	const match = regex.exec(String(mall.chat.title))
-	const emoji = match ? match[0] : '??'
+	const emoji = match ? match[0]! : '??'
 	return emoji
 }
 

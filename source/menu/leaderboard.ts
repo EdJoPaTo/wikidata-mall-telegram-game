@@ -44,13 +44,11 @@ interface LeaderboardEntries<T> {
 
 async function getMatchingHobbiesTable(now: number): Promise<LeaderboardEntries<number>> {
 	const allUserShops = await userShops.getAll()
-	const playerIds = Object.keys(allUserShops)
-		.map(o => Number(o))
-		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
+	const playerIds = Object.entries(allUserShops)
+		.filter(([_, shops]) => now - lastTimeActive(shops) < WEEK_IN_SECONDS)
 
 	const values: Record<string, number> = {}
-	for (const playerId of playerIds) {
-		const shops = allUserShops[playerId]
+	for (const [playerId, shops] of playerIds) {
 		const currently = employeesWithFittingHobbyAmount(shops)
 		if (currently > 0) {
 			values[playerId] = currently
@@ -66,14 +64,12 @@ async function getMatchingHobbiesTable(now: number): Promise<LeaderboardEntries<
 async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
 	const allUserShops = await userShops.getAll()
 	const allUserSkills = await userSkills.getAll()
-	const playerIds = Object.keys(allUserShops)
-		.map(o => Number(o))
-		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
+	const playerIds = Object.entries(allUserShops)
+		.filter(([_, shops]) => now - lastTimeActive(shops) < WEEK_IN_SECONDS)
 
 	const values: Record<string, number> = {}
-	for (const playerId of playerIds) {
-		const shops = allUserShops[playerId]
-		const skills: Skills = allUserSkills[playerId] || {}
+	for (const [playerId, shops] of playerIds) {
+		const skills: Skills = allUserSkills[Number(playerId)] || {}
 		const roi = returnOnInvestment(shops, skills)
 		if (!Number.isFinite(roi)) {
 			continue
@@ -90,13 +86,11 @@ async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
 
 async function getAssortmentTable(now: number): Promise<LeaderboardEntries<number>> {
 	const allUserShops = await userShops.getAll()
-	const playerIds = Object.keys(allUserShops)
-		.map(o => Number(o))
-		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
+	const playerIds = Object.entries(allUserShops)
+		.filter(([_, shops]) => now - lastTimeActive(shops) < WEEK_IN_SECONDS)
 
 	const values: Record<string, number> = {}
-	for (const playerId of playerIds) {
-		const shops = allUserShops[playerId]
+	for (const [playerId, shops] of playerIds) {
 		const products = shops.flatMap(o => o.products).length
 		values[playerId] = products
 	}
@@ -110,20 +104,18 @@ async function getAssortmentTable(now: number): Promise<LeaderboardEntries<numbe
 async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<number>> {
 	const allUserShops = await userShops.getAll()
 	const allUserSkills = await userSkills.getAll()
-	const playerIds = Object.keys(allUserShops)
-		.map(o => Number(o))
-		.filter(o => now - lastTimeActive(allUserShops[o]) < WEEK_IN_SECONDS)
+	const playerIds = Object.entries(allUserShops)
+		.filter(([_, shops]) => now - lastTimeActive(shops) < WEEK_IN_SECONDS)
 
 	const values: Record<string, number> = {}
-	for (const playerId of playerIds) {
+	for (const [playerId, shops] of playerIds) {
 		// eslint-disable-next-line no-await-in-loop
-		const mallId = await userMalls.getMallIdOfUser(playerId)
+		const mallId = await userMalls.getMallIdOfUser(Number(playerId))
 		// eslint-disable-next-line no-await-in-loop
 		const mall = mallId === undefined ? undefined : await userMalls.get(mallId)
 		const attractionHeight = getAttractionHeight(mall?.attraction)
 
-		const shops = allUserShops[playerId]
-		const skills: Skills = allUserSkills[playerId] || {}
+		const skills: Skills = allUserSkills[Number(playerId)] || {}
 		const income = shops
 			.map(o => maxSellPerMinute(o, skills, attractionHeight))
 			.reduce((a, b) => a + b, 0)
@@ -143,8 +135,8 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 async function getCollectorTable(): Promise<LeaderboardEntries<number>> {
 	const allUserSkills = await userSkills.getAll()
 	const values: Record<string, number> = {}
-	for (const playerId of Object.keys(allUserSkills).map(o => Number(o))) {
-		const bonus = productBasePriceCollectorFactor(allUserSkills[playerId])
+	for (const [playerId, skills] of Object.entries(allUserSkills)) {
+		const bonus = productBasePriceCollectorFactor(skills)
 		values[playerId] = bonus
 	}
 
@@ -166,9 +158,7 @@ async function getMallProductionTable(): Promise<LeaderboardEntries<number>> {
 async function getMallAttractionTable(now: number): Promise<LeaderboardEntries<number>> {
 	const allMalls = await userMalls.getAll()
 	const values: Record<string, number> = {}
-	for (const mallId of Object.keys(allMalls).map(o => Number(o))) {
-		const mall = allMalls[mallId]
-
+	for (const [mallId, mall] of Object.entries(allMalls)) {
 		if (mall.attraction && mall.attraction.disasterTimestamp > now) {
 			values[mallId] = wdAttraction.getHeight(mall.attraction.item)
 		}
@@ -214,7 +204,7 @@ async function generateTable<T>(entries: LeaderboardEntries<T>, forPlayerId: num
 	const lines = await Promise.all(
 		entries.order.map((playerId, i) => {
 			if (i < 10 || (i > indexOfPlayer - 5 && i < indexOfPlayer + 5)) {
-				return entryLine(i, nameOfId(allPlayerInfos, allMallInfos, playerId), formatNumberFunc(entries.values[playerId]), i === indexOfPlayer)
+				return entryLine(i, nameOfId(allPlayerInfos, allMallInfos, playerId), formatNumberFunc(entries.values[playerId]!), i === indexOfPlayer)
 			}
 
 			return undefined

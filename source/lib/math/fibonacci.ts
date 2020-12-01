@@ -10,7 +10,7 @@ export function stateful(initialValue = 1): (next: number) => number {
 const cache = [0, 1]
 export function cached(i: number): number {
 	fillArray(cache, i)
-	return cache[i]
+	return cache[i]!
 }
 
 export function fillArray(numbers: number[], untilIndex: number): void {
@@ -23,6 +23,6 @@ export function fillArray(numbers: number[], untilIndex: number): void {
 	}
 
 	while (numbers.length <= untilIndex) {
-		numbers.push(numbers[numbers.length - 2] + numbers[numbers.length - 1])
+		numbers.push(numbers[numbers.length - 2]! + numbers[numbers.length - 1]!)
 	}
 }

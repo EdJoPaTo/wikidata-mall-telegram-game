@@ -54,8 +54,8 @@ export async function personMarkdown(ctx: Context, person: Person, isFitting: bo
 	text += '*'
 	text += '\n'
 
-	const talentLines = await Promise.all((Object.keys(talents) as Talent[])
-		.map(async t => talentLine(ctx, t, talents[t]))
+	const talentLines = await Promise.all(Object.entries(talents)
+		.map(async ([t, level]) => talentLine(ctx, t as Talent, level))
 	)
 	text += talentLines.join('\n')
 

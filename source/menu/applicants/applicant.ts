@@ -15,7 +15,7 @@ import {createHelpMenu, helpButtonText} from '../help'
 
 function fromCtx(ctx: Context): {applicantId: number; applicant: Person; hobbyIsFitting: boolean} {
 	const applicantId = Number(ctx.match![1])
-	const applicant: Person = ctx.persist.applicants.list[applicantId]
+	const applicant = ctx.persist.applicants.list[applicantId]
 	if (!applicant) {
 		throw new Error('The applicant you are looking for is not there.')
 	}

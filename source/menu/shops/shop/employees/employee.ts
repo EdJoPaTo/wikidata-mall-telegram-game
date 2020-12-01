@@ -17,7 +17,7 @@ import {createHelpMenu, helpButtonText} from '../../../help'
 import {menu as confirmEmployee} from './confirm-applicant'
 
 function fromCtx(ctx: Context): {shop: Shop; talent: Talent; employee?: Person} {
-	const shopType = ctx.match![1]
+	const shopType = ctx.match![1]!
 	const talent = ctx.match![2] as Talent
 
 	const shop = ctx.persist.shops.find(o => o.id === shopType)!
@@ -85,16 +85,15 @@ function availableApplicants(ctx: Context): string[] {
 	}
 
 	const applicantBoni: Record<number, number> = {}
-	for (let i = 0; i < applicants.list.length; i++) {
-		const applicant = applicants.list[i]
+	for (const [i, applicant] of applicants.list.entries()) {
 		applicantBoni[i] = personalBonusWhenEmployed(shop, talent, applicant)
 	}
 
 	const currentBonus = personalBonusWhenEmployed(shop, talent, employee)
 	const indiciesOfInterest = applicants.list
 		.map((_, i) => i)
-		.filter(i => applicantBoni[i] > currentBonus)
-		.sort((a, b) => applicantBoni[b] - applicantBoni[a])
+		.filter(i => applicantBoni[i]! > currentBonus)
+		.sort((a, b) => applicantBoni[b]! - applicantBoni[a]!)
 
 	return indiciesOfInterest.map(o => String(o))
 }
@@ -105,6 +104,9 @@ menu.chooseIntoSubmenu('a', availableApplicants, confirmEmployee, {
 		const {applicants} = ctx.persist
 		const {shop, talent} = fromCtx(ctx)
 		const applicant = applicants.list[Number(key)]
+		if (!applicant) {
+			throw new Error('applicant seems to be gone')
+		}
 
 		const {name} = applicant
 

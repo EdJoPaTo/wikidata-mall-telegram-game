@@ -13,7 +13,7 @@ import {infoHeader, moneyCostPart} from '../../../lib/interface/formatted-string
 import {createHelpMenu, helpButtonText} from '../../help'
 
 function fromCtx(ctx: Context): {construction: string} {
-	const construction = ctx.match![1]
+	const construction = ctx.match![1]!
 	return {construction}
 }
 

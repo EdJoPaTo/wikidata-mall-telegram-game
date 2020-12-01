@@ -13,7 +13,7 @@ import {buttonText, bodyPhoto, backButtons} from '../../../lib/interface/menu'
 import {helpButtonText, createHelpMenu} from '../../help'
 
 function fromCtx(ctx: Context): string {
-	return ctx.match![1]
+	return ctx.match![1]!
 }
 
 async function menuBody(ctx: Context): Promise<Body> {
@@ -50,8 +50,8 @@ menu.interact(buttonText(emojis.yes, 'mall.vote'), 'vote', {
 		const qNumber = fromCtx(ctx)
 
 		const currentProduction = await mallProduction.get()
-		for (const o of Object.keys(currentProduction.nextItemVote)) {
-			currentProduction.nextItemVote[o] = currentProduction.nextItemVote[o]
+		for (const [key, value] of Object.entries(currentProduction.nextItemVote)) {
+			currentProduction.nextItemVote[key] = value
 				.filter(o => o !== ctx.from!.id)
 		}
 
@@ -59,7 +59,7 @@ menu.interact(buttonText(emojis.yes, 'mall.vote'), 'vote', {
 			throw new Error('You cant vote for something not on the list')
 		}
 
-		currentProduction.nextItemVote[qNumber].push(ctx.from!.id)
+		currentProduction.nextItemVote[qNumber]!.push(ctx.from!.id)
 		await mallProduction.set(currentProduction)
 		return '.'
 	}

@@ -94,6 +94,10 @@ menu.chooseIntoSubmenu('a', availableApplicants, applicantMenu, {
 	},
 	buttonText: (ctx, key) => {
 		const applicant = ctx.persist.applicants.list[Number(key)]
+		if (!applicant) {
+			throw new Error('applicant seems to be gone')
+		}
+
 		const hasShopOfHobby = ctx.persist.shops.some(o => o.id === applicant.hobby)
 		const hasShopOfHobbyString = hasShopOfHobby ? emojis.hobbyMatch : ''
 		const stateEmoji = personStateEmoji(applicant)

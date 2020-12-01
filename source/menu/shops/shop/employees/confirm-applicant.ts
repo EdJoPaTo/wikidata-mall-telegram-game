@@ -14,7 +14,7 @@ import {percentBonusString} from '../../../../lib/interface/format-percent'
 import {personMarkdown} from '../../../../lib/interface/person'
 
 function fromCtx(ctx: Context): {shop: Shop; talent: Talent; employee?: Person; applicantId: number; applicant: Person} {
-	const shopType = ctx.match![1]
+	const shopType = ctx.match![1]!
 	const talent = ctx.match![2] as Talent
 	const applicantId = Number(ctx.match![3])
 

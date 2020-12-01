@@ -19,8 +19,7 @@ export async function getAll(): Promise<Record<number, Mall>> {
 
 export async function getMallIdOfUser(userId: number): Promise<number | undefined> {
 	const dict = await getAll()
-	for (const key of Object.keys(dict)) {
-		const mall = dict[Number(key)]
+	for (const [key, mall] of Object.entries(dict)) {
 		if (mall.member.includes(userId)) {
 			return Number(key)
 		}

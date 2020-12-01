@@ -63,13 +63,15 @@ async function preloadCategory(category: string): Promise<Record<string, string[
 	return filtered
 }
 
-function reduceRowsIntoKeyValue(coll: Record<string, string[]>, {product, part}: Record<string, string>): Record<string, string[]> {
+function reduceRowsIntoKeyValue(coll: Record<string, string[]>, add: Record<string, string>): Record<string, string[]> {
+	const product = add.product!
+	const part = add.part!
 	if (!coll[product]) {
 		coll[product] = []
 	}
 
-	if (!coll[product].includes(part) && Boolean(part)) {
-		coll[product].push(part)
+	if (!coll[product]!.includes(part) && Boolean(part)) {
+		coll[product]!.push(part)
 	}
 
 	return coll

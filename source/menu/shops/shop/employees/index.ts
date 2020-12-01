@@ -14,7 +14,7 @@ import {createHelpMenu, helpButtonText} from '../../../help'
 import {menu as employee} from './employee'
 
 function fromCtx(ctx: Context): {shop: Shop} {
-	const shopType = ctx.match![1]
+	const shopType = ctx.match![1]!
 	const shop = ctx.persist.shops.find(o => o.id === shopType)!
 	return {shop}
 }
@@ -57,7 +57,7 @@ export const menu = new MenuTemplate<Context>(menuBody)
 
 menu.chooseIntoSubmenu('t', TALENTS, employee, {
 	columns: 1,
-	buttonText: buttonText((_, key) => emojis[key!], (_, key) => `person.talents.${key}`)
+	buttonText: buttonText((_, key) => emojis[key as Talent], (_, key) => `person.talents.${key}`)
 })
 
 menu.url(

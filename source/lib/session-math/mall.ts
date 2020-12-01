@@ -106,12 +106,12 @@ function updateCurrentProduction(production: MallProduction, now: number): void 
 		delete production.nextItemVote[production.itemToProduce]
 	}
 
-	for (const o of Object.keys(production.nextItemVote)) {
+	for (const [item, votes] of Object.entries(production.nextItemVote)) {
 		// Keep but reset when someone voted. Remove when noone was interested
-		if (production.nextItemVote[o].length > 0) {
-			production.nextItemVote[o] = []
+		if (votes.length > 0) {
+			production.nextItemVote[item] = []
 		} else {
-			delete production.nextItemVote[o]
+			delete production.nextItemVote[item]
 		}
 	}
 }

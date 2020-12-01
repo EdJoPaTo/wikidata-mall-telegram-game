@@ -29,7 +29,7 @@ export class NotificationManager {
 
 		if (job) {
 			// Created Job in the past does not need to be added
-			this._currentJobs[chatId].push(job)
+			this._currentJobs[chatId]!.push(job)
 		}
 	}
 }

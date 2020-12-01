@@ -15,7 +15,7 @@ const tzNormal = listTimeZones()
 	.filter(o => o.length >= 2)
 
 const tzPrefixesRaw = tzNormal
-	.map(o => o[0])
+	.map(o => o[0]!)
 	.filter(arrayFilterUnique())
 
 function tzPrefixes(ctx: Context): string[] {
@@ -26,7 +26,7 @@ function tzPrefixes(ctx: Context): string[] {
 
 function tzInPrefix(ctx: Context): string[] {
 	const {__wikibase_language_code: locale} = ctx.session
-	const prefix = ctx.match![1]
+	const prefix = ctx.match![1]!
 	return tzNormal
 		.filter(o => o[0] === prefix)
 		.map(o => o.slice(1).join(':'))

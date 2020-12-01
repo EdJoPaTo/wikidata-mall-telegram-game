@@ -8,7 +8,7 @@ function formatNumber(number: number, formatRelevantNumber: (relevantNumPart: nu
 	const relevantNumberPart = number / sciNumber
 	const numberString = formatRelevantNumber(relevantNumberPart, sciExp)
 
-	const letterString = LETTERS[sciExp / 3]
+	const letterString = LETTERS[sciExp / 3]!
 
 	return numberString + letterString
 }

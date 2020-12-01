@@ -92,7 +92,7 @@ async function skillOptions(ctx: Context, skills: readonly Skill[]): Promise<Rec
 	const readers = await Promise.all(skills.map(async o => ctx.wd.reader(`skill.${o}`)))
 	const labels: Record<string, string> = {}
 	for (const [i, reader] of readers.entries()) {
-		const key = skills[i]
+		const key = skills[i]!
 		labels[key] = reader.label()
 	}
 
@@ -101,7 +101,7 @@ async function skillOptions(ctx: Context, skills: readonly Skill[]): Promise<Rec
 	for (const key of skills) {
 		const emoji = emojis[key]
 		if (emoji) {
-			labels[key] = emoji + ' ' + labels[key]
+			labels[key] = emoji + ' ' + labels[key]!
 		}
 	}
 

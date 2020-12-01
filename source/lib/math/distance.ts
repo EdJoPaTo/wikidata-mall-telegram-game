@@ -5,7 +5,7 @@ export function distanceSteps(values: readonly number[]): number[] {
 			return curr
 		}
 
-		const distance = add - array[i - 1]
+		const distance = add - array[i - 1]!
 		curr.push(distance)
 
 		return curr

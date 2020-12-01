@@ -34,9 +34,9 @@ import {menu as employeeMenu} from './employees'
 import {menu as productMenu} from './product'
 
 function fromCtx(ctx: Context): {shop: Shop; indexOfShop: number} {
-	const shopType = ctx.match![1]
+	const shopType = ctx.match![1]!
 	const indexOfShop = ctx.persist.shops.map(o => o.id).indexOf(shopType)
-	const shop = ctx.persist.shops[indexOfShop]
+	const shop = ctx.persist.shops[indexOfShop]!
 	return {shop, indexOfShop}
 }
 

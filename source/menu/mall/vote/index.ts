@@ -52,11 +52,10 @@ async function voteOptions(ctx: Context): Promise<Record<string, string>> {
 
 	const order = sortDictKeysByStringValues(result, locale === 'wikidatan' ? 'en' : locale)
 
-	for (const o of possible) {
-		const voters = currentProduction.nextItemVote[o]
+	for (const [o, voters] of Object.entries(currentProduction.nextItemVote)) {
 		const userVoted = voters.includes(ctx.from!.id)
 		const prefix = userVoted ? emojis.yes : emojis.vote
-		result[o] = prefix + ' ' + result[o]
+		result[o] = prefix + ' ' + result[o]!
 	}
 
 	return recreateDictWithGivenKeyOrder(result, order)

@@ -26,7 +26,7 @@ export function incomeUntil(session: Session): number {
 		return Infinity
 	}
 
-	return skillQueue[0].endTimestamp
+	return skillQueue[0]!.endTimestamp
 }
 
 export function incomeLoop(session: Session, persist: Persist, now: number): void {

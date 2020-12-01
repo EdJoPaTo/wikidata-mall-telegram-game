@@ -59,7 +59,7 @@ menu.select('talent', TALENTS, {
 	},
 	buttonText: async (ctx, key) => {
 		const label = (await ctx.wd.reader(`person.talents.${key}`)).label()
-		const emoji = emojis[key]
+		const emoji = emojis[key as Talent]
 		return emoji + label
 	}
 })

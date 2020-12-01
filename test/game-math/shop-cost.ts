@@ -205,8 +205,8 @@ test('returnOnInvestment is the same as when calculated manually without magnet'
 		storage: 1
 	})
 
-	const p = purchasingCost(shop, shop.products[0], skills)
-	const s = sellingCost(shop, shop.products[0], skills)
+	const p = purchasingCost(shop, shop.products[0]!, skills)
+	const s = sellingCost(shop, shop.products[0]!, skills)
 
 	const manually = s / p
 	const roi = returnOnInvestment([shop], skills)
@@ -226,10 +226,10 @@ test('returnOnInvestment is the same as when calculated manually with magnet', t
 	t.is(magnetFactor, 1.4, 'sanity check')
 
 	const b = buyAllCost([shop], skills)
-	const p = purchasingCost(shop, shop.products[0], skills) * magnetFactor
+	const p = purchasingCost(shop, shop.products[0]!, skills) * magnetFactor
 	t.is(b, p, 'sanety check buyAllCost calculates the same')
 
-	const s = sellingCost(shop, shop.products[0], skills)
+	const s = sellingCost(shop, shop.products[0]!, skills)
 
 	const manually = s / p
 	t.log('manually', manually)

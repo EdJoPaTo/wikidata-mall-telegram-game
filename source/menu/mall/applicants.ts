@@ -39,7 +39,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 			text += emojis.requireAttention + emojis.seat
 		}
 
-		const reader = await ctx.wd.reader(mall.applicants[0].hobby)
+		const reader = await ctx.wd.reader(mall.applicants[0]!.hobby)
 		return {
 			...bodyPhoto(reader),
 			text, parse_mode: 'Markdown'
