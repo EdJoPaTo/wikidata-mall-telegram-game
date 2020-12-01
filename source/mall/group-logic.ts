@@ -37,8 +37,8 @@ async function checkEveryMemberAndRemoveIfNeeded(ctx: Context, mallData: Mall): 
 				}
 
 				return entry.user.id
-			} catch (error) {
-				console.log('error while testing members', memberId, error.message)
+			} catch (error: unknown) {
+				console.log('error while testing members', memberId, error instanceof Error ? error.message : error)
 				return false
 			}
 		})
@@ -62,8 +62,8 @@ bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'),
 
 	try {
 		await ctx.reply(ctx.i18n.t('mall.supergroupMigration'))
-	} catch (error) {
-		console.log('supergroup migration hint error', error.message, ctx.updateType, ctx.updateSubTypes, ctx.update)
+	} catch (error: unknown) {
+		console.log('supergroup migration hint error', error instanceof Error ? error.message : error, ctx.updateType, ctx.updateSubTypes, ctx.update)
 	}
 }))
 
@@ -130,7 +130,7 @@ bot.on(['group_chat_created', 'new_chat_members'], async ctx => {
 				return
 			}
 		}
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('error while detecting big group', ctx.updateType, ctx.updateSubTypes, error)
 	}
 

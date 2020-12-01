@@ -80,12 +80,9 @@ function hobbyForType(type: PersonType): string {
 
 function retirementTimestampForType(type: PersonType, skills: Skills, retirementRandom: number, now: number): number {
 	const retirement = daysUntilRetirement(skills)
-	let days: number
-	if (PERSON_EVENT_TYPES.includes(type)) {
-		days = randomBetween(retirement.min, retirement.max, 1 - retirementRandom)
-	} else {
-		days = randomBetween(retirement.min, retirement.max, retirementRandom)
-	}
+	const days = randomBetween(retirement.min, retirement.max,
+		PERSON_EVENT_TYPES.includes(type) ? 1 - retirementRandom : retirementRandom
+	)
 
 	const retirementTimestamp = Math.floor(now + (DAY_IN_SECONDS * days))
 	return retirementTimestamp

@@ -50,7 +50,7 @@ async function loadQNumbersOfKey(logger: (...args: any[]) => void, key: SetName)
 		const qNumbers = results as string[]
 		entities[key] = qNumbers
 		logger(key, qNumbers.length)
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('wikidata-set query failed', key, error)
 	}
 }

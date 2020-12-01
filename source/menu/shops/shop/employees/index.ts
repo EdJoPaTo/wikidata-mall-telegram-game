@@ -29,11 +29,7 @@ async function talentLine(ctx: Context, shop: Shop, talent: Talent): Promise<str
 	text += '*'
 	text += '\n  '
 
-	if (person) {
-		text += personInShopLine(shop, talent)
-	} else {
-		text += emojis.noPerson
-	}
+	text += person ? personInShopLine(shop, talent) : emojis.noPerson
 
 	return text
 }

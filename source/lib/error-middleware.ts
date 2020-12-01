@@ -29,7 +29,7 @@ export class ErrorMiddleware {
 		return async (ctx, next) => {
 			try {
 				await next()
-			} catch (error) {
+			} catch (error: unknown) {
 				if (!(error instanceof Error)) {
 					throw new TypeError(`Error is not of type error: ${typeof error} ${error}`)
 				}
@@ -88,7 +88,7 @@ export class ErrorMiddleware {
 				try {
 					const target = (ctx.chat || ctx.from!).id
 					await ctx.telegram.sendMessage(target, text, Extra.markdown().webPreview(false).markup(this._keyboard))
-				} catch (error) {
+				} catch (error: unknown) {
 					console.error('send error to user failed', error)
 				}
 			}

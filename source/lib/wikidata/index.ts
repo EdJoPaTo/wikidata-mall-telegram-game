@@ -44,7 +44,7 @@ async function preloadSpecific<T>(title: string, loadFunc: (log: Logger) => Prom
 		console.timeEnd(identifier)
 		console.timeLog('wikidata preload', 'finish', title)
 		return result
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('wikidata preloadSpecific', title, 'failed:', error)
 		throw new Error(`wikidata preload ${title} failed`)
 	}

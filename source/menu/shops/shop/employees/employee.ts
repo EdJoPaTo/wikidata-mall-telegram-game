@@ -33,6 +33,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	let text = ''
 	text += infoHeader(await ctx.wd.reader(`person.talents.${talent}`), {titlePrefix: emojis[talent]})
 
+	// eslint-disable-next-line unicorn/prefer-ternary
 	if (employee) {
 		text += await personMarkdown(ctx, employee, shop.id === employee.hobby, now)
 	} else {

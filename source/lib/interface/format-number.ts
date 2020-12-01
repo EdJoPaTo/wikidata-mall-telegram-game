@@ -2,7 +2,7 @@ import {scientificExponent} from '../math/number'
 
 const LETTERS = ['', 'k', 'M', 'G', 'T', 'P', 'E']
 
-function formatNumber(number: number, formatRelevantNumber: (relevantNumPart: number, scientificExponent: number) => string): string {
+function formatNumber(number: number, formatRelevantNumber: (relevantNumberPart: number, scientificExponent: number) => string): string {
 	const sciExp = scientificExponent(number)
 	const sciNumber = 10 ** sciExp
 	const relevantNumberPart = number / sciNumber

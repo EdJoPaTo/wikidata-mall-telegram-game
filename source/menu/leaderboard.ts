@@ -196,7 +196,7 @@ function nameOfId(allPlayerInfos: Record<string, User>, allMallInfos: Record<str
 	return '??'
 }
 
-async function generateTable<T>(entries: LeaderboardEntries<T>, forPlayerId: number | undefined, formatNumberFunc: (num: T) => string): Promise<string> {
+async function generateTable<T>(entries: LeaderboardEntries<T>, forPlayerId: number | undefined, formatFunc: (number: T) => string): Promise<string> {
 	const allPlayerInfos = await userInfo.getAll()
 	const allMallInfos = await userMalls.getAll()
 	const indexOfPlayer = entries.order.indexOf(String(forPlayerId))
@@ -204,7 +204,7 @@ async function generateTable<T>(entries: LeaderboardEntries<T>, forPlayerId: num
 	const lines = await Promise.all(
 		entries.order.map((playerId, i) => {
 			if (i < 10 || (i > indexOfPlayer - 5 && i < indexOfPlayer + 5)) {
-				return entryLine(i, nameOfId(allPlayerInfos, allMallInfos, playerId), formatNumberFunc(entries.values[playerId]!), i === indexOfPlayer)
+				return entryLine(i, nameOfId(allPlayerInfos, allMallInfos, playerId), formatFunc(entries.values[playerId]!), i === indexOfPlayer)
 			}
 
 			return undefined

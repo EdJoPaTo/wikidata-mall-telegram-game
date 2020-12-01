@@ -65,15 +65,15 @@ const notificationManager = new NotificationManager(
 	async (chatId, notification, fireDate) => {
 		try {
 			const text = notificationText(notification, fireDate)
+			// eslint-disable-next-line unicorn/prefer-ternary
 			if (notification.photo) {
 				await bot.telegram.sendPhoto(chatId, notification.photo, {parse_mode: 'Markdown', caption: text})
 			} else {
 				await bot.telegram.sendMessage(chatId, text, {parse_mode: 'Markdown'})
 			}
-		} catch (error) {
-			const {message} = error as Error
-			if (message.includes('chat not found')) {
-				console.error('notification failed to send', chatId, message)
+		} catch (error: unknown) {
+			if (error instanceof Error && error.message.includes('chat not found')) {
+				console.error('notification failed to send', chatId, error.message)
 			} else {
 				console.error('notification failed to send', chatId, error)
 			}
@@ -137,7 +137,7 @@ async function startup(): Promise<void> {
 
 		setInterval(async () => wikidata.update(), 4 * HOUR_IN_SECONDS * 1000)
 		setTimeout(async () => wikidata.update(), 15 * MINUTE_IN_SECONDS * 1000)
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('startup failed:', error)
 	}
 }

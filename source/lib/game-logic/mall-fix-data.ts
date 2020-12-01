@@ -56,8 +56,8 @@ export async function fixMallDataForGroup(telegram: Telegram, chatId: number): P
 async function tryLeave(telegram: Telegram, chatId: number): Promise<void> {
 	try {
 		await telegram.leaveChat(chatId)
-	} catch (error) {
-		console.log('leaving chat error', chatId, error.message)
+	} catch (error: unknown) {
+		console.log('leaving chat error', chatId, error instanceof Error ? error.message : error)
 	}
 }
 
@@ -69,8 +69,8 @@ async function tryGetChat(telegram: Telegram, chatId: number): Promise<Chat.Supe
 		}
 
 		return result as Chat.SupergroupChat
-	} catch (error) {
-		console.log('get chat error', chatId, error.message)
+	} catch (error: unknown) {
+		console.log('get chat error', chatId, error instanceof Error ? error.message : error)
 		return undefined
 	}
 }
@@ -79,8 +79,8 @@ async function tryGetChatMember(telegram: Telegram, chatId: number, userId: numb
 	try {
 		const result = await telegram.getChatMember(chatId, userId)
 		return result as ChatMember
-	} catch (error) {
-		console.log('get chat member error', chatId, userId, error.message)
+	} catch (error: unknown) {
+		console.log('get chat member error', chatId, userId, error instanceof Error ? error.message : error)
 		return undefined
 	}
 }

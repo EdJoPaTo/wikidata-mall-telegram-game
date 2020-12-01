@@ -66,6 +66,7 @@ menu.interact(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		const groupKeyboard = Markup.inlineKeyboard([
 			Markup.callbackButton(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
 		])
+		// eslint-disable-next-line unicorn/prefer-ternary
 		if (photo) {
 			await ctx.telegram.sendPhoto(mall.chat.id, photo, new Extra({caption}).markdown().markup(groupKeyboard) as any)
 		} else {
