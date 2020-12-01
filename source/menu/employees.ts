@@ -3,7 +3,7 @@ import {MenuTemplate, Body} from 'telegraf-inline-menu'
 import {Context} from '../lib/types'
 import {Talent, TALENTS} from '../lib/types/people'
 
-import {buttonText, bodyPhoto, backButtons} from '../lib/interface/menu'
+import {buttonText, backButtons} from '../lib/interface/menu'
 import {emojis} from '../lib/interface/emojis'
 import {infoHeader} from '../lib/interface/formatted-strings'
 import {shopEmployeeOverview, employeeStatsPart} from '../lib/interface/person'
@@ -30,10 +30,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 	text += await employeeStatsPart(ctx, ctx.persist.shops, talents)
 
-	return {
-		...bodyPhoto(reader),
-		text, parse_mode: 'Markdown'
-	}
+	return {text, parse_mode: 'Markdown'}
 }
 
 export const menu = new MenuTemplate<Context>(menuBody)

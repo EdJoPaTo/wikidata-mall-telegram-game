@@ -6,7 +6,7 @@ import {Person} from '../../lib/types/people'
 import {secondsBetweenApplicants, applicantSeats} from '../../lib/game-math/applicant'
 
 import {applicantInfluencesPart} from '../../lib/interface/applicants'
-import {buttonText, bodyPhoto, backButtons} from '../../lib/interface/menu'
+import {buttonText, backButtons} from '../../lib/interface/menu'
 import {emojis} from '../../lib/interface/emojis'
 import {formatFloat} from '../../lib/interface/format-number'
 import {humanReadableTimestamp} from '../../lib/interface/formatted-time'
@@ -74,10 +74,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 		text += '\n\n'
 	}
 
-	return {
-		...bodyPhoto(reader),
-		text, parse_mode: 'Markdown'
-	}
+	return {text, parse_mode: 'Markdown'}
 }
 
 export const menu = new MenuTemplate<Context>(menuBody)
