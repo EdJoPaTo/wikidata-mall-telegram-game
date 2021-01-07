@@ -36,15 +36,17 @@ async function talentLine(ctx: Context, shop: Shop, talent: Talent): Promise<str
 
 async function menuBody(ctx: Context): Promise<Body> {
 	const {shop} = fromCtx(ctx)
+	const shopReader = await ctx.wd.reader(shop.id)
+
 	let text = ''
-	const reader = await ctx.wd.reader('menu.employee')
-	text += infoHeader(reader)
+	const employeeReader = await ctx.wd.reader('menu.employee')
+	text += infoHeader(employeeReader)
 
 	const talentLines = await Promise.all(TALENTS.map(async o => talentLine(ctx, shop, o)))
 	text += talentLines.join('\n')
 
 	return {
-		...bodyPhoto(reader),
+		...bodyPhoto(shopReader),
 		text, parse_mode: 'Markdown'
 	}
 }
