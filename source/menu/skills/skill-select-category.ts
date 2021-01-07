@@ -68,7 +68,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	if (ctx.session.hideAllSkillsSeenBefore) {
 		await ctx.wd.preload(shops)
 	} else {
-		const categoriesSeenBefore = Object.keys(ctx.persist.skills[skill] || {})
+		const categoriesSeenBefore = Object.keys(ctx.persist.skills[skill] ?? {})
 			.filter(o => !shops.includes(o))
 		const seenBeforeGroupedByLevel = categoriesSeenBefore
 			.reduce(arrayReduceGroupBy(o => categorySkillSpecificLevel(ctx.persist.skills, skill, o)), {})

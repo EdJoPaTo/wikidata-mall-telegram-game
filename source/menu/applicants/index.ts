@@ -50,6 +50,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	text += '\n'
 	if (ctx.persist.applicants.list.length > 0) {
 		const maxPages = Math.ceil(ctx.persist.applicants.list.length / 20)
+		// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 		const page = Math.min(ctx.session.page || 1, maxPages)
 		const offset = (page - 1) * 20
 

@@ -180,7 +180,7 @@ menu.url(
 )
 
 menu.url(
-	buttonText(emojis.wikidataItem, async () => (await mallProduction.get()).itemToProduce || ''),
+	buttonText(emojis.wikidataItem, async () => (await mallProduction.get()).itemToProduce ?? ''),
 	async ctx => (await ctx.wd.reader((await mallProduction.get()).itemToProduce!)).url(),
 	{
 		joinLastRow: true

@@ -30,7 +30,7 @@ export function notificationText(notification: Notification, fireDate: Readonly<
 			text += emojis.attraction
 			break
 		default:
-			throw new Error(`notification message not implemented for type: ${notification.type}`)
+			throw new Error(`notification message not implemented for type: ${String(notification.type)}`)
 	}
 
 	text += notification.text

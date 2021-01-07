@@ -10,7 +10,7 @@ export class NotificationManager {
 	) {}
 
 	clear(chatId: string | number): void {
-		const jobs = this._currentJobs[chatId] || []
+		const jobs = this._currentJobs[chatId] ?? []
 		let j: Job | undefined
 		while ((j = jobs.pop()) !== undefined) {
 			j.cancel()

@@ -181,7 +181,7 @@ bot.command('fix', async ctx => {
 })
 
 bot.command(['language', 'settings'], async ctx => {
-	const {username} = ctx.botInfo!
+	const username = ctx.botInfo!.username!
 	return ctx.reply(`${emojis.chat}@${username}`)
 })
 

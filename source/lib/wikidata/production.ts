@@ -33,7 +33,7 @@ export function getProducts(): readonly string[] {
 }
 
 export function getParts(product: string): readonly string[] {
-	return producable[product] || []
+	return producable[product] ?? []
 }
 
 export async function preload(logger: (...args: any[]) => void): Promise<void> {
@@ -56,8 +56,7 @@ async function preloadCategory(category: string): Promise<Record<string, string[
 	const query = buildQuery(category)
 	const result = await sparqlQuerySimplified(query) as ReadonlyArray<Record<string, string>>
 
-	// eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-	const reduced = result.reduce(reduceRowsIntoKeyValue, {})
+	const reduced = result.reduce<Record<string, string[]>>((coll, add) => reduceRowsIntoKeyValue(coll, add), {})
 	const filteredKeys = filterDictKeysByValues(reduced, (_, v) => v.length >= 3)
 	const filtered = recreateDictWithGivenKeyOrder(reduced, filteredKeys)
 	return filtered

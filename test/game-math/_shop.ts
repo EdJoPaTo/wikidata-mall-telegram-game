@@ -3,7 +3,7 @@ import {Talents, Person} from '../../source/lib/types/people'
 
 export function generateShop(amounts: readonly number[], talents?: Talents): Shop {
 	const products: Product[] = amounts.map(o => ({id: 'Q42', itemTimestamp: 0, itemsInStore: o}))
-	const talentsEnsured: Talents = talents || {
+	const talentsEnsured: Talents = talents ?? {
 		purchasing: 1,
 		selling: 1,
 		storage: 1

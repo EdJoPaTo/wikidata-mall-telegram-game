@@ -39,7 +39,7 @@ test('shopProductsEmptyTimestamps without bonus', t => {
 
 test('lastTimeActive empty', t => {
 	const result = lastTimeActive([])
-	t.is(result, -Infinity)
+	t.is(result, Number.NEGATIVE_INFINITY)
 })
 
 test('lastTimeActive product max', t => {

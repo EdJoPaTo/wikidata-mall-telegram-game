@@ -36,7 +36,9 @@ export async function update(): Promise<void> {
 async function preloadSpecific<T>(title: string, loadFunc: (log: Logger) => Promise<T>): Promise<T> {
 	try {
 		const identifier = `wikidata preload ${title}`
-		const logFn: Logger = (...args) => console.timeLog(identifier, ...args)
+		const logFn: Logger = (...args) => {
+			console.timeLog(identifier, ...args)
+		}
 
 		console.timeLog('wikidata preload', 'start', title)
 		console.time(identifier)

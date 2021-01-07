@@ -4,8 +4,8 @@ import {TALENTS, Person} from '../types/people'
 
 export function incomeUntil(persist: Persist): number {
 	const retirements = persist.shops
-		.flatMap(o => o.personal.selling as Person)
-		.filter(o => o)
+		.flatMap(o => o.personal.selling)
+		.filter((o): o is Person => typeof o === 'object')
 		.map(o => o.retirementTimestamp)
 	return Math.min(...retirements)
 }

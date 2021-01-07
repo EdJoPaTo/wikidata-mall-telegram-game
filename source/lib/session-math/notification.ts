@@ -21,12 +21,12 @@ export async function initialize(notififyManager: NotificationManager, entitySto
 	const allSkills = await userSkills.getAll()
 
 	for (const {user, data} of userSessions.getRaw()) {
-		const applicants = allApplicants[user] || {
+		const applicants = allApplicants[user] ?? {
 			list: [],
 			timestamp: 0
 		}
-		const shops = allShops[user] || []
-		const skills = allSkills[user] || {}
+		const shops = allShops[user] ?? []
+		const skills = allSkills[user] ?? {}
 		const persist: Persist = {applicants, shops, skills}
 		// eslint-disable-next-line no-await-in-loop
 		await updateNotification(user, data, persist)

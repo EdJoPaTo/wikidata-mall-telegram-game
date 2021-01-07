@@ -23,7 +23,7 @@ export function startup(session: Session, persist: Persist): void {
 export function incomeUntil(session: Session): number {
 	const {skillQueue} = session
 	if (skillQueue.length === 0) {
-		return Infinity
+		return Number.POSITIVE_INFINITY
 	}
 
 	return skillQueue[0]!.endTimestamp

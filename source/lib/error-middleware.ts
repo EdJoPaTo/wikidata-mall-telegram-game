@@ -31,7 +31,7 @@ export class ErrorMiddleware {
 				await next()
 			} catch (error: unknown) {
 				if (!(error instanceof Error)) {
-					throw new TypeError(`Error is not of type error: ${typeof error} ${error}`)
+					throw new TypeError(`Error is not of type error: ${typeof error} ${String(error)}`)
 				}
 
 				if (error.message.includes('Too Many Requests')) {
@@ -74,7 +74,7 @@ export class ErrorMiddleware {
 				)) {
 					// Some problem with the url
 					const url = payload.photo ?? payload.media?.media
-					console.warn('Telegram url fail', ...getUpdateContext(ctx), error.message, url || payload)
+					console.warn('Telegram url fail', ...getUpdateContext(ctx), error.message, url ?? payload)
 					if (url) {
 						text += 'Problem with this url: '
 						text +=	url
@@ -86,7 +86,7 @@ export class ErrorMiddleware {
 				}
 
 				try {
-					const target = (ctx.chat || ctx.from!).id
+					const target = (ctx.chat ?? ctx.from!).id
 					await ctx.telegram.sendMessage(target, text, Extra.markdown().webPreview(false).markup(this._keyboard))
 				} catch (error: unknown) {
 					console.error('send error to user failed', error)

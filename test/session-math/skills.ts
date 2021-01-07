@@ -16,9 +16,13 @@ test('does not crash when there is no queue', t => {
 	}
 
 	const session: any = {skillQueue: []}
-	t.notThrows(() => handler.startup(session, persist))
+	t.notThrows(() => {
+		handler.startup(session, persist)
+	})
 	t.notThrows(() => handler.incomeUntil(session))
-	t.notThrows(() => handler.incomeLoop(session, persist, 0))
+	t.notThrows(() => {
+		handler.incomeLoop(session, persist, 0)
+	})
 })
 
 test('removes skills and all behind from queue when shop doesnt exist anymore', t => {
@@ -201,13 +205,13 @@ test('skills category skill when time is up', t => {
 
 test('incomeUntil without queue', t => {
 	const session: any = {skillQueue: []}
-	t.is(handler.incomeUntil(session), Infinity)
+	t.is(handler.incomeUntil(session), Number.POSITIVE_INFINITY)
 })
 
 test('incomeUntil without skill', t => {
 	const skillQueue: SkillInTraining[] = []
 	const session: any = {skillQueue}
-	t.is(handler.incomeUntil(session), Infinity)
+	t.is(handler.incomeUntil(session), Number.POSITIVE_INFINITY)
 })
 
 test('incomeUntil with skill', t => {

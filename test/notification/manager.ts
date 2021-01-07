@@ -53,7 +53,9 @@ test.cb('clear works', t => {
 	}, 1000)
 
 	const notify = new NotificationManager(
-		() => t.fail('should not be triggered')
+		() => {
+			t.fail('should not be triggered')
+		}
 	)
 
 	notify.add('bob', {
@@ -89,7 +91,9 @@ test.cb('clear works after notification triggered', t => {
 	setTimeout(t.end, 1000)
 
 	const notify = new NotificationManager(
-		() => t.pass()
+		() => {
+			t.pass()
+		}
 	)
 
 	notify.add('bob', {
@@ -106,7 +110,9 @@ test.cb('clear works after notification triggered', t => {
 
 test('job in the past can be cleared', t => {
 	const notify = new NotificationManager(
-		() => t.fail()
+		() => {
+			t.fail()
+		}
 	)
 
 	notify.add('bob', {
@@ -115,5 +121,7 @@ test('job in the past can be cleared', t => {
 		text: '42'
 	})
 
-	t.notThrows(() => notify.clear('bob'))
+	t.notThrows(() => {
+		notify.clear('bob')
+	})
 })

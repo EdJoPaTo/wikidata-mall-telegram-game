@@ -69,7 +69,7 @@ async function getROITable(now: number): Promise<LeaderboardEntries<number>> {
 
 	const values: Record<string, number> = {}
 	for (const [playerId, shops] of playerIds) {
-		const skills: Skills = allUserSkills[Number(playerId)] || {}
+		const skills: Skills = allUserSkills[Number(playerId)] ?? {}
 		const roi = returnOnInvestment(shops, skills)
 		if (!Number.isFinite(roi)) {
 			continue
@@ -115,7 +115,7 @@ async function getSellPerMinuteTable(now: number): Promise<LeaderboardEntries<nu
 		const mall = mallId === undefined ? undefined : await userMalls.get(mallId)
 		const attractionHeight = getAttractionHeight(mall?.attraction)
 
-		const skills: Skills = allUserSkills[Number(playerId)] || {}
+		const skills: Skills = allUserSkills[Number(playerId)] ?? {}
 		const income = shops
 			.map(o => maxSellPerMinute(o, skills, attractionHeight))
 			.reduce((a, b) => a + b, 0)
@@ -225,7 +225,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 	const reader = await ctx.wd.reader('menu.leaderboard')
 	text += infoHeader(reader, {titlePrefix: emojis.leaderboard})
 
-	const view = ctx.session.leaderboardView || DEFAULT_VIEW
+	const view = ctx.session.leaderboardView ?? DEFAULT_VIEW
 	text += infoHeader(await ctx.wd.reader(viewResourceKey(view)))
 
 	const readerMinute = await ctx.wd.reader('unit.minute')
@@ -265,7 +265,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 			break
 
 		default:
-			throw new Error(`unknown leaderboard view: ${view}`)
+			throw new Error(`unknown leaderboard view: ${String(view)}`)
 	}
 
 	return {
@@ -293,7 +293,7 @@ function viewResourceKey(view: LeaderboardView): string {
 		case 'mallAttraction':
 			return 'mall.attraction'
 		default:
-			throw new Error(`unknown leaderboard view: ${view}`)
+			throw new Error(`unknown leaderboard view: ${String(view)}`)
 	}
 }
 

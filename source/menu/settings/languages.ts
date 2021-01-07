@@ -7,6 +7,7 @@ import {infoHeader} from '../../lib/interface/formatted-strings'
 import {bodyPhoto, backButtons, buttonText} from '../../lib/interface/menu'
 import {percentString} from '../../lib/interface/format-percent'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const localeEmoji = require('locale-emoji')
 
 async function menuBody(ctx: Context): Promise<Body> {

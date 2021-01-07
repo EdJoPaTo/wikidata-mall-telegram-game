@@ -26,7 +26,7 @@ export async function preload(logger: (...args: any[]) => void): Promise<void> {
 
 	attractions = resultAttractions
 		.reduce((coll: Record<QNumber, number>, add) => {
-			const current = coll[add.item] === undefined ? -Infinity : coll[add.item]!
+			const current = coll[add.item] === undefined ? Number.NEGATIVE_INFINITY : coll[add.item]!
 			coll[add.item] = Math.max(current, add.height)
 			return coll
 		}, {})

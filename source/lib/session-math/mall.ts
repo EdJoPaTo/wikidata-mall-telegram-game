@@ -37,7 +37,7 @@ export function startup(persist: Persist): void {
 export function incomeUntil(persist: Persist): number {
 	const {mall} = persist
 	if (!mall || !mall.attraction) {
-		return Infinity
+		return Number.POSITIVE_INFINITY
 	}
 
 	// TODO: has to handle opening too -> shouldnt calc income before opening

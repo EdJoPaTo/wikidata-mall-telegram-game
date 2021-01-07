@@ -53,7 +53,7 @@ export const menu = new MenuTemplate<Context>(menuBody)
 
 menu.chooseIntoSubmenu('t', TALENTS, employee, {
 	columns: 1,
-	buttonText: buttonText((_, key) => emojis[key as Talent], (_, key) => `person.talents.${key}`)
+	buttonText: buttonText((_, key) => emojis[key as Talent], (_, key) => `person.talents.${key!}`)
 })
 
 menu.url(

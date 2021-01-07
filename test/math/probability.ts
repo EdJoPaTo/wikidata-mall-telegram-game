@@ -19,7 +19,7 @@ function happensMacro(t: ExecutionContext, probability: number, arrayTrue: (arra
 }
 
 function happensSometimesMacro(t: ExecutionContext, probability: number): void {
-	return happensMacro(t, probability, array => array.some(o => o) && array.some(o => !o))
+	happensMacro(t, probability, array => array.some(o => o) && array.some(o => !o))
 }
 
 test('happens not', happensMacro, 0, array => array.every(o => !o))

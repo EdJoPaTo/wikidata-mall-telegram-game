@@ -49,7 +49,7 @@ function canAddProductTechnically(shop: Shop, skills: Skills): boolean {
 		return false
 	}
 
-	const allAvailableProductsForShop = (wdShop.products(shop.id) || []).length
+	const allAvailableProductsForShop = (wdShop.products(shop.id) ?? []).length
 	const productsAvailable = allAvailableProductsForShop - currentProductsAmount
 	if (productsAvailable <= 0) {
 		return false
@@ -94,7 +94,7 @@ async function productsPart(ctx: Context, shop: Shop, skills: Skills, showExplan
 
 	const logisticsLevel = currentLevel(skills, 'logistics')
 	const productsPossible = shopProductsPossible(logisticsLevel)
-	const allAvailableProductsForShop = (wdShop.products(shop.id) || []).length
+	const allAvailableProductsForShop = (wdShop.products(shop.id) ?? []).length
 
 	let text = ''
 	text += '*'
@@ -231,7 +231,7 @@ menu.interact(buttonText(emojis.add, 'other.assortment'), 'addProduct', {
 		}
 
 		const pickedProductId = randomUnusedEntry(
-			wdShop.products(shop.id) || [],
+			wdShop.products(shop.id) ?? [],
 			userProducts(ctx)
 		)
 

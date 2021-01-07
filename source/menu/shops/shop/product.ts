@@ -157,7 +157,7 @@ menu.interact(buttonText(emojis.purchasing, 'person.talents.purchasing', {suffix
 	hide: ctx => itemsPurchasableCtx(ctx) < 1,
 	do: ctx => {
 		const now = Math.floor(Date.now() / 1000)
-		buyAmount(ctx, Infinity, now)
+		buyAmount(ctx, Number.POSITIVE_INFINITY, now)
 		return '.'
 	}
 })

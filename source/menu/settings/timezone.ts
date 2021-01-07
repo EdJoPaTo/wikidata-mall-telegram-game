@@ -35,7 +35,7 @@ function tzInPrefix(ctx: Context): string[] {
 
 async function menuBody(ctx: Context): Promise<Body> {
 	const {__wikibase_language_code: locale} = ctx.session
-	const current = ctx.session.timeZone || 'UTC'
+	const current = ctx.session.timeZone ?? 'UTC'
 
 	let text = ''
 	const reader = await ctx.wd.reader('menu.timezone')

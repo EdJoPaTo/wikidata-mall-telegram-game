@@ -21,7 +21,7 @@ export function currentLevel(skills: Skills, skill: SimpleSkill): number {
 }
 
 export function categorySkillCategories(skills: Skills, skill: CategorySkill): readonly string[] {
-	return Object.keys(skills[skill] || {})
+	return Object.keys(skills[skill] ?? {})
 }
 
 export function categorySkillSpecificLevel(skills: Skills, skill: CategorySkill, category: string): number {
@@ -30,7 +30,7 @@ export function categorySkillSpecificLevel(skills: Skills, skill: CategorySkill,
 		return 0
 	}
 
-	return content[category] || 0
+	return content[category] ?? 0
 }
 
 export function entriesInSkillQueue(queue: readonly SkillInTraining[], skill: Skill, category: string | undefined): number {

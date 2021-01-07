@@ -18,7 +18,7 @@ export async function get(): Promise<MallProduction> {
 		}
 	}
 
-	return current || {
+	return current ?? {
 		competitionSince: 0,
 		competitionUntil: Number.MAX_SAFE_INTEGER,
 		itemsProducedPerMall: {},

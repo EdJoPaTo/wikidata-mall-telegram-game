@@ -19,7 +19,7 @@ function formatClock(total: number): string {
 export function humanReadableTimestamp(unixTimestamp: number, locale: string | undefined, timeZone: string | undefined): string {
 	const date = new Date(unixTimestamp * 1000)
 	return date.toLocaleString(locale === 'wikidatan' ? 'en' : locale, {
-		timeZone: timeZone || 'UTC',
+		timeZone: timeZone ?? 'UTC',
 		timeZoneName: 'short',
 		year: 'numeric',
 		month: 'short',

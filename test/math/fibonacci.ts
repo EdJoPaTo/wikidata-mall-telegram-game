@@ -19,11 +19,15 @@ test('fillArray example', t => {
 
 test('fillArray does not work to infinity', t => {
 	const array = [0, 1]
-	t.throws(() => fillArray(array, Infinity), {message: /finite/})
+	t.throws(() => {
+		fillArray(array, Number.POSITIVE_INFINITY)
+	}, {message: /finite/})
 })
 
 test('fillArray does need start numbers', t => {
-	t.throws(() => fillArray([], 5), {message: /array.+too short/})
+	t.throws(() => {
+		fillArray([], 5)
+	}, {message: /array.+too short/})
 })
 
 test('cached works', t => {

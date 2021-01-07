@@ -128,5 +128,5 @@ export function products(shop: string): readonly string[] | undefined {
 }
 
 export function productPotential(shop: string): number {
-	return shopPotentialProducts[shop] || 0
+	return shopPotentialProducts[shop] ?? 0
 }
