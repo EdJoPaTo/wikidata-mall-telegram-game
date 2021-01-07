@@ -28,7 +28,7 @@ export function buttonText(emoji: ConstOrContextFunc<string>, resourceKey: Const
 }
 
 export function bodyPhoto(reader: WikidataEntityReader): MediaBody | Record<string, unknown> {
-	const url: string | undefined = reader.images(800)[0]
+	const url = reader.images(800)[0]
 	if (!url) {
 		return {}
 	}
