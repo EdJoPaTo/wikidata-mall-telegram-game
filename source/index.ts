@@ -10,7 +10,7 @@ import TelegrafI18n from 'telegraf-i18n'
 
 import * as wikidata from './lib/wikidata'
 
-import {HOUR_IN_SECONDS, MINUTE_IN_SECONDS} from './lib/math/timestamp-constants'
+import {HOUR_IN_SECONDS} from './lib/math/timestamp-constants'
 
 import {Context} from './lib/types'
 import data from './lib/data'
@@ -87,6 +87,7 @@ const twb = new TelegrafWikibase({
 	contextKey: 'wd',
 	logQueriedEntityIds: process.env.NODE_ENV !== 'production',
 	store: wdCache,
+	ttl: 22 * HOUR_IN_SECONDS * 1000,
 	userAgent: 'github.com/EdJoPaTo/wikidata-mall-telegram-game'
 })
 twb.addResourceKeys(resourceKeysFromYaml(readFileSync('wikidata-items.yaml', 'utf8')))
@@ -135,8 +136,7 @@ async function startup(): Promise<void> {
 		await bot.launch()
 		console.log(new Date(), 'Bot started as', bot.options.username)
 
-		setInterval(async () => wikidata.update(), 4 * HOUR_IN_SECONDS * 1000)
-		setTimeout(async () => wikidata.update(), 15 * MINUTE_IN_SECONDS * 1000)
+		setInterval(async () => wikidata.update(), 20 * HOUR_IN_SECONDS * 1000)
 	} catch (error: unknown) {
 		console.error('startup failed:', error)
 	}
