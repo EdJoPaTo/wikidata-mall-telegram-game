@@ -55,3 +55,18 @@ export async function incomePart(ctx: Context, shops: readonly Shop[], persist: 
 	text += '\n\n'
 	return text
 }
+
+export function sparqlQueryUrl(shopItemID: string): string {
+	const query = `SELECT ?item ?itemLabel ?commons ?image WHERE {
+  ?item wdt:P279 wd:${shopItemID}.
+  OPTIONAL { ?item wdt:P373 ?commons. }
+  OPTIONAL { ?item wdt:P18 ?image. }
+  # FILTER NOT EXISTS { ?item wdt:P18 ?image. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}`
+
+	const urlSuffix = encodeURIComponent(query)
+	const urlPrefix = 'https://query.wikidata.org/#'
+
+	return urlPrefix + urlSuffix
+}

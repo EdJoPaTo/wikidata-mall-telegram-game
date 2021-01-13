@@ -57,6 +57,7 @@ const basic = {
 	vote: '🗳️',
 	warning: '⚠️',
 	wikidataItem: 'ℹ️',
+	wikidataSparql: '🔍',
 	yes: '👍'
 }
 

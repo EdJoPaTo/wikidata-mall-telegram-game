@@ -22,7 +22,7 @@ import {getAttractionHeight} from '../../../lib/game-logic/mall-attraction'
 import {buttonText, bodyPhoto, backButtons} from '../../../lib/interface/menu'
 import {emojis} from '../../../lib/interface/emojis'
 import {formatFloat} from '../../../lib/interface/format-number'
-import {incomePart} from '../../../lib/interface/shop'
+import {incomePart, sparqlQueryUrl} from '../../../lib/interface/shop'
 import {infoHeader, labeledInt, moneyCostPart} from '../../../lib/interface/formatted-strings'
 import {percentBonusString} from '../../../lib/interface/format-percent'
 import {personInShopLine} from '../../../lib/interface/person'
@@ -295,6 +295,14 @@ menu.submenu(buttonText(emojis.close, 'action.close'), 'remove', closureMenu, {
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
 	async ctx => (await ctx.wd.reader(fromCtx(ctx).shop.id)).url()
+)
+
+menu.url(
+	buttonText(emojis.wikidataSparql, 'menu.wikidataSparql'),
+	ctx => sparqlQueryUrl(fromCtx(ctx).shop.id),
+	{
+		joinLastRow: true
+	}
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shop'))
