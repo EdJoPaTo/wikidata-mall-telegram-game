@@ -42,6 +42,14 @@ menu.toggle(async ctx => (await ctx.wd.reader('other.math')).label(), 'explanati
 	}
 })
 
+menu.url(buttonText(emojis.chat, 'menu.chat'), 'https://t.me/WikidataMallChat')
+
+menu.url(buttonText(emojis.github, 'other.github'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game')
+
+menu.url(buttonText(emojis.github, 'other.changelog'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game/releases', {
+	joinLastRow: true
+})
+
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
 	async ctx => (await ctx.wd.reader('menu.settings')).url()

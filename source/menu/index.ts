@@ -106,12 +106,4 @@ menu.submenu(buttonText(emojis.stats, 'stat.stats'), 'botStats', botStats, {
 	joinLastRow: true
 })
 
-menu.url(buttonText(emojis.chat, 'menu.chat'), 'https://t.me/WikidataMallChat')
-
-menu.url(buttonText(emojis.github, 'other.github'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game', {
-	joinLastRow: true
-})
-
-menu.url(buttonText(emojis.github, 'other.changelog'), 'https://github.com/EdJoPaTo/wikidata-mall-telegram-game/releases')
-
 menu.manualRow(backButtons)
