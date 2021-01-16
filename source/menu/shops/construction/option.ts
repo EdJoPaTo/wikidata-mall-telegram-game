@@ -9,6 +9,7 @@ import {buttonText, backButtons, bodyPhoto} from '../../../lib/interface/menu'
 import {constructionSuffix} from '../../../lib/interface/shop-construction'
 import {emojis} from '../../../lib/interface/emojis'
 import {infoHeader, moneyCostPart} from '../../../lib/interface/formatted-strings'
+import {sparqlQueryUrl} from '../../../lib/interface/shop'
 
 import {createHelpMenu, helpButtonText} from '../../help'
 
@@ -86,6 +87,14 @@ menu.interact(buttonText(emojis.construction, 'action.construction'), 'construct
 menu.url(
 	buttonText(emojis.wikidataItem, 'menu.wikidataItem'),
 	async ctx => (await ctx.wd.reader(fromCtx(ctx).construction)).url()
+)
+
+menu.url(
+	buttonText(emojis.wikidataSparql, 'menu.wikidataSparql'),
+	ctx => sparqlQueryUrl(fromCtx(ctx).construction),
+	{
+		joinLastRow: true
+	}
 )
 
 menu.submenu(helpButtonText(), 'help', createHelpMenu('help.shops-construction'))
