@@ -1,5 +1,5 @@
 import {Chat} from 'typegram'
-import {Composer, Extra, Markup} from 'telegraf'
+import {Composer, Markup} from 'telegraf'
 import stringify from 'json-stable-stringify'
 
 import {Mall} from '../lib/types/mall'
@@ -14,7 +14,7 @@ import {emojis} from '../lib/interface/emojis'
 const bot = new Composer<Context>()
 
 async function replyJoinMessage(ctx: Context): Promise<void> {
-	const button = Markup.callbackButton((await ctx.wd.reader('mall.participation')).label(), 'join')
+	const button = Markup.button.callback((await ctx.wd.reader('mall.participation')).label(), 'join')
 	const keyboard = Markup.inlineKeyboard([
 		button
 	])
@@ -23,7 +23,11 @@ async function replyJoinMessage(ctx: Context): Promise<void> {
 	text += '\n\n'
 	text += (await ctx.wd.reader('menu.mall')).label()
 
-	await ctx.reply(text, Extra.markdown().inReplyTo(ctx.message!.message_id).markup(keyboard))
+	await ctx.reply(text, {
+		...keyboard,
+		parse_mode: 'Markdown',
+		reply_to_message_id: ctx.message!.message_id
+	})
 }
 
 async function checkEveryMemberAndRemoveIfNeeded(ctx: Context, mallData: Mall): Promise<void> {
@@ -50,27 +54,27 @@ async function checkEveryMemberAndRemoveIfNeeded(ctx: Context, mallData: Mall): 
 
 if (process.env.NODE_ENV !== 'production') {
 	bot.use(async (ctx, next) => {
-		console.log('happened in chat:', ctx.updateType, ctx.updateSubTypes, ctx.chat)
+		console.log('happened in chat:', ctx.updateType, ctx.chat)
 		return next()
 	})
 }
 
 bot.use(Composer.optional(ctx => Boolean(ctx.chat && ctx.chat.type === 'group'), async ctx => {
-	if (ctx.updateSubTypes.includes('migrate_to_chat_id')) {
+	if (!ctx.message || 'migrate_to_chat_id' in ctx.message) {
 		return
 	}
 
 	try {
 		await ctx.reply(ctx.i18n.t('mall.supergroupMigration'))
 	} catch (error: unknown) {
-		console.log('supergroup migration hint error', error instanceof Error ? error.message : error, ctx.updateType, ctx.updateSubTypes, ctx.update)
+		console.log('supergroup migration hint error', error instanceof Error ? error.message : error, ctx.updateType, ctx.update)
 	}
 }))
 
 bot.use(async (ctx, next) => {
 	// Update title
 	if (ctx.chat && ctx.chat.type === 'supergroup') {
-		const chat = ctx.chat as Chat.SupergroupChat
+		const {chat} = ctx
 		const mallId = chat.id
 		const mall = await userMalls.get(mallId)
 		if (mall) {
@@ -88,8 +92,8 @@ bot.use(async (ctx, next) => {
 
 bot.on('left_chat_member', async ctx => {
 	const mallId = ctx.chat!.id
-	const left = ctx.message!.left_chat_member!
-	const myId = ctx.botInfo!.id
+	const left = ctx.message.left_chat_member
+	const myId = ctx.botInfo.id
 
 	if (myId === left.id) {
 		await userMalls.remove(mallId)
@@ -113,7 +117,7 @@ bot.on('migrate_from_chat_id', async ctx => {
 	return replyJoinMessage(ctx)
 })
 
-bot.use(Composer.optional(ctx => Boolean(ctx.chat?.username), async (ctx, next) => {
+bot.use(Composer.optional(ctx => Boolean(ctx.chat && 'username' in ctx.chat), async (ctx, next) => {
 	await ctx.reply(ctx.i18n.t('mall.groupPrivate'))
 	return next()
 }))
@@ -131,7 +135,7 @@ bot.on(['group_chat_created', 'new_chat_members'], async ctx => {
 			}
 		}
 	} catch (error: unknown) {
-		console.error('error while detecting big group', ctx.updateType, ctx.updateSubTypes, error)
+		console.error('error while detecting big group', ctx.updateType, error)
 	}
 
 	return replyJoinMessage(ctx)
@@ -181,7 +185,7 @@ bot.command('fix', async ctx => {
 })
 
 bot.command(['language', 'settings'], async ctx => {
-	const username = ctx.botInfo!.username!
+	const {username} = ctx.botInfo
 	return ctx.reply(`${emojis.chat}@${username}`)
 })
 

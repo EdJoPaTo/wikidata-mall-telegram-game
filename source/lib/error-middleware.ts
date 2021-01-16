@@ -1,4 +1,4 @@
-import {Context as TelegrafContext, Middleware, Extra} from 'telegraf'
+import {Context as TelegrafContext, MiddlewareFn} from 'telegraf'
 import {InlineKeyboardMarkup} from 'typegram'
 
 export type ErrorMatchRule = RegExp | string
@@ -25,7 +25,7 @@ export class ErrorMiddleware {
 		this._userText = options.text
 	}
 
-	middleware(): Middleware<TelegrafContext> {
+	middleware(): MiddlewareFn<TelegrafContext> {
 		return async (ctx, next) => {
 			try {
 				await next()
@@ -87,7 +87,11 @@ export class ErrorMiddleware {
 
 				try {
 					const target = (ctx.chat ?? ctx.from!).id
-					await ctx.telegram.sendMessage(target, text, Extra.markdown().webPreview(false).markup(this._keyboard))
+					await ctx.telegram.sendMessage(target, text, {
+						...this._keyboard,
+						parse_mode: 'Markdown',
+						disable_web_page_preview: true
+					})
 				} catch (error: unknown) {
 					console.error('send error to user failed', error)
 				}
@@ -107,7 +111,7 @@ function getUpdateContext(ctx: TelegrafContext): Array<string | number | undefin
 		infos.push(ctx.from.id)
 	}
 
-	if (ctx.callbackQuery) {
+	if (ctx.callbackQuery && 'data' in ctx.callbackQuery) {
 		infos.push(ctx.callbackQuery.data)
 	}
 

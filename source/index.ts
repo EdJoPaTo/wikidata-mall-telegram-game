@@ -2,11 +2,11 @@ import {existsSync, readFileSync} from 'fs'
 
 import {EntitySimplified} from 'wikidata-sdk-got/dist/source/wikibase-sdk-types'
 import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
+import {I18n as TelegrafI18n} from '@edjopato/telegraf-i18n'
 import {MenuMiddleware} from 'telegraf-inline-menu'
 import {Telegraf, Composer} from 'telegraf'
 import {TelegrafWikibase, resourceKeysFromYaml} from 'telegraf-wikibase'
 import {TtlKeyValueInMemoryFile} from '@edjopato/datastore'
-import TelegrafI18n from 'telegraf-i18n'
 
 import * as wikidata from './lib/wikidata'
 
@@ -134,7 +134,7 @@ async function startup(): Promise<void> {
 		await wikidata.preload()
 		await notifications.initialize(notificationManager, twb)
 		await bot.launch()
-		console.log(new Date(), 'Bot started as', bot.options.username)
+		console.log(new Date(), 'Bot started as', bot.botInfo?.username)
 
 		setInterval(async () => wikidata.update(), 20 * HOUR_IN_SECONDS * 1000)
 	} catch (error: unknown) {

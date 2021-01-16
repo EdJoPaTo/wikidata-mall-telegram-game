@@ -1,9 +1,11 @@
 import {Chat, ChatMember} from 'typegram'
-import {Telegram} from 'telegraf'
+import {Telegraf} from 'telegraf'
 
 import {sequentialAsync} from '../js-helper/async'
 
 import * as userMalls from '../data/malls'
+
+type Telegram = Telegraf['telegram']
 
 export async function fixMallDataForAllMalls(telegram: Telegram): Promise<void> {
 	const allMalls = await userMalls.getAll()
@@ -78,7 +80,7 @@ async function tryGetChat(telegram: Telegram, chatId: number): Promise<Chat.Supe
 async function tryGetChatMember(telegram: Telegram, chatId: number, userId: number): Promise<ChatMember | undefined> {
 	try {
 		const result = await telegram.getChatMember(chatId, userId)
-		return result as ChatMember
+		return result
 	} catch (error: unknown) {
 		console.log('get chat member error', chatId, userId, error instanceof Error ? error.message : error)
 		return undefined

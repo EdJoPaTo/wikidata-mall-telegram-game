@@ -52,7 +52,7 @@ menu.submenu(buttonText(emojis.shop, 'menu.shop', {requireAttention: shopsRequir
 menu.interact(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 	hide: ctx => Boolean(ctx.persist.mall),
 	do: async ctx => {
-		const {username} = ctx.botInfo!
+		const {username} = ctx.botInfo
 		let text = ''
 		text += '@'
 		text += username
@@ -60,7 +60,9 @@ menu.interact(buttonText(emojis.mall, 'menu.mall'), 'mallJoinHint', {
 		text += emojis.group
 		text += (await ctx.wd.reader('menu.chat')).label()
 
-		await ctx.answerCbQuery(text, true)
+		await ctx.answerCbQuery(text, {
+			show_alert: true
+		})
 		return false
 	}
 })

@@ -1,5 +1,5 @@
-import {Extra, Markup} from 'telegraf'
 import {markdown as format} from 'telegram-format'
+import {Markup} from 'telegraf'
 import {MenuTemplate, Body} from 'telegraf-inline-menu'
 
 import {Person} from '../../lib/types/people'
@@ -64,13 +64,20 @@ menu.interact(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 
 		const photo = await ctx.wd.reader(applicant.hobby).then(r => r.images(800)[0])
 		const groupKeyboard = Markup.inlineKeyboard([
-			Markup.callbackButton(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
+			Markup.button.callback(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
 		])
 		// eslint-disable-next-line unicorn/prefer-ternary
 		if (photo) {
-			await ctx.telegram.sendPhoto(mall.chat.id, photo, new Extra({caption}).markdown().markup(groupKeyboard) as any)
+			await ctx.telegram.sendPhoto(mall.chat.id, photo, {
+				...groupKeyboard,
+				caption,
+				parse_mode: format.parse_mode
+			})
 		} else {
-			await ctx.telegram.sendMessage(mall.chat.id, caption, Extra.markdown().markup(groupKeyboard))
+			await ctx.telegram.sendMessage(mall.chat.id, caption, {
+				...groupKeyboard,
+				parse_mode: format.parse_mode
+			})
 		}
 
 		mall.applicants.push(applicant)

@@ -34,7 +34,7 @@ bot.action('takeAllApplicants', async ctx => {
 	try {
 		await ctx.deleteMessage()
 	} catch {
-		await ctx.editMessageReplyMarkup()
+		await ctx.editMessageReplyMarkup(undefined)
 	}
 })
 
