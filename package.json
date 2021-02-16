@@ -14,18 +14,10 @@
 		"node": ">=14"
 	},
 	"scripts": {
-		"build": "del dist && tsc",
-		"prepack": "npm run build",
+		"build": "del-cli dist && tsc",
 		"start": "ts-node source/index.ts",
-		"test": "tsc && xo && NODE_ICU_DATA='node_modules/full-icu' nyc ava"
+		"test": "tsc --sourceMap && xo && NODE_ICU_DATA='node_modules/full-icu' nyc ava"
 	},
-	"main": "dist/source",
-	"types": "dist/source",
-	"files": [
-		"dist/source",
-		"!*.test.*"
-	],
-	"keywords": [],
 	"dependencies": {
 		"@edjopato/datastore": "^0.3.0",
 		"@edjopato/telegraf-i18n": "^0.2.0",
@@ -73,9 +65,9 @@
 			"source"
 		],
 		"exclude": [
+			"**/*.d.ts",
 			"**/*.test.ts"
 		],
-		"all": false,
 		"reporter": [
 			"lcov",
 			"text"
