@@ -18,7 +18,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 		throw new Error('You are not part of a mall')
 	}
 
-	const shopIds = shops.map(o => o.id)
+	const shopIds = new Set(shops.map(o => o.id))
 	const personalMaxSeats = applicantSeats(skills)
 	const personalMaxSeatsReached = applicants.list.length > personalMaxSeats
 
@@ -27,7 +27,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 	const applicantEntries = await Promise.all(mall.applicants
 		.map(async applicant => {
-			const hobbyIsFitting = shopIds.some(o => o === applicant.hobby)
+			const hobbyIsFitting = shopIds.has(applicant.hobby)
 			return personMarkdown(ctx, applicant, hobbyIsFitting, now)
 		})
 	)

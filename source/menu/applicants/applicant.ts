@@ -21,7 +21,7 @@ function fromCtx(ctx: Context): {applicantId: number; applicant: Person; hobbyIs
 	}
 
 	const shopIds = ctx.persist.shops.map(o => o.id)
-	const hobbyIsFitting = shopIds.some(o => o === applicant.hobby)
+	const hobbyIsFitting = shopIds.includes(applicant.hobby)
 	return {applicantId, applicant, hobbyIsFitting}
 }
 
@@ -66,7 +66,6 @@ menu.interact(buttonText(emojis.mall, 'menu.mall'), 'toMall', {
 		const groupKeyboard = Markup.inlineKeyboard([
 			Markup.button.callback(await buttonText(emojis.seat, 'other.seat')(ctx), 'takeAllApplicants')
 		])
-		// eslint-disable-next-line unicorn/prefer-ternary
 		if (photo) {
 			await ctx.telegram.sendPhoto(mall.chat.id, photo, {
 				...groupKeyboard,

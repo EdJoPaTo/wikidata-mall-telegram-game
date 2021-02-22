@@ -116,8 +116,7 @@ function getUpdateContext(ctx: TelegrafContext): Array<string | number | undefin
 	}
 
 	if (ctx.inlineQuery) {
-		infos.push(ctx.inlineQuery.offset)
-		infos.push(ctx.inlineQuery.query)
+		infos.push(ctx.inlineQuery.offset, ctx.inlineQuery.query)
 	}
 
 	return infos

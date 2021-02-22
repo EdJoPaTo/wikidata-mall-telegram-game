@@ -172,13 +172,13 @@ async function getMallAttractionTable(now: number): Promise<LeaderboardEntries<n
 
 function entryLine(index: number, name: string, formattedValue: string, highlighted: boolean): string {
 	const rank = index + 1
-
-	const parts: string[] = []
-	parts.push(`${rank}.`)
-	parts.push(format.italic(format.escape(formattedValue)))
 	const escapedName = format.escape(name)
-	parts.push(highlighted ? format.bold(escapedName) : escapedName)
 
+	const parts: string[] = [
+		`${rank}.`,
+		format.italic(format.escape(formattedValue)),
+		highlighted ? format.bold(escapedName) : escapedName
+	]
 	return parts.join(' ')
 }
 

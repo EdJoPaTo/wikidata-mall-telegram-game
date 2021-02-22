@@ -91,7 +91,7 @@ bot.use(async (ctx, next) => {
 })
 
 bot.on('left_chat_member', async ctx => {
-	const mallId = ctx.chat!.id
+	const mallId = ctx.chat.id
 	const left = ctx.message.left_chat_member
 	const myId = ctx.botInfo.id
 
@@ -123,7 +123,7 @@ bot.use(Composer.optional(ctx => Boolean(ctx.chat && 'username' in ctx.chat), as
 }))
 
 bot.on(['group_chat_created', 'new_chat_members'], async ctx => {
-	const mallId = ctx.chat!.id
+	const mallId = ctx.chat.id
 	const mallData = await userMalls.get(mallId)
 	try {
 		const members = await ctx.getChatMembersCount()

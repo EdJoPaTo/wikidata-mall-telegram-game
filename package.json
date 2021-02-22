@@ -40,7 +40,7 @@
 		"timezone-support": "^2.0.2",
 		"wikidata-entity-reader": "^2.0.0",
 		"wikidata-person-names": "^1.0.0",
-		"wikidata-sdk-got": "^2.0.1"
+		"wikidata-sdk-got": "^2.1.0"
 	},
 	"devDependencies": {
 		"@sindresorhus/tsconfig": "^0.8.0",
@@ -54,7 +54,7 @@
 		"ts-node": "^9.0.0",
 		"typegram": "^3.0.2",
 		"typescript": "^4.1.2",
-		"xo": "^0.37.1"
+		"xo": "^0.38.1"
 	},
 	"nyc": {
 		"extension": [

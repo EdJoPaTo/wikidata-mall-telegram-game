@@ -1,5 +1,5 @@
 import {createBackMainMenuButtons} from 'telegraf-inline-menu'
-import {MediaBody} from 'telegraf-inline-menu/dist/source/body'
+import {MediaBody} from 'telegraf-inline-menu/dist/source/body.js'
 
 import {Context} from '../types'
 

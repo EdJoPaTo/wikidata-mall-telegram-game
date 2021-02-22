@@ -1,6 +1,6 @@
 import {existsSync, readFileSync} from 'fs'
 
-import {EntitySimplified} from 'wikidata-sdk-got/dist/source/wikibase-sdk-types'
+import {EntitySimplified} from 'wikidata-sdk-got'
 import {generateUpdateMiddleware} from 'telegraf-middleware-console-time'
 import {I18n as TelegrafI18n} from '@edjopato/telegraf-i18n'
 import {MenuMiddleware} from 'telegraf-inline-menu'
