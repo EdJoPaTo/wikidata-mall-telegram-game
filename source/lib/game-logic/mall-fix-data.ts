@@ -1,11 +1,9 @@
 import {Chat, ChatMember} from 'typegram'
-import {Telegraf} from 'telegraf'
+import {Telegram} from 'telegraf'
 
 import {sequentialAsync} from '../js-helper/async'
 
 import * as userMalls from '../data/malls'
-
-type Telegram = Telegraf['telegram']
 
 export async function fixMallDataForAllMalls(telegram: Telegram): Promise<void> {
 	const allMalls = await userMalls.getAll()
