@@ -31,6 +31,7 @@ async function menuBody(ctx: Context): Promise<Body> {
 
 	text += await moneyCostPart(ctx, ctx.session.money, cost)
 
+	await ctx.wd.preload(options)
 	const readersOptions = await Promise.all(options.map(async o => ctx.wd.reader(o)))
 	text += readersOptions
 		.map(r => infoHeader(r, {
