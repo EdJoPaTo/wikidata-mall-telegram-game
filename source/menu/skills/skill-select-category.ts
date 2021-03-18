@@ -116,7 +116,12 @@ menu.toggle(async ctx => (await ctx.wd.reader('other.whole')).label(), 'all', {
 
 menu.chooseIntoSubmenu('s', shops, skillMenu, {
 	columns: 2,
-	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label()
+	maxRows: 7,
+	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label(),
+	getCurrentPage: ctx => ctx.session.page,
+	setPage: (ctx, page) => {
+		ctx.session.page = page
+	}
 })
 
 menu.url(

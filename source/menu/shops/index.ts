@@ -69,7 +69,12 @@ function userShops(ctx: Context): string[] {
 
 menu.chooseIntoSubmenu('s', userShops, shopMenu, {
 	columns: 2,
-	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label()
+	maxRows: 7,
+	buttonText: async (ctx, key) => (await ctx.wd.reader(key)).label(),
+	getCurrentPage: ctx => ctx.session.page,
+	setPage: (ctx, page) => {
+		ctx.session.page = page
+	}
 })
 
 menu.submenu(buttonText(emojis.construction, 'action.construction'), 'build', constructionMenu)
