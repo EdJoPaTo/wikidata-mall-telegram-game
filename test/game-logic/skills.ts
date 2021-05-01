@@ -103,11 +103,13 @@ test('increaseLevelByOne with category never trained', t => {
 test('increaseLevelByOne with category not yet trained', t => {
 	const skills: Skills = JSON.parse(JSON.stringify(exampleSkills))
 	increaseLevelByOne(skills, 'collector', 'Q42')
-	t.is(skills.collector!.Q42, 1)
+	// eslint-disable-next-line @typescript-eslint/dot-notation
+	t.is(skills.collector?.['Q42'], 1)
 })
 
 test('increaseLevelByOne with category trained', t => {
 	const skills: Skills = JSON.parse(JSON.stringify(exampleSkills))
 	increaseLevelByOne(skills, 'collector', 'Q5')
-	t.is(skills.collector!.Q5, 4)
+	// eslint-disable-next-line @typescript-eslint/dot-notation
+	t.is(skills.collector?.['Q5'], 4)
 })
