@@ -114,7 +114,7 @@ bot.use(Telegraf.groupChat(mall.middleware()))
 
 bot.use(fallback.middleware())
 
-bot.catch((error: any) => {
+bot.catch((error: unknown) => {
 	console.error('telegraf error occured', error)
 })
 
