@@ -10,13 +10,13 @@
 		"email": "wikidata-mall-telegram-game@edjopato.de",
 		"url": "https://edjopato.de"
 	},
-	"engines": {
-		"node": ">=14"
-	},
 	"scripts": {
 		"build": "del-cli dist && tsc",
 		"start": "ts-node source/index.ts",
 		"test": "tsc --sourceMap && xo && NODE_ICU_DATA='node_modules/full-icu' nyc ava"
+	},
+	"engines": {
+		"node": ">=14"
 	},
 	"dependencies": {
 		"@edjopato/datastore": "^0.3.0",
@@ -57,17 +57,6 @@
 		"xo": "^0.39.1"
 	},
 	"nyc": {
-		"extension": [
-			".ts"
-		],
-		"include": [
-			"dist/source",
-			"source"
-		],
-		"exclude": [
-			"**/*.d.ts",
-			"**/*.test.ts"
-		],
 		"reporter": [
 			"lcov",
 			"text"
