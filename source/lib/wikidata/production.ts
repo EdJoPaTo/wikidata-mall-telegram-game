@@ -63,9 +63,7 @@ async function preloadCategory(category: string): Promise<Record<string, string[
 }
 
 function reduceRowsIntoKeyValue(coll: Record<string, string[]>, add: Record<string, string>): Record<string, string[]> {
-	// eslint-disable-next-line @typescript-eslint/dot-notation
 	const product = add['product']!
-	// eslint-disable-next-line @typescript-eslint/dot-notation
 	const part = add['part']!
 	if (!coll[product]) {
 		coll[product] = []

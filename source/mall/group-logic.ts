@@ -52,7 +52,6 @@ async function checkEveryMemberAndRemoveIfNeeded(ctx: Context, mallData: Mall): 
 	mallData.member = remainingIds
 }
 
-// eslint-disable-next-line @typescript-eslint/dot-notation
 if (process.env['NODE_ENV'] !== 'production') {
 	bot.use(async (ctx, next) => {
 		console.log('happened in chat:', ctx.updateType, ctx.chat)

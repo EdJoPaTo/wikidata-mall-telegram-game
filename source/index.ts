@@ -34,7 +34,6 @@ process.title = 'wikidata-mall-tgbot'
 
 const token = (existsSync('/run/secrets/bot-token.txt') && readFileSync('/run/secrets/bot-token.txt', 'utf8').trim()) ||
 	(existsSync('bot-token.txt') && readFileSync('bot-token.txt', 'utf8').trim()) ||
-	// eslint-disable-next-line @typescript-eslint/dot-notation
 	process.env['BOT_TOKEN']
 if (!token) {
 	throw new Error('You have to provide the bot-token from @BotFather via file (bot-token.txt) or environment variable (BOT_TOKEN)')
@@ -42,7 +41,6 @@ if (!token) {
 
 const bot = new Telegraf<Context>(token)
 
-// eslint-disable-next-line @typescript-eslint/dot-notation
 if (process.env['NODE_ENV'] !== 'production') {
 	bot.use(generateUpdateMiddleware())
 }
@@ -92,7 +90,6 @@ const wdCache = new TtlKeyValueInMemoryFile<EntitySimplified>('tmp/wikidata-cach
 
 const twb = new TelegrafWikibase({
 	contextKey: 'wd',
-	// eslint-disable-next-line @typescript-eslint/dot-notation
 	logQueriedEntityIds: process.env['NODE_ENV'] !== 'production',
 	store: wdCache,
 	ttl: 22 * HOUR_IN_SECONDS * 1000,
@@ -129,7 +126,6 @@ async function startup(): Promise<void> {
 			{command: 'settings', description: 'open settings'}
 		])
 
-		// eslint-disable-next-line @typescript-eslint/dot-notation
 		if (process.env['NODE_ENV'] === 'production') {
 			console.time('check-mall-groups')
 			await fixMallDataForAllMalls(bot.telegram)
