@@ -1,10 +1,10 @@
 import {createBackMainMenuButtons} from 'telegraf-inline-menu'
 import {MediaBody} from 'telegraf-inline-menu/dist/source/body.js'
+import WikidataEntityReader from 'wikidata-entity-reader'
 
 import {Context} from '../types'
 
 import {emojis} from './emojis'
-import WikidataEntityReader from 'wikidata-entity-reader'
 
 type ConstOrPromise<T> = T | Promise<T>
 type Func<T> = (ctx: Context, key?: string) => ConstOrPromise<T>
