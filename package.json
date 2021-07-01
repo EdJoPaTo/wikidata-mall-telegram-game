@@ -50,7 +50,7 @@
 		"@types/node": "^15.0.1",
 		"@types/node-schedule": "^1.2.3",
 		"ava": "^3.8.2",
-		"del-cli": "^3.0.0",
+		"del-cli": "^4.0.0",
 		"nyc": "^15.0.0",
 		"ts-node": "^10.0.0",
 		"typegram": "^3.0.2",
